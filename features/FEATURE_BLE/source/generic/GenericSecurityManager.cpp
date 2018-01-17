@@ -55,7 +55,11 @@ public:
     static const uint8_t NUMBER_OFFSET = '0';
 
     PasskeyAsci(const uint8_t* passkey) {
-        memcpy(asci, passkey, SecurityManager::PASSKEY_LEN);
+        if (passkey) {
+            memcpy(asci, passkey, SecurityManager::PASSKEY_LEN);
+        } else {
+            memset(asci, NUMBER_OFFSET, SecurityManager::PASSKEY_LEN);
+        }
     }
     PasskeyAsci() {
         memset(asci, NUMBER_OFFSET, SecurityManager::PASSKEY_LEN);
@@ -102,6 +106,7 @@ struct SecurityEntry_t {
     uint8_t encrypt_data:1;
     uint8_t oob_mitm_protection:1;
     uint8_t oob:1;
+    uint8_t secure_connections:1;
 };
 
 struct SecurityEntryKeys_t {
@@ -193,7 +198,7 @@ public:
         bondable = initBondable;
         mitm = initMITM;
         iocaps = initIocaps;
-        passkey = PasskeyAsci(initPasskey);
+        displayPasskey = PasskeyAsci(initPasskey);
         legacyPairingAllowed = true;
 
         return BLE_ERROR_NONE;
@@ -238,9 +243,9 @@ public:
     // Security settings
     //
 
-    ble_error_t setPasskey(const Passkey_t passkeyASCI, bool isStatic = false) {
-        // FIXME: ADD API in the pal to set default passkey!
-        return BLE_ERROR_NOT_IMPLEMENTED;
+    virtual ble_error_t setDisplayPasskey(const Passkey_t passkey) {
+        displayPasskey = passkey;
+        return BLE_ERROR_NONE;
     }
 
     ble_error_t setAuthenticationTimeout(connection_handle_t connection,
@@ -406,7 +411,7 @@ private:
     SecurityDb db;
 
     SecurityIOCapabilities_t iocaps;
-    PasskeyNum passkey;
+    PasskeyNum displayPasskey;
 
     bool mitm;
     bool bondable;
