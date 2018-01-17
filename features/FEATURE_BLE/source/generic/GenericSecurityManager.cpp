@@ -39,7 +39,11 @@ typedef SecurityManager::SecurityIOCapabilities_t SecurityIOCapabilities_t;
 
 class PasskeyNum {
 public:
-    operator uint32_t() {
+    PasskeyNum() : number() { }
+
+    PasskeyNum(uint32_t num) : number(num) { }
+
+    operator uint32_t() const {
         return number;
     }
 private:
@@ -50,7 +54,7 @@ class PasskeyAsci {
 public:
     static const uint8_t NUMBER_OFFSET = '0';
 
-    PasskeyAsci(uint8_t* passkey) {
+    PasskeyAsci(const uint8_t* passkey) {
         if (passkey) {
             memcpy(asci, passkey, SecurityManager::PASSKEY_LEN);
         } else {
@@ -61,22 +65,28 @@ public:
         memset(asci, NUMBER_OFFSET, SecurityManager::PASSKEY_LEN);
     }
     PasskeyAsci(const PasskeyNum& passkey) {
+        uint32_t num_key = passkey;
         for (int i = 5, m = 100000; i >= 0; --i, m /= 10) {
-            uint32_t result = passkey / m;
+            uint32_t result = num_key / m;
             asci[i] = NUMBER_OFFSET + result;
-            passkey -= result;
+            num_key -= result;
         }
     }
-    operator PasskeyNum() {
+    operator PasskeyNum() const {
         return PasskeyNum(getNumber());
     }
-private:
-    uint32_t getNumber() {
+
+    static uint32_t to_num(const uint8_t* asci) {
         uint32_t passkey = 0;
-        for (int i = 0, m = 1; i < SecurityManager::PASSKEY_LEN; ++i, m *= 10) {
+        for (size_t i = 0, m = 1; i < SecurityManager::PASSKEY_LEN; ++i, m *= 10) {
             passkey += (asci[i] - NUMBER_OFFSET) * m;
         }
         return passkey;
+    }
+
+private:
+    uint32_t getNumber() const {
+        return to_num(asci);
     }
     uint8_t asci[SecurityManager::PASSKEY_LEN];
 };
@@ -259,7 +269,7 @@ public:
     ble_error_t getLinkSecurity(connection_handle_t connection,
                                 SecurityMode_t *securityMode) {
 
-        securityMode = SECURITY_MODE_ENCRYPTION_OPEN_LINK;
+        *securityMode = SECURITY_MODE_ENCRYPTION_OPEN_LINK;
         return BLE_ERROR_NONE;
     }
 
@@ -370,7 +380,7 @@ public:
     }
 
     virtual ble_error_t passkeyEntered(connection_handle_t connection, Passkey_t passkey) {
-        return pal.passkey_request_reply(connection, passkey);
+        return pal.passkey_request_reply(connection, PasskeyAsci::to_num(passkey));
     }
 
     virtual ble_error_t sendKeypressNotification(connection_handle_t connection, Keypress_t keypress) {
