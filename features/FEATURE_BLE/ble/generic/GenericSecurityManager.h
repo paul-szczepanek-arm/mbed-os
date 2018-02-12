@@ -31,22 +31,12 @@ using ble::pal::AuthenticationMask;
 using ble::pal::KeyDistribution;
 using ble::pal::connection_peer_address_type_t;
 
-using ble::address_t;
-using ble::irk_t;
-using ble::csrk_t;
-using ble::ltk_t;
-using ble::ediv_t;
-using ble::rand_t;
-using ble::pairing_failure_t;
-using ble::PasskeyAscii;
-using ble::passkey_num_t;
-
 typedef SecurityManager::SecurityIOCapabilities_t SecurityIOCapabilities_t;
 
 class GenericSecurityManagerEventHandler;
 
 class GenericSecurityManager : public SecurityManager,
-                               public ble::pal::SecurityManagerEventHandler {
+                               public pal::SecurityManagerEventHandler {
 public:
     /* implements SecurityManager */
 
@@ -239,7 +229,7 @@ public:
 
 protected:
     GenericSecurityManager(
-        ble::pal::SecurityManager &palImpl,
+        pal::SecurityManager &palImpl,
         GenericSecurityDb &dbImpl,
         Gap &gapImpl
     ) : _pal(palImpl),
@@ -409,7 +399,7 @@ private:
     void on_connected(
         connection_handle_t connection,
         bool is_master,
-        BLEProtocol::AddressType_t peer_address_type,
+        AddressType_t peer_address_type,
         const address_t &peer_address,
         const address_t &local_address
     );
@@ -433,7 +423,7 @@ private:
     );
 
 private:
-    ble::pal::SecurityManager &_pal;
+    pal::SecurityManager &_pal;
     GenericSecurityDb &_db;
     Gap &_gap;
 
@@ -446,7 +436,7 @@ private:
     bool _public_keys_generated;
 
 
-    /* implements ble::pal::SecurityManagerEventHandler */
+    /* implements pal::SecurityManagerEventHandler */
 public:
     ////////////////////////////////////////////////////////////////////////////
     // Pairing
@@ -649,7 +639,7 @@ public:
         connection_handle_t connection
     );
 
-    /* end implements ble::pal::SecurityManagerEventHandler */
+    /* end implements pal::SecurityManagerEventHandler */
 
 private:
     /* handler is always a valid pointer */

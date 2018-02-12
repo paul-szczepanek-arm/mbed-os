@@ -739,7 +739,7 @@ void GenericSecurityManager::on_disconnected(connection_handle_t connection) {
 void GenericSecurityManager::on_connected(
     connection_handle_t connection,
     bool is_master,
-    BLEProtocol::AddressType_t peer_address_type,
+    AddressType_t peer_address_type,
     const address_t &peer_address,
     const address_t &local_address
 ) {
@@ -775,7 +775,7 @@ void GenericSecurityManager::disconnection_callback(
     on_disconnected(params->handle);
 }
 
-/* Implements ble::pal::SecurityManagerEventHandler */
+/* Implements pal::SecurityManagerEventHandler */
 
 ////////////////////////////////////////////////////////////////////////////
 // Pairing

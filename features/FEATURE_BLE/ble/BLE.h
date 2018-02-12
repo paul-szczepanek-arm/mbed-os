@@ -455,8 +455,8 @@ public:
      */
     MBED_DEPRECATED("Use ble.gap().setAddress(...)")
     ble_error_t setAddress(
-        BLEProtocol::AddressType_t type,
-        const BLEProtocol::AddressBytes_t address
+        ble::AddressType_t type,
+        const ble::AddressBytes_t address
     ) {
         return gap().setAddress(type, address);
     }
@@ -472,7 +472,7 @@ public:
      */
     MBED_DEPRECATED("Use ble.gap().getAddress(...)")
     ble_error_t getAddress(
-        BLEProtocol::AddressType_t *typeP, BLEProtocol::AddressBytes_t address
+        ble::AddressType_t *typeP, ble::AddressBytes_t address
     ) {
         return gap().getAddress(typeP, address);
     }
@@ -1006,8 +1006,8 @@ public:
      *             ble.gap().connect(...).
      */
     MBED_DEPRECATED("Use ble.gap().connect(...)")
-    ble_error_t connect(const BLEProtocol::AddressBytes_t  peerAddr,
-                        BLEProtocol::AddressType_t         peerAddrType = BLEProtocol::AddressType::RANDOM_STATIC,
+    ble_error_t connect(const ble::AddressBytes_t  peerAddr,
+                        ble::AddressType_t         peerAddrType = ble::AddressType::RANDOM_STATIC,
                         const Gap::ConnectionParams_t     *connectionParams = NULL,
                         const GapScanningParams           *scanParams = NULL) {
         return gap().connect(peerAddr, peerAddrType, connectionParams, scanParams);
