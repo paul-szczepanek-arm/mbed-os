@@ -20,6 +20,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+#include <algorithm>
 #include "ble/SafeEnum.h"
 
 /**
@@ -359,9 +360,14 @@ typedef octet_type_t<32> private_key_t;
 typedef octet_type_t<32> dhkey_t;
 
 /**
+ * Length (in octets) of the BLE MAC address.
+ */
+static const size_t ADDR_LEN = 6;
+
+/**
  * MAC address data type.
  */
-struct address_t : public octet_type_t<6> {
+struct address_t : public octet_type_t<ADDR_LEN> {
     /**
      * Create an invalid mac address, equal to FF:FF:FF:FF:FF:FF
      */
@@ -374,7 +380,7 @@ struct address_t : public octet_type_t<6> {
      *
      * @param input_value value of the MAC address.
      */
-    address_t(const uint8_t (&input_value)[6]) {
+    address_t(const uint8_t (&input_value)[ADDR_LEN]) {
         memcpy(_value, input_value, sizeof(_value));
     }
 
@@ -391,7 +397,116 @@ struct address_t : public octet_type_t<6> {
     }
 };
 
+/**
+ * Container for the enumeration of BLE address types.
+ *
+ * @note Adding a struct to encapsulate the contained enumeration prevents
+ * polluting the ble namespace with the enumerated values. It also
+ * allows type-aliases for the enumeration while retaining the enumerated
+ * values. i.e. doing:
+ *
+ * @code
+ *       typedef AddressType AliasedType;
+ * @endcode
+ *
+ * would allow the use of AliasedType::PUBLIC in code.
+ *
+ * @note see Bluetooth Standard version 4.2 [Vol 6, Part B] section 1.3 .
+ */
+struct AddressType {
+    /**
+     * Address-types for Protocol addresses.
+     */
+    enum Type {
+        /**
+         * Public device address.
+         */
+        PUBLIC = 0,
+
+        /**
+         * Random static device address.
+         */
+        RANDOM_STATIC,
+
+        /**
+         * Private resolvable device address.
+         */
+        RANDOM_PRIVATE_RESOLVABLE,
+
+        /**
+         * Private non-resolvable device address.
+         */
+        RANDOM_PRIVATE_NON_RESOLVABLE
+    };
+};
+
+/**
+ * Alias for AddressType::Type
+ */
+typedef AddressType::Type AddressType_t;
+
+/**
+ * 48-bit address, in LSB format.
+ */
+typedef uint8_t AddressBytes_t[ADDR_LEN];
+
+/**
+ * BLE address representation.
+ *
+ * It contains an address-type (::AddressType_t) and the address value
+ * (::AddressBytes_t).
+ */
+struct Address_t {
+    /**
+     * Construct an Address_t object with the supplied type and address.
+     *
+     * @param[in] typeIn The BLE address type.
+     * @param[in] addressIn The BLE address.
+     *
+     * @post type is equal to typeIn and address is equal to the content
+     * present in addressIn.
+     */
+    Address_t(AddressType_t typeIn, const AddressBytes_t &addressIn) :
+        type(typeIn) {
+        std::copy(addressIn, addressIn + ADDR_LEN, address);
+    }
+
+    /**
+     * Empty constructor.
+     *
+     * @note The address constructed with the empty constructor is not
+     * valid.
+     *
+     * @post type is equal to PUBLIC and the address value is equal to
+     * 00:00:00:00:00:00
+     */
+    Address_t(void) : type(), address() { }
+
+    /**
+     * Type of the BLE device address.
+     */
+    AddressType_t  type;
+
+    /**
+     * Value of the device address.
+     */
+    AddressBytes_t address;
+};
+
 } // namespace ble
+
+namespace BLEProtocol {
+/** @deprecated please use the ble:: namespace above */
+typedef ble::AddressType AddressType;
+/** @deprecated please use the ble:: namespace above */
+typedef ble::AddressType_t AddressType_t;
+/** @deprecated please use the ble:: namespace above */
+typedef ble::AddressBytes_t AddressBytes_t;
+/** @deprecated please use the ble:: namespace above */
+typedef ble::Address_t Address_t;
+/** @deprecated please use the ble:: namespace above */
+static const size_t ADDR_LEN = 6;
+};
 
 /**
  * @}

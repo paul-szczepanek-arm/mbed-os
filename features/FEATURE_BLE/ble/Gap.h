@@ -18,7 +18,6 @@
 #define MBED_BLE_GAP_H__
 
 #include "BLETypes.h"
-#include "BLEProtocol.h"
 #include "GapAdvertisingData.h"
 #include "GapAdvertisingParams.h"
 #include "GapScanningParams.h"
@@ -237,7 +236,7 @@ class GapAdvertisingData;
  *    // Initiate the connection procedure
  *    gap.connect(
  *       packet->peerAddr,
- *       BLEProtocol::RANDOM_STATIC,
+ *       ble::RANDOM_STATIC,
  *       &connection_parameters,
  *       &scanning_params
  *    );
@@ -268,55 +267,55 @@ class GapAdvertisingData;
 class Gap {
     /*
      * DEPRECATION ALERT: all of the APIs in this `public` block are deprecated.
-     * They have been relocated to the class BLEProtocol.
+     * They have been relocated to the namespace ble.
      */
 public:
     /**
-     * Address-type for BLEProtocol addresses.
+     * Address-type for ble addresses.
      *
-     * @deprecated Use BLEProtocol::AddressType_t instead.
+     * @deprecated Use ble::AddressType_t instead.
      */
-    typedef BLEProtocol::AddressType_t AddressType_t;
+    typedef ble::AddressType_t AddressType_t;
 
     /**
-     * Address-type for BLEProtocol addresses.
+     * Address-type for ble addresses.
      *
-     * @deprecated Use BLEProtocol::AddressType_t instead.
+     * @deprecated Use ble::AddressType_t instead.
      */
-    typedef BLEProtocol::AddressType_t addr_type_t;
+    typedef ble::AddressType_t addr_type_t;
 
     /**
-     * Address-type for BLEProtocol addresses.
+     * Address-type for ble addresses.
      *
-     * @deprecated Use BLEProtocol::AddressType_t instead. The following
+     * @deprecated Use ble::AddressType_t instead. The following
      * constants have been left in their deprecated state to transparently
      * support existing applications that may have used Gap::ADDR_TYPE_*.
      */
     enum DeprecatedAddressType_t {
-        ADDR_TYPE_PUBLIC = BLEProtocol::AddressType::PUBLIC,
-        ADDR_TYPE_RANDOM_STATIC = BLEProtocol::AddressType::RANDOM_STATIC,
-        ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE = BLEProtocol::AddressType::RANDOM_PRIVATE_RESOLVABLE,
-        ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE = BLEProtocol::AddressType::RANDOM_PRIVATE_NON_RESOLVABLE
+        ADDR_TYPE_PUBLIC = ble::AddressType::PUBLIC,
+        ADDR_TYPE_RANDOM_STATIC = ble::AddressType::RANDOM_STATIC,
+        ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE = ble::AddressType::RANDOM_PRIVATE_RESOLVABLE,
+        ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE = ble::AddressType::RANDOM_PRIVATE_NON_RESOLVABLE
     };
 
     /**
      * Length (in octets) of the BLE MAC address.
      */
-    static const unsigned ADDR_LEN = BLEProtocol::ADDR_LEN;
+    static const unsigned ADDR_LEN = ble::ADDR_LEN;
 
     /**
      * 48-bit address, LSB format.
      *
-     * @deprecated Use BLEProtocol::AddressBytes_t instead.
+     * @deprecated Use ble::AddressBytes_t instead.
      */
-    typedef BLEProtocol::AddressBytes_t Address_t;
+    typedef ble::AddressBytes_t Address_t;
 
     /**
      * 48-bit address, LSB format.
      *
-     * @deprecated Use BLEProtocol::AddressBytes_t instead.
+     * @deprecated Use ble::AddressBytes_t instead.
      */
-    typedef BLEProtocol::AddressBytes_t address_t;
+    typedef ble::AddressBytes_t address_t;
 
 public:
     /**
@@ -458,7 +457,7 @@ public:
         /**
          * Pointer to the array of the addresses composing the whitelist.
          */
-        BLEProtocol::Address_t *addresses;
+        ble::Address_t *addresses;
 
         /**
          * Number addresses in this whitelist.
@@ -582,7 +581,7 @@ public:
         /**
          * BLE address of the device that has advertised the packet.
          */
-        BLEProtocol::AddressBytes_t peerAddr;
+        ble::AddressBytes_t peerAddr;
 
         /**
          * RSSI value of the packet.
@@ -640,22 +639,22 @@ public:
         /**
          * Type of the address the peer uses.
          */
-        BLEProtocol::AddressType_t peerAddrType;
+        ble::AddressType_t peerAddrType;
 
         /**
          * Address of the peer.
          */
-        BLEProtocol::AddressBytes_t peerAddr;
+        ble::AddressBytes_t peerAddr;
 
         /**
          * Address type of the local device.
          */
-        BLEProtocol::AddressType_t  ownAddrType;
+        ble::AddressType_t  ownAddrType;
 
         /**
          * Address of the local device.
          */
-        BLEProtocol::AddressBytes_t ownAddr;
+        ble::AddressBytes_t ownAddr;
 
         /**
          * Connection parameters.
@@ -679,9 +678,9 @@ public:
         ConnectionCallbackParams_t(
             Handle_t handleIn,
             Role_t roleIn,
-            BLEProtocol::AddressType_t peerAddrTypeIn,
+            ble::AddressType_t peerAddrTypeIn,
             const uint8_t *peerAddrIn,
-            BLEProtocol::AddressType_t ownAddrTypeIn,
+            ble::AddressType_t ownAddrTypeIn,
             const uint8_t *ownAddrIn,
             const ConnectionParams_t *connectionParamsIn
         ) : handle(handleIn),
@@ -842,8 +841,8 @@ public:
      * @return BLE_ERROR_NONE on success.
      */
     virtual ble_error_t setAddress(
-        BLEProtocol::AddressType_t type,
-        const BLEProtocol::AddressBytes_t address
+        ble::AddressType_t type,
+        const ble::AddressBytes_t address
     ) {
         /* avoid compiler warnings about unused variables */
         (void)type;
@@ -863,8 +862,8 @@ public:
      * @return BLE_ERROR_NONE on success.
      */
     virtual ble_error_t getAddress(
-        BLEProtocol::AddressType_t *typeP,
-        BLEProtocol::AddressBytes_t address
+        ble::AddressType_t *typeP,
+        ble::AddressBytes_t address
     ) {
         /* Avoid compiler warnings about unused variables. */
         (void)typeP;
@@ -960,8 +959,8 @@ public:
      * a connection event.
      */
     virtual ble_error_t connect(
-        const BLEProtocol::AddressBytes_t peerAddr,
-        BLEProtocol::AddressType_t peerAddrType,
+        const ble::AddressBytes_t peerAddr,
+        ble::AddressType_t peerAddrType,
         const ConnectionParams_t *connectionParams,
         const GapScanningParams *scanParams
     ) {
@@ -982,24 +981,24 @@ public:
      * @see connect()
      *
      * @deprecated  This funtion overloads Gap::connect(
-     *      const BLEProtocol::Address_t peerAddr,
-     *      BLEProtocol::AddressType_t peerAddrType,
+     *      const ble::Address_t peerAddr,
+     *      ble::AddressType_t peerAddrType,
      *      const ConnectionParams_t *connectionParams,
      *      const GapScanningParams *scanParams
      * )
      * to maintain backward compatibility for changes from Gap::AddressType_t to
-     * BLEProtocol::AddressType_t.
+     * ble::AddressType_t.
      */
-    MBED_DEPRECATED("Gap::DeprecatedAddressType_t is deprecated, use BLEProtocol::AddressType_t instead")
+    MBED_DEPRECATED("Gap::DeprecatedAddressType_t is deprecated, use ble::AddressType_t instead")
     ble_error_t connect(
-        const BLEProtocol::AddressBytes_t peerAddr,
+        const ble::AddressBytes_t peerAddr,
         DeprecatedAddressType_t peerAddrType,
         const ConnectionParams_t *connectionParams,
         const GapScanningParams *scanParams
     ) {
         return connect(
             peerAddr,
-            (BLEProtocol::AddressType_t)
+            (ble::AddressType_t)
             peerAddrType,
             connectionParams,
             scanParams
@@ -1282,7 +1281,7 @@ public:
      * populated with the addresses in the given whitelist.
      *
      * @note The whitelist must not contain addresses of type @ref
-     * BLEProtocol::AddressType::RANDOM_PRIVATE_NON_RESOLVABLE. This
+     * ble::AddressType::RANDOM_PRIVATE_NON_RESOLVABLE. This
      * results in a @ref BLE_ERROR_INVALID_PARAM because the remote peer might
      * change its private address at any time, and it is not possible to resolve
      * it.
@@ -2284,10 +2283,10 @@ public:
     void processConnectionEvent(
         Handle_t handle,
         Role_t role,
-        BLEProtocol::AddressType_t peerAddrType,
-        const BLEProtocol::AddressBytes_t peerAddr,
-        BLEProtocol::AddressType_t ownAddrType,
-        const BLEProtocol::AddressBytes_t ownAddr,
+        ble::AddressType_t peerAddrType,
+        const ble::AddressBytes_t peerAddr,
+        ble::AddressType_t ownAddrType,
+        const ble::AddressBytes_t ownAddr,
         const ConnectionParams_t *connectionParams
     ) {
         /* Update Gap state */
@@ -2344,7 +2343,7 @@ public:
      * @param[in] advertisingData Pointer to the advertisement packet's data.
      */
     void processAdvertisementReport(
-        const BLEProtocol::AddressBytes_t peerAddr,
+        const ble::AddressBytes_t peerAddr,
         int8_t rssi,
         bool isScanResponse,
         GapAdvertisingParams::AdvertisingType_t type,

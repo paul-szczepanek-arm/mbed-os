@@ -25,12 +25,6 @@
 namespace ble {
 namespace generic {
 
-using ble::address_t;
-using ble::irk_t;
-using ble::csrk_t;
-using ble::ltk_t;
-using ble::ediv_t;
-using ble::rand_t;
 using ble::pal::connection_peer_address_type_t;
 
 /* separate structs for keys to allow db implementation
@@ -441,7 +435,7 @@ public:
      */
     virtual SecurityEntry_t* connect_entry(
         connection_handle_t connection,
-        BLEProtocol::AddressType_t peer_address_type,
+        AddressType_t peer_address_type,
         const address_t &peer_address,
         const address_t &local_address
     ) = 0;
@@ -825,12 +819,12 @@ public:
 
     virtual SecurityEntry_t* connect_entry(
         connection_handle_t connection,
-        BLEProtocol::AddressType_t peer_address_type,
+        AddressType_t peer_address_type,
         const address_t &peer_address,
         const address_t &local_address
     ) {
         const bool peer_address_public =
-            (peer_address_type == BLEProtocol::AddressType::PUBLIC);
+            (peer_address_type == AddressType::PUBLIC);
 
         for (size_t i = 0; i < MAX_ENTRIES; i++) {
             if (_db[i].entry.connected) {
@@ -876,15 +870,15 @@ public:
     virtual void generate_whitelist_from_bond_table(WhitelistDbCb_t cb, Gap::Whitelist_t *whitelist) {
         for (size_t i = 0; i < MAX_ENTRIES && i < whitelist->capacity; i++) {
             if (_db[i].entry.peer_address_is_public) {
-                whitelist->addresses[i].type = BLEProtocol::AddressType::PUBLIC;
+                whitelist->addresses[i].type = AddressType::PUBLIC;
             } else {
-                whitelist->addresses[i].type = BLEProtocol::AddressType::RANDOM_STATIC;
+                whitelist->addresses[i].type = AddressType::RANDOM_STATIC;
             }
 
             memcpy(
                 whitelist->addresses[i].address,
                 _identities[i].identity_address.data(),
-                sizeof(BLEProtocol::AddressBytes_t)
+                sizeof(AddressBytes_t)
             );
         }
 

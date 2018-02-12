@@ -20,7 +20,6 @@
 #include <algorithm>
 
 #include "ble/BLE.h"
-#include "ble/BLEProtocol.h"
 #include "ble/Gap.h"
 #include "ble/pal/PalGap.h"
 #include "ble/pal/GapEvents.h"
@@ -70,16 +69,16 @@ public:
      * @see Gap::setAddress
      */
     virtual ble_error_t setAddress(
-        BLEProtocol::AddressType_t type,
-        const BLEProtocol::AddressBytes_t address
+        AddressType_t type,
+        const AddressBytes_t address
     );
 
     /**
      * @see Gap::getAddress
      */
     virtual ble_error_t getAddress(
-        BLEProtocol::AddressType_t *type,
-        BLEProtocol::AddressBytes_t address
+        AddressType_t *type,
+        AddressBytes_t address
     );
 
     /**
@@ -111,8 +110,8 @@ public:
      * @see Gap::connect
      */
     virtual ble_error_t connect(
-        const BLEProtocol::AddressBytes_t peerAddr,
-        BLEProtocol::AddressType_t peerAddrType,
+        const AddressBytes_t peerAddr,
+        AddressType_t peerAddrType,
         const ConnectionParams_t *connectionParams,
         const GapScanningParams *scanParams
     );
@@ -282,7 +281,7 @@ private:
     pal::EventQueue& _event_queue;
     pal::Gap &_pal_gap;
     pal::GenericAccessService &_gap_service;
-    BLEProtocol::AddressType_t _address_type;
+    AddressType_t _address_type;
     ble::address_t _address;
     pal::initiator_policy_t _initiator_policy_mode;
     pal::scanning_filter_policy_t _scanning_filter_policy;
