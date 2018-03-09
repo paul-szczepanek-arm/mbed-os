@@ -115,6 +115,8 @@ ble_error_t CordioSecurityManager::clear_resolving_list()
 // Feature support
 //
 
+// FIXME: Enable when new function available in the pal.
+#if 0
 ble_error_t CordioSecurityManager::set_secure_connections_support(
     bool enabled, bool secure_connections_only
 ) {
@@ -126,6 +128,7 @@ ble_error_t CordioSecurityManager::set_secure_connections_support(
     }
     return BLE_ERROR_NONE;
 }
+#endif
 
 ble_error_t CordioSecurityManager::get_secure_connections_support(
     bool &enabled
@@ -677,7 +680,6 @@ bool CordioSecurityManager::sm_handler(const wsfMsgHdr_t* msg) {
 
         case DM_SEC_KEYPRESS_IND: {
             dmSecKeypressIndEvt_t* evt = (dmSecKeypressIndEvt_t*) msg;
-
             handler->on_keypress_notification(
                 /* connection */ evt->hdr.param,
                 (Keypress_t) evt->notificationType
