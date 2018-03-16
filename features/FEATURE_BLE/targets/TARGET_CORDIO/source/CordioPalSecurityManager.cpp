@@ -423,10 +423,11 @@ ble_error_t CordioSecurityManager::generate_secure_connections_oob(
     return BLE_ERROR_NOT_IMPLEMENTED;
 }
 
-ble_error_t CordioSecurityManager::secure_connections_oob_received(
-    const address_t &address,
-    const oob_lesc_value_t &random,
-    const oob_confirm_t &confirm
+ble_error_t CordioSecurityManager::secure_connections_oob_request_reply(
+    connection_handle_t connection,
+    const oob_lesc_value_t &local_random,
+    const oob_lesc_value_t &peer_random,
+    const oob_confirm_t &peer_confirm
 ) {
     _peer_oob_present = true;
     _peer_oob_address = address;
