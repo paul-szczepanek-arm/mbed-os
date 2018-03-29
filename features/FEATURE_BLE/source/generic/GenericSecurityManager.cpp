@@ -951,7 +951,9 @@ void GenericSecurityManager::on_valid_mic_timeout(connection_handle_t connection
     (void)connection;
 }
 
-void GenericSecurityManager::on_signature_verification_failure(connection_handle_t connection) {
+void GenericSecurityManager::on_signature_verification_failure(
+    connection_handle_t connection
+) {
     ControlBlock_t *cb = get_control_block(connection);
     if (!cb) {
         return;
