@@ -1069,11 +1069,6 @@ ble_error_t GenericGattClient::read(
 	return err;
 }
 
-#define PREPARE_WRITE_HEADER_LENGTH 5
-#define WRITE_HEADER_LENGTH 3
-#define CMAC_LENGTH 8
-#define MAC_COUNTER_LENGTH 4
-
 ble_error_t GenericGattClient::write(
 	GattClient::WriteOp_t cmd,
 	Gap::Handle_t connection_handle,
