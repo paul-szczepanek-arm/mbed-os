@@ -22,8 +22,10 @@
 #include "ble/pal/SecurityDb.h"
 #include "platform/Callback.h"
 #include "ble/pal/ConnectionEventMonitor.h"
+#include "ble/pal/SigningEventMonitor.h"
 #include "ble/generic/GenericGap.h"
 #include "ble/pal/PalSecurityManager.h"
+#include "ble/ArrayView.h"
 
 namespace ble {
 namespace generic {
@@ -32,7 +34,8 @@ typedef SecurityManager::SecurityIOCapabilities_t SecurityIOCapabilities_t;
 
 class GenericSecurityManager : public SecurityManager,
                                public pal::SecurityManager::EventHandler,
-                               public pal::ConnectionEventMonitor::EventHandler {
+                               public pal::ConnectionEventMonitor::EventHandler,
+                               public pal::SigningEventMonitor::EventHandler {
 public:
     typedef ble::pal::SecurityDistributionFlags_t SecurityDistributionFlags_t;
     typedef ble::pal::SecurityEntryKeys_t SecurityEntryKeys_t;
@@ -192,6 +195,10 @@ public:
     // MITM
     //
 
+    virtual ble_error_t generateOOB(
+        const address_t *address
+    );
+
     virtual ble_error_t setOOBDataUsage(
         connection_handle_t connection,
         bool useOOB,
@@ -230,17 +237,23 @@ public:
     GenericSecurityManager(
         pal::SecurityManager &palImpl,
         pal::SecurityDb &dbImpl,
-        pal::ConnectionEventMonitor &connMonitorImpl
+        pal::ConnectionEventMonitor &connMonitorImpl,
+        pal::SigningEventMonitor &signingMonitorImpl
     ) : _pal(palImpl),
         _db(dbImpl),
         _connection_monitor(connMonitorImpl),
+        _signing_monitor(signingMonitorImpl),
         _default_authentication(0),
         _default_key_distribution(pal::KeyDistribution::KEY_DISTRIBUTION_ALL),
         _pairing_authorisation_required(false),
         _legacy_pairing_allowed(true),
-        _master_sends_keys(false),
-        _public_keys_generated(false) {
+        _master_sends_keys(false) {
         _pal.set_event_handler(this);
+
+        /* We create a fake value for oob to allow creation of the next oob which needs
+         * the last process to finish first before restarting (this is to simplify checking).
+         * This fake value will not be used as the oob address is currently invalid */
+        _oob_local_random[0] = 1;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -314,23 +327,25 @@ private:
      * Returns the CSRK for the connection. Called by the security db.
      *
      * @param[in] connectionHandle Handle to identify the connection.
-     * @param[in] entryKeys security entry containing keys.
+     * @param[in] csrk connection signature resolving key.
      */
     void return_csrk_cb(
         pal::SecurityDb::entry_handle_t connection,
-        const csrk_t *csrk
+        const csrk_t *csrk,
+        sign_count_t sign_counter
     );
 
-#if defined(MBEDTLS_CMAC_C)
     /**
-     * Generate local OOB data to be sent to the application which sends it to the peer.
+     * Set the peer CSRK for the connection. Called by the security db.
      *
      * @param[in] connectionHandle Handle to identify the connection.
+     * @param[in] csrk connection signature resolving key.
      */
-    void generate_secure_connections_oob(
-        connection_handle_t connection
+    void set_peer_csrk_cb(
+        pal::SecurityDb::entry_handle_t connection,
+        const csrk_t *csrk,
+        sign_count_t sign_counter
     );
-#endif
 
     /**
      * Updates the entry for the connection with OOB data presence.
@@ -340,26 +355,6 @@ private:
     void update_oob_presence(
         connection_handle_t connection
     );
-
-#if defined(MBEDTLS_CMAC_C)
-    /**
-     * Calculate the confirmation value for secure connections OOB data based
-     * on local public key and a random number.
-     * @see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part H - 2.2.6
-
-     * @param[in] U public key x component
-     * @param[in] V public key y component
-     * @param[in] X random number
-     * @param[out] confirm confirmation value
-     * @return true if cryptography functioned worked
-     */
-    static bool crypto_toolbox_f4(
-        const public_key_t &U,
-        const public_key_t &V,
-        const oob_lesc_value_t &X,
-        oob_confirm_t &confirm
-    );
-#endif
 
     /**
      * Set the MITM protection setting on the database entry
@@ -406,21 +401,28 @@ private:
     );
 
     /**
-     * Inform the security manager of a new connection.
-     *
-     * @param[in] params information about the new connection.
+     * Callback invoked by the secure DB when an identity entry has been
+     * retrieved.
+     * @param entry Handle of the entry.
+     * @param identity The identity associated with the entry; may be NULL.
      */
-    void connection_callback(
-        const Gap::ConnectionCallbackParams_t* params
+    void on_security_entry_retrieved(
+        pal::SecurityDb::entry_handle_t entry,
+        const pal::SecurityEntryIdentity_t* identity
     );
 
     /**
-     * Inform the security manager that a connection ended.
+     * Callback invoked by the secure DB when the identity list has been
+     * retrieved.
      *
-     * @param[in] params handle and reason of the disconnection.
+     * @param identity View to the array passed to the secure DB. It contains
+     * identity entries retrieved.
+     *
+     * @param count Number of identities entries retrieved.
      */
-    void disconnection_callback(
-        const Gap::DisconnectionCallbackParams_t* params
+    void on_identity_list_retrieved(
+        ble::ArrayView<pal::SecurityEntryIdentity_t*>& identity_list,
+        size_t count
     );
 
 private:
@@ -465,11 +467,24 @@ private:
         uint8_t attempt_oob:1;
         uint8_t oob_mitm_protection:1;
         uint8_t oob_present:1;
+        uint8_t legacy_pairing_oob_request_pending:1;
+
+        uint8_t csrk_failures:2;
     };
 
     pal::SecurityManager &_pal;
     pal::SecurityDb &_db;
     pal::ConnectionEventMonitor &_connection_monitor;
+    pal::SigningEventMonitor &_signing_monitor;
+
+    /* OOB data */
+    address_t _oob_local_address;
+    address_t _oob_peer_address;
+    oob_lesc_value_t _oob_peer_random;
+    oob_confirm_t _oob_peer_confirm;
+    oob_lesc_value_t _oob_local_random;
+    address_t _oob_temporary_key_creator_address; /**< device which generated and sent the TK */
+    oob_tk_t _oob_temporary_key; /**< used for legacy pairing */
 
     pal::AuthenticationMask _default_authentication;
     pal::KeyDistribution _default_key_distribution;
@@ -477,13 +492,6 @@ private:
     bool _pairing_authorisation_required;
     bool _legacy_pairing_allowed;
     bool _master_sends_keys;
-    bool _public_keys_generated;
-
-    /** There is always only one OOB data set stored at a time */
-    address_t _peer_sc_oob_address;
-    oob_lesc_value_t _peer_sc_oob_random;
-    oob_confirm_t _peer_sc_oob_confirm;
-    oob_lesc_value_t _local_sc_oob_random;
 
     static const size_t MAX_CONTROL_BLOCKS = 5;
     ControlBlock_t _control_blocks[MAX_CONTROL_BLOCKS];
@@ -532,6 +540,23 @@ public:
     virtual void on_valid_mic_timeout(
         connection_handle_t connection
     );
+
+    /** @copydoc ble::pal::SecurityManager::on_signed_write_received
+     */
+    virtual void on_signed_write_received(
+        connection_handle_t connection,
+        uint32_t sign_coutner
+    );
+
+    /** @copydoc ble::pal::SecurityManager::on_signed_write_verification_failure
+     */
+    virtual void on_signed_write_verification_failure(
+        connection_handle_t connection
+    );
+
+    /** @copydoc ble::pal::SecurityManager::on_signed_write
+     */
+    virtual void on_signed_write();
 
     /** @copydoc ble::pal::SecurityManager::on_slave_security_request
      */
@@ -587,30 +612,28 @@ public:
         connection_handle_t connection
     );
 
+    /** @copydoc ble::pal::SecurityManager::on_secure_connections_oob_request
+     */
+    virtual void on_secure_connections_oob_request(
+        connection_handle_t connection
+    );
+
     /** @copydoc ble::pal::SecurityManager::on_legacy_pairing_oob_request
      */
     virtual void on_legacy_pairing_oob_request(
         connection_handle_t connection
     );
 
-    /** @copydoc ble::pal::SecurityManager::on_oob_data_verification_request
+    /** @copydoc ble::pal::SecurityManager::on_secure_connections_oob_generated
      */
-    virtual void on_oob_data_verification_request(
-        connection_handle_t connection,
-        const public_key_coord_t &peer_public_key_x,
-        const public_key_coord_t &peer_public_key_y
+    virtual void on_secure_connections_oob_generated(
+        const oob_lesc_value_t &random,
+        const oob_confirm_t &confirm
     );
 
     ////////////////////////////////////////////////////////////////////////////
     // Keys
     //
-
-    /** @copydoc ble::pal::SecurityManager::on_public_key_generated
-     */
-    virtual void on_public_key_generated(
-        const public_key_coord_t &public_key_x,
-        const public_key_coord_t &public_key_y
-    );
 
     /** @copydoc ble::pal::SecurityManager::on_secure_connections_ltk_generated
      */

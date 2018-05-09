@@ -35,12 +35,12 @@ struct SecurityDistributionFlags_t {
         peer_address(),
         encryption_key_size(0),
         peer_address_is_public(false),
-        local_address_is_public(false),
         csrk_stored(false),
         csrk_mitm_protected(false),
         ltk_stored(false),
         ltk_mitm_protected(false),
-        secure_connections_paired(false) {
+        secure_connections_paired(false),
+        irk_stored(false) {
     }
 
     /** peer address */
@@ -50,8 +50,6 @@ struct SecurityDistributionFlags_t {
     uint8_t encryption_key_size;
     /** true if peer address is public, false if it's static random */
     uint8_t peer_address_is_public:1;
-    /** true if local address is public, false if it's static random */
-    uint8_t local_address_is_public:1;
 
     /** CSRK (Connection Signature Resolving Key) has been distributed and stored */
     uint8_t csrk_stored:1;
@@ -63,6 +61,8 @@ struct SecurityDistributionFlags_t {
     uint8_t ltk_mitm_protected:1;
     /** the current pairing was done using Secure Connections */
     uint8_t secure_connections_paired:1;
+    /** the security entry has been distributed and stored */
+    uint8_t irk_stored:1;
 };
 
 /** Long Term Key and data used to identify it */
@@ -81,6 +81,8 @@ struct SecurityEntryIdentity_t {
     address_t identity_address;
     /** Identity Resolving Key */
     irk_t irk;
+    /** true if peer identity address is public, false if it's static random */
+    uint8_t identity_address_is_public:1;
 };
 
 /**
@@ -101,8 +103,12 @@ public:
 
     typedef mbed::Callback<void(entry_handle_t, const SecurityEntryKeys_t*)>
         SecurityEntryKeysDbCb_t;
-    typedef mbed::Callback<void(entry_handle_t, const csrk_t*)>
+    typedef mbed::Callback<void(entry_handle_t, const csrk_t*, uint32_t sign_counter)>
         SecurityEntryCsrkDbCb_t;
+    typedef mbed::Callback<void(entry_handle_t, const SecurityEntryIdentity_t*)>
+        SecurityEntryIdentityDbCb_t;
+    typedef mbed::Callback<void(ArrayView<SecurityEntryIdentity_t*>&, size_t count)>
+        IdentitylistDbCb_t;
     typedef mbed::Callback<void(::Gap::Whitelist_t*)>
         WhitelistDbCb_t;
 
@@ -260,6 +266,31 @@ public:
     ) = 0;
 
     /**
+     * Retrieve stored identity address and IRK.
+     *
+     * @param[in] cb callback that will receive the SecurityEntryIdentity_t struct
+     * @param[in] db_entry handle of the entry being queried.
+     */
+    virtual void get_entry_identity(
+        SecurityEntryIdentityDbCb_t cb,
+        entry_handle_t db_entry
+    ) = 0;
+
+    /**
+     * Asynchronously return the identity list stored in NVM through a callback.
+     * Function takes ownership of the memory. The identity list and the
+     * ownership will be returned in the callback.
+     *
+     * @param[in] cb callback that will receive the whitelist
+     * @param[in] identity_list preallocated identity_list that will be filled
+     * in.
+     */
+    virtual void get_identity_list(
+        IdentitylistDbCb_t cb,
+        ArrayView<SecurityEntryIdentity_t*>& identity_list
+    ) = 0;
+
+    /**
      * Update peer signing key.
      *
      * @param[in] db_entry handle of the entry being updated.
@@ -268,6 +299,17 @@ public:
     virtual void set_entry_peer_csrk(
         entry_handle_t db_entry,
         const csrk_t &csrk
+    ) = 0;
+
+    /**
+     * Update peer signing counter.
+     *
+     * @param[in] db_entry handle of the entry being updated.
+     * @param[in] sign_counter new signing counter value
+     */
+    virtual void set_entry_peer_sign_counter(
+        entry_handle_t db_entry,
+        sign_count_t sign_counter
     ) = 0;
 
     /* local csrk */
@@ -280,37 +322,28 @@ public:
     virtual const csrk_t* get_local_csrk() = 0;
 
     /**
+     * Return local signing counter.
+     *
+     * @return signing counter
+     */
+    virtual sign_count_t get_local_sign_counter() = 0;
+
+    /**
      * Update local signing key.
      *
      * @param[in] csrk new CSRK value
      */
-    virtual void set_local_csrk(const csrk_t &csrk) = 0;
-
-    /* public keys */
-
-    /**
-     * Return local public key.
-     *
-     * @return ref to x component of public key
-     */
-    virtual const public_key_coord_t& get_public_key_x() = 0;
+    virtual void set_local_csrk(
+        const csrk_t &csrk
+    ) = 0;
 
     /**
-     * Return local public key.
+     * Update local signing counter.
      *
-     * @return ref to y component of public key
+     * @param[in] sign_counter new signing counter value
      */
-    virtual const public_key_coord_t& get_public_key_y() = 0;
-
-    /**
-     * Set local public key.
-     *
-     * @param[in] public_key_x new public key value of the x coordinate
-     * @param[in] public_key_y new public key value of the y coordinate
-     */
-    virtual void set_public_key(
-        const public_key_coord_t &public_key_x,
-        const public_key_coord_t &public_key_y
+    virtual void set_local_sign_counter(
+        sign_count_t sign_counter
     ) = 0;
 
     /* list management */

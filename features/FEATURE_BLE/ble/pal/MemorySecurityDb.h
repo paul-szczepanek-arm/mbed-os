@@ -32,12 +32,13 @@ private:
     };
 
     struct entry_t {
-        entry_t() : state(ENTRY_FREE) { };
+        entry_t() : sign_counter(0), state(ENTRY_FREE) { };
         SecurityDistributionFlags_t flags;
         SecurityEntryKeys_t peer_keys;
         SecurityEntryKeys_t local_keys;
         SecurityEntryIdentity_t peer_identity;
         csrk_t csrk;
+        sign_count_t sign_counter;
         state_t state;
     };
     static const size_t MAX_ENTRIES = 5;
@@ -48,8 +49,8 @@ private:
     }
 
 public:
-    MemorySecurityDb() { };
-    virtual ~MemorySecurityDb() { };
+    MemorySecurityDb() : _local_sign_counter(0) { }
+    virtual ~MemorySecurityDb() { }
 
     virtual const SecurityDistributionFlags_t* get_distribution_flags(
         entry_handle_t entry_handle
@@ -151,11 +152,13 @@ public:
         entry_handle_t entry_handle
     ) {
         csrk_t csrk;
+        sign_count_t sign_counter = 0;
         entry_t *entry = as_entry(entry_handle);
         if (entry) {
             csrk = entry->csrk;
+            sign_counter = entry->sign_counter;
         }
-        cb(entry_handle, &csrk);
+        cb(entry_handle, &csrk, sign_counter);
     }
 
     virtual void get_entry_peer_keys(
@@ -168,6 +171,35 @@ public:
             key = &entry->peer_keys;
         }
         cb(entry_handle, key);
+    }
+
+    virtual void get_entry_identity(
+        SecurityEntryIdentityDbCb_t cb,
+        entry_handle_t entry_handle
+    ) {
+        entry_t *entry = as_entry(entry_handle);
+        if (entry && entry->flags.irk_stored) {
+            cb(entry_handle, &entry->peer_identity);
+        } else {
+            cb(entry_handle, NULL);
+        }
+    }
+
+    virtual void get_identity_list(
+        IdentitylistDbCb_t cb,
+        ArrayView<SecurityEntryIdentity_t*>& entries
+    ) {
+        size_t count = 0;
+        for (size_t i = 0; i < MAX_ENTRIES && count < entries.size(); ++i) {
+            entry_t& e = _entries[i];
+
+            if (e.state == ENTRY_WRITTEN && e.flags.irk_stored) {
+                entries[count] = &e.peer_identity;
+                ++count;
+            }
+        }
+
+        cb(entries, count);
     }
 
     /* set */
@@ -204,6 +236,7 @@ public:
         if (entry) {
             entry->state = ENTRY_WRITTEN;
             entry->peer_identity.irk = irk;
+            entry->flags.irk_stored = true;
         }
     }
 
@@ -216,6 +249,7 @@ public:
         if (entry) {
             entry->state = ENTRY_WRITTEN;
             entry->peer_identity.identity_address = peer_address;
+            entry->peer_identity.identity_address_is_public = address_is_public;
         }
     }
 
@@ -230,6 +264,17 @@ public:
         }
     }
 
+    virtual void set_entry_peer_sign_counter(
+        entry_handle_t entry_handle,
+        sign_count_t sign_counter
+    ) {
+        entry_t *entry = as_entry(entry_handle);
+        if (entry) {
+            entry->state = ENTRY_WRITTEN;
+            entry->sign_counter = sign_counter;
+        }
+    }
+
     /* local csrk */
 
     virtual const csrk_t* get_local_csrk() {
@@ -240,22 +285,14 @@ public:
         _local_csrk = csrk;
     }
 
-    /* public key */
-
-    virtual const public_key_coord_t& get_public_key_x() {
-        return _public_key_x;
+    virtual sign_count_t get_local_sign_counter() {
+        return _local_sign_counter;
     }
 
-    virtual const public_key_coord_t& get_public_key_y() {
-        return _public_key_y;
-    }
-
-    virtual void set_public_key(
-        const public_key_coord_t &public_key_x,
-        const public_key_coord_t &public_key_y
+    virtual void set_local_sign_counter(
+        sign_count_t sign_counter
     ) {
-        _public_key_x = public_key_x;
-        _public_key_y = public_key_y;
+        _local_sign_counter = sign_counter;
     }
 
     /* list management */
@@ -265,14 +302,46 @@ public:
         const address_t &peer_address
     ) {
         const bool peer_address_public =
-            (peer_address_type == BLEProtocol::AddressType::PUBLIC);
+            (peer_address_type == BLEProtocol::AddressType::PUBLIC) ||
+            (peer_address_type == BLEProtocol::AddressType::PUBLIC_IDENTITY);
 
         for (size_t i = 0; i < MAX_ENTRIES; i++) {
-            if (_entries[i].state == ENTRY_FREE) {
+            entry_t& e = _entries[i];
+
+            if (e.state == ENTRY_FREE) {
                 continue;
-            } else if (peer_address == _entries[i].peer_identity.identity_address
-                && _entries[i].flags.peer_address_is_public == peer_address_public) {
-                return &_entries[i];
+            } else {
+                if (peer_address_type == BLEProtocol::AddressType::PUBLIC_IDENTITY &&
+                    e.flags.irk_stored == false
+                ) {
+                    continue;
+                }
+
+                // lookup for the identity address then the connection address.
+                if (e.flags.irk_stored &&
+                    e.peer_identity.identity_address == peer_address &&
+                    e.peer_identity.identity_address_is_public == peer_address_public
+                ) {
+                    return &e;
+                // lookup for connection address used during bonding
+                } else if (e.flags.peer_address == peer_address &&
+                           e.flags.peer_address_is_public == peer_address_public
+                ) {
+                    return &e;
+                }
+            }
+        }
+
+        // determine if the address in input is private or not.
+        bool is_private_address = false;
+        if (peer_address_type == BLEProtocol::AddressType::RANDOM) {
+            ::Gap::RandomAddressType_t random_type(::Gap::RandomAddressType_t::STATIC);
+            ble_error_t err = ::Gap::getRandomAddressType(peer_address.data(), &random_type);
+            if (err) {
+                return NULL;
+            }
+            if (random_type != ::Gap::RandomAddressType_t::STATIC) {
+                is_private_address = true;
             }
         }
 
@@ -280,8 +349,14 @@ public:
         for (size_t i = 0; i < MAX_ENTRIES; i++) {
             if (_entries[i].state == ENTRY_FREE) {
                 _entries[i] = entry_t();
-                _entries[i].flags.peer_address = peer_address;
-                _entries[i].flags.peer_address_is_public = peer_address_public;
+                // do not store private addresses in the flags; just store public
+                // or random static address so it can be reused latter.
+                if (is_private_address == false) {
+                    _entries[i].flags.peer_address = peer_address;
+                    _entries[i].flags.peer_address_is_public = peer_address_public;
+                } else {
+                    _entries[i].flags.peer_address = address_t();
+                }
                 _entries[i].state = ENTRY_RESERVED;
                 return &_entries[i];
             }
@@ -362,8 +437,7 @@ private:
     entry_t _entries[MAX_ENTRIES];
     SecurityEntryIdentity_t _local_identity;
     csrk_t _local_csrk;
-    public_key_coord_t _public_key_x;
-    public_key_coord_t _public_key_y;
+    sign_count_t _local_sign_counter;
 };
 
 } /* namespace pal */

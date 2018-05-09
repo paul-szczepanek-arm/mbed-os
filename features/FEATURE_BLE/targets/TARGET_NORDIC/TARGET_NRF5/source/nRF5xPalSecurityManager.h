@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-#ifndef CORDIO_PAL_SECURITY_MANAGER_
-#define CORDIO_PAL_SECURITY_MANAGER_
+#ifndef NRF5X_PAL_SECURITY_MANAGER_
+#define NRF5X_PAL_SECURITY_MANAGER_
 
+#include "ble/BLETypes.h"
 #include "ble/pal/PalSecurityManager.h"
-#include "wsf_types.h"
-#include "wsf_os.h"
-#include "sec_api.h"
-#include "smp_defs.h"
+#include "nrf_ble.h"
+#if defined(MBEDTLS_ECDH_C)
+#include "nRF5xCrypto.h"
+#endif
 
 namespace ble {
 namespace pal {
 namespace vendor {
-namespace cordio {
+namespace nordic {
 
-class CordioSecurityManager : public ::ble::pal::SecurityManager {
+class nRF5xSecurityManager : public ::ble::pal::SecurityManager {
 public:
-    CordioSecurityManager();
+    nRF5xSecurityManager();
 
-    virtual ~CordioSecurityManager();
+    virtual ~nRF5xSecurityManager();
 
     ////////////////////////////////////////////////////////////////////////////
     // SM lifecycle management
@@ -84,6 +85,40 @@ public:
      */
     virtual ble_error_t clear_resolving_list();
 
+    /**
+     * An entry of the resolving list stored in the SecurityManager.
+     */
+    struct resolving_list_entry_t {
+        resolving_list_entry_t() :
+            peer_identity_address_type(
+                advertising_peer_address_type_t::PUBLIC_ADDRESS
+            )
+        { }
+
+        irk_t peer_irk;
+        address_t peer_identity_address;
+        advertising_peer_address_type_t peer_identity_address_type;
+    };
+
+    /**
+     * Return the IRKs present in the resolving list
+     * @param count The number of entries present in the resolving list.
+     * @param pointer to the first entry of the resolving list.
+     */
+    ArrayView<resolving_list_entry_t> get_resolving_list();
+
+    /**
+     * Try to resolve a private resolvable address.
+     *
+     * @param resolvable_address The address to resolve.
+     *
+     * @return Pointer to the entry found if any.
+     */
+    const resolving_list_entry_t*  resolve_address(
+        const address_t& resolvable_address
+    );
+
+
     ////////////////////////////////////////////////////////////////////////////
     // Pairing
     //
@@ -116,6 +151,7 @@ public:
     virtual ble_error_t cancel_pairing(
         connection_handle_t connection, pairing_failure_t reason
     );
+
 
     ////////////////////////////////////////////////////////////////////////////
     // Feature support
@@ -189,7 +225,7 @@ public:
         connection_handle_t connection,
         const ltk_t &ltk,
         bool mitm
-    );
+    ) ;
 
     /**
      * @see ::ble::pal::SecurityManager::encrypt_data
@@ -237,10 +273,7 @@ public:
     /**
      * @see ::ble::pal::SecurityManager::set_csrk
      */
-    virtual ble_error_t set_csrk(
-        const csrk_t &csrk,
-        sign_count_t sign_counter
-    );
+    virtual ble_error_t set_csrk(const csrk_t &csrk, sign_count_t sign_counter);
 
     /**
      * @see ::ble::pal::SecurityManager::set_peer_csrk
@@ -251,6 +284,7 @@ public:
         bool authenticated,
         sign_count_t sign_counter
     );
+
 
     ////////////////////////////////////////////////////////////////////////////
     // Authentication
@@ -315,22 +349,56 @@ public:
      */
     virtual ble_error_t generate_secure_connections_oob();
 
-    // singleton of the ARM Cordio Security Manager
-    static CordioSecurityManager &get_security_manager();
+    // singleton of nordic Security Manager
+    static nRF5xSecurityManager& get_security_manager();
 
     // Event handler
-    static bool sm_handler(const wsfMsgHdr_t* msg);
+    bool sm_handler(const ble_evt_t *evt);
 
 private:
-    bool _use_default_passkey;
-    passkey_num_t _default_passkey;
-    bool _lesc_keys_generated;
-    uint8_t _public_key_x[SEC_ECC_KEY_LEN];
+    csrk_t _csrk;
+    sign_count_t _sign_counter;
+    io_capability_t _io_capability;
+    uint8_t _min_encryption_key_size;
+    uint8_t _max_encryption_key_size;
+
+    struct pairing_control_block_t;
+
+    ble_gap_sec_params_t make_security_params(
+        bool oob_data_flag,
+        AuthenticationMask authentication_requirements,
+        KeyDistribution initiator_dist,
+        KeyDistribution responder_dist
+    );
+
+    ble_gap_sec_keyset_t make_keyset(
+        pairing_control_block_t& pairing_cb,
+        KeyDistribution initiator_dist,
+        KeyDistribution responder_dist
+    );
+
+    pairing_control_block_t* allocate_pairing_cb(connection_handle_t connection);
+    void release_pairing_cb(pairing_control_block_t* pairing_cb);
+    pairing_control_block_t* get_pairing_cb(connection_handle_t connection);
+    void release_all_pairing_cb();
+
+    pairing_control_block_t* _control_blocks;
+#if defined(MBEDTLS_ECDH_C)
+    CryptoToolbox _crypto;
+    ble::public_key_coord_t X;
+    ble::public_key_coord_t Y;
+    ble::public_key_coord_t secret;
+#endif
+
+    static const size_t MAX_RESOLVING_LIST_ENTRIES = BLE_GAP_WHITELIST_IRK_MAX_COUNT;
+
+    size_t resolving_list_entry_count;
+    resolving_list_entry_t resolving_list[MAX_RESOLVING_LIST_ENTRIES];
 };
 
-} // cordio
+} // nordic
 } // vendor
 } // pal
 } // ble
 
-#endif /* CORDIO_PAL_SECURITY_MANAGER_ */
+#endif /* NRF5X_PAL_SECURITY_MANAGER_ */
