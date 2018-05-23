@@ -22,6 +22,7 @@
 #include "wsf_os.h"
 #include "sec_api.h"
 #include "smp_defs.h"
+#include "cfg_stack.h"
 
 namespace ble {
 namespace pal {
@@ -252,6 +253,8 @@ public:
         sign_count_t sign_counter
     );
 
+    virtual ble_error_t remove_peer_csrk(connection_handle_t connection);
+
     ////////////////////////////////////////////////////////////////////////////
     // Authentication
     //
@@ -322,10 +325,49 @@ public:
     static bool sm_handler(const wsfMsgHdr_t* msg);
 
 private:
+    struct PrivacyControlBlock;
+    struct PrivacyClearResListControlBlock;
+    struct PrivacyAddDevToResListControlBlock;
+    struct PrivacyRemoveDevFromResListControlBlock;
+
+    // Queue control block to add device to resolving list
+    void queue_add_device_to_resolving_list(
+        advertising_peer_address_type_t peer_identity_address_type,
+        const address_t &peer_identity_address,
+        const irk_t &peer_irk
+    );
+
+    // Queue control block to remove device from resolving list
+    void queue_remove_device_from_resolving_list(
+        advertising_peer_address_type_t peer_identity_address_type,
+        const address_t &peer_identity_address
+    );
+
+    // Queue control block to clear resolving list
+    void queue_clear_resolving_list();
+
+    // Clear all control blocks
+    void clear_privacy_control_blocks();
+
+    // Queue a control block
+    void queue_privacy_control_block(PrivacyControlBlock* block);
+
+    // Try to dequeue and process the next control block
+    // cb_completed is set when the previous block has completed
+    void process_privacy_control_blocks(bool cb_completed);
+    
+    void cleanup_peer_csrks();
+
     bool _use_default_passkey;
     passkey_num_t _default_passkey;
     bool _lesc_keys_generated;
     uint8_t _public_key_x[SEC_ECC_KEY_LEN];
+
+    PrivacyControlBlock* _pending_privacy_control_blocks;
+    bool _processing_privacy_control_block;
+    irk_t _irk;
+    csrk_t _csrk;
+    csrk_t* _peer_csrks[DM_CONN_MAX];
 };
 
 } // cordio
