@@ -34,13 +34,13 @@ static uint16_t deep_sleep_lock = 0U;
 static us_timestamp_t sleep_time = 0;
 static us_timestamp_t deep_sleep_time = 0;
 
-#if defined(MBED_CPU_STATS_ENABLED) && defined(DEVICE_LOWPOWERTIMER)
+#if defined(MBED_CPU_STATS_ENABLED) && defined(DEVICE_LPTICKER)
 static ticker_data_t *sleep_ticker = NULL;
 #endif
 
 static inline us_timestamp_t read_us(void)
 {
-#if defined(MBED_CPU_STATS_ENABLED) && defined(DEVICE_LOWPOWERTIMER)
+#if defined(MBED_CPU_STATS_ENABLED) && defined(DEVICE_LPTICKER)
     if (NULL == sleep_ticker) {
         sleep_ticker = (ticker_data_t *)get_lp_ticker_data();
     }
@@ -161,7 +161,7 @@ void sleep_manager_lock_deep_sleep_internal(void)
     core_util_critical_section_enter();
     if (deep_sleep_lock == USHRT_MAX) {
         core_util_critical_section_exit();
-        error("Deep sleep lock would overflow (> USHRT_MAX)");
+        MBED_ERROR1(MBED_MAKE_ERROR(MBED_MODULE_HAL, MBED_ERROR_CODE_OVERFLOW), "DeepSleepLock overflow (> USHRT_MAX)", deep_sleep_lock);
     }
     core_util_atomic_incr_u16(&deep_sleep_lock, 1);
     core_util_critical_section_exit();
@@ -172,7 +172,7 @@ void sleep_manager_unlock_deep_sleep_internal(void)
     core_util_critical_section_enter();
     if (deep_sleep_lock == 0) {
         core_util_critical_section_exit();
-        error("Deep sleep lock would underflow (< 0)");
+        MBED_ERROR1(MBED_MAKE_ERROR(MBED_MODULE_HAL, MBED_ERROR_CODE_UNDERFLOW), "DeepSleepLock underflow (< 0)", deep_sleep_lock);
     }
     core_util_atomic_decr_u16(&deep_sleep_lock, 1);
     core_util_critical_section_exit();
