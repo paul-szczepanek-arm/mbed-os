@@ -1277,7 +1277,9 @@ void GenericSecurityManager::on_slave_security_request(
 
     bool pairing_required = false;
 
-    if (authentication.get_secure_connections() && !flags->secure_connections_paired
+    if (!flags->ltk_stored) {
+        pairing_required = true;
+    } else if (authentication.get_secure_connections() && !flags->secure_connections_paired
         && _default_authentication.get_secure_connections()) {
         pairing_required = true;
     }
