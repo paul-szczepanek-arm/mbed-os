@@ -17,7 +17,6 @@
 #include <algorithm>
 #include "CordioBLE.h"
 #include "CordioGattServer.h"
-#include "mbed.h"
 #include "wsf_types.h"
 #include "att_api.h"
 

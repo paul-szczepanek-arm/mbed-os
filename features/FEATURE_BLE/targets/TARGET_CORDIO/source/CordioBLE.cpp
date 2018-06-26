@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "mbed.h"
+#include "drivers/Timeout.h"
 #include "us_ticker_api.h"
 #include "BLE.h"
 #include "wsf_types.h"
@@ -39,6 +39,8 @@
 
 /*! WSF handler ID */
 wsfHandlerId_t stack_handler_id;
+
+using mbed::Timeout;
 
 /**
  * Weak definition of ble_cordio_get_hci_driver.
