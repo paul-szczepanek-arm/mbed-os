@@ -575,7 +575,7 @@ struct peer_address_type_t :SafeEnum<peer_address_type_t, uint8_t> {
 /**
  * Type that describes a bluetooth PHY(sical) transport.
  */
-struct phy_t :SafeEnum<phy_t, uint8_t> {
+struct phy_t : SafeEnum<phy_t, uint8_t> {
     /** struct scoped enum wrapped by the class */
     enum type {
         /**
