@@ -20,6 +20,7 @@
 #include "platform/Callback.h"
 #include "GapTypes.h"
 #include "GapEvents.h"
+#include "blecommon.h"
 
 namespace ble {
 namespace pal {
