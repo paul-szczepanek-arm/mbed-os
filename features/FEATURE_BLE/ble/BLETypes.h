@@ -647,6 +647,29 @@ struct phys_t {
     uint8_t le_coded:1;
 };
 
+/**
+ * Type describing the number of symbols per bit in le coded phy.
+ */
+struct coded_symbol_per_bit_t :SafeEnum<coded_symbol_per_bit_t, uint8_t> {
+    /** struct scoped enum wrapped by the class */
+    enum type {
+        /**
+         * Two symbols to code a bit.
+         */
+        S2,
+
+        /**
+         * Eight symbols to code a bit.
+         */
+        S8
+    };
+
+    /**
+     * Construct a new instance of coded_symbol_per_bit_t.
+     */
+    coded_symbol_per_bit_t(type value) :
+        SafeEnum<coded_symbol_per_bit_t, uint8_t>(value) { }
+};
 
 } // namespace ble
 
