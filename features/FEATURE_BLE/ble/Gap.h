@@ -1105,7 +1105,7 @@ public:
          *
          * @param rxPhy PHY used by the receiver.
          */
-        virtual void onPhyRead(
+        virtual void onReadPhy(
             ble_error_t status,
             Handle_t connectionHandle,
             ble::phy_t txPhy,
