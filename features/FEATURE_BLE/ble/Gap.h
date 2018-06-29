@@ -1097,9 +1097,12 @@ public:
          *
          * @param status Status of the operation: BLE_ERROR_NONE in case of
          * success or an appropriate error code.
+         *
          * @param connectionHandle: The handle of the connection for which the
          * PHYs have been read.
+         *
          * @param txPhy PHY used by the transmitter.
+         *
          * @param rxPhy PHY used by the receiver.
          */
         virtual void onPhyRead(
@@ -1114,9 +1117,12 @@ public:
          *
          * @param status Status of the operation: BLE_ERROR_NONE in case of
          * success or an appropriate error code.
+         *
          * @param connectionHandle: The handle of the connection on which the
          * operation was made.
+         *
          * @param txPhy PHY used by the transmitter.
+         *
          * @param rxPhy PHY used by the receiver.
          *
          * @note Success doesn't mean the PHY has been updated it means both
@@ -1402,13 +1408,13 @@ public:
     /**
      * Read the PHY used by the transmitter and the receiver on a connection.
      *
-     * Once the phy has been read, it is reported back via the function onPhyRead
+     * Once the PHY has been read, it is reported back via the function onPhyRead
      * of the event handler registered by the application.
      *
      * @param connection Handle of the connection for which the PHY being used is
      * queried.
      *
-     * @return BLE_ERROR_NONE if the read phy procedure has been started or an
+     * @return BLE_ERROR_NONE if the read PHY procedure has been started or an
      * appropriate error code.
      */
     virtual ble_error_t readPhy(Handle_t connection) {
@@ -1416,13 +1422,13 @@ public:
     }
 
     /**
-     * Set the prefered phys to use in a connection.
+     * Set the prefered PHYs to use in a connection.
      *
-     * @param txPhy: Set of Phys prefered for tx operations. If NULL then no
-     * prefered phys are set and the default value of the subsytem is used.
+     * @param txPhy: Set of PHYs prefered for tx operations. If NULL then no
+     * prefered PHYs are set and the default value of the subsytem is used.
      *
-     * @param rxPhy: Set of Phys prefered for rx operations. If NULL then no
-     * prefered phys are set and the default value of the subsytem is used.
+     * @param rxPhy: Set of PHYs prefered for rx operations. If NULL then no
+     * prefered PHYs are set and the default value of the subsytem is used.
      *
      * @return BLE_ERROR_NONE if the preferences have been set or an appropriate
      * error code.
@@ -1443,16 +1449,16 @@ public:
      *
      * @param connection Handle of the connection to update.
      *
-     * @param txPhys Set of Phys prefered for tx operations. If NULL then the
+     * @param txPhys Set of PHYs prefered for tx operations. If NULL then the
      * choice is up to the Bluetooth subsystem.
      *
-     * @param rxPhys Set of Phys prefered for rx operations. If NULL then the
+     * @param rxPhys Set of PHYs prefered for rx operations. If NULL then the
      * choice is up to the Bluetooth subsystem.
      *
      * @param codedSymbol Number of symbols used to code a bit when le coded is
      * used. If NULL then the choice is up to the Bluetooth subsystem.
      *
-     * @return BLE_ERROR_NONE if the update phy procedure has been successfully
+     * @return BLE_ERROR_NONE if the update PHY procedure has been successfully
      * started or an error code.
      */
     virtual ble_error_t setPhy(

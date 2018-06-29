@@ -610,7 +610,7 @@ struct phy_t : SafeEnum<phy_t, uint8_t> {
          *   - S=2: 500kbit/s
          *   - S=8: 125kbit/s
          *
-         * The goal of the coded phy is to increase the range of BLE devices.
+         * The goal of the coded PHY is to increase the range of BLE devices.
          * Of course given it takes more time to transfer data, transmission
          * and reception last longer which leads to an increase in power
          * consumption.
@@ -648,7 +648,7 @@ struct phys_t {
 };
 
 /**
- * Type describing the number of symbols per bit in le coded phy.
+ * Type describing the number of symbols per bit in le coded PHY.
  */
 struct coded_symbol_per_bit_t :SafeEnum<coded_symbol_per_bit_t, uint8_t> {
     /** struct scoped enum wrapped by the class */
