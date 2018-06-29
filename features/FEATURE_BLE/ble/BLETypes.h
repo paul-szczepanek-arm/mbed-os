@@ -654,6 +654,11 @@ struct coded_symbol_per_bit_t :SafeEnum<coded_symbol_per_bit_t, uint8_t> {
     /** struct scoped enum wrapped by the class */
     enum type {
         /**
+         * The Number of symbol used to code a bit is undefined.
+         */
+        UNDEFINED,
+
+        /**
          * Two symbols to code a bit.
          */
         S2,

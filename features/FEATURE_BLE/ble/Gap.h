@@ -1456,7 +1456,8 @@ public:
      * choice is up to the Bluetooth subsystem.
      *
      * @param codedSymbol Number of symbols used to code a bit when le coded is
-     * used. If NULL then the choice is up to the Bluetooth subsystem.
+     * used. If the value is UNDEFINED then the choice is up to the Bluetooth
+     * subsystem.
      *
      * @return BLE_ERROR_NONE if the update PHY procedure has been successfully
      * started or an error code.
@@ -1465,7 +1466,7 @@ public:
         Handle_t connection,
         const Phys_t* txPhys,
         const Phys_t* rxPhys,
-        const CodedSymbolPerBit_t* codedSymbol
+        CodedSymbolPerBit_t codedSymbol
     ) {
         return BLE_ERROR_NONE;
     }
