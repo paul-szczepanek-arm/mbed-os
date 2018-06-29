@@ -1471,7 +1471,7 @@ public:
         const Phys_t* rxPhys,
         CodedSymbolPerBit_t codedSymbol
     ) {
-        return BLE_ERROR_NONE;
+        return BLE_ERROR_NOT_IMPLEMENTED;
     }
 
     /**
