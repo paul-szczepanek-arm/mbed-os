@@ -286,7 +286,7 @@ class GapAdvertisingData;
  * Symmetrically an increased range means a lowered bandwith and a degraded power
  * consumption.
  *
- * Applications can change the PHY used by calling the function setPHY. Once the
+ * Applications can change the PHY used by calling the function setPhy. Once the
  * update has been made the result is forwarded to the application by calling the
  * function onPhyUpdateComplete of the event handler registered.
  *
