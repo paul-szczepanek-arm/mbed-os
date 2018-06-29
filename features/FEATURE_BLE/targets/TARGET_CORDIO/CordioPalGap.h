@@ -251,6 +251,33 @@ private:
         }
     };
 
+    struct ReadPhyMessageConverter : public MessageConverter<DM_PHY_READ_IND> {
+        typedef hciLeReadPhyCmdCmplEvt_t type;
+
+        static ReadPhyEvent convert(const hciLeReadPhyCmdCmplEvt_t* evt) {
+            return ReadPhyEvent(
+                evt->status,
+                evt->hdr.param,
+                evt->rxPhy,
+                evt->txPhy
+            );
+        }
+    };
+
+    struct PhyUpdateCompleteMessageConverter : public MessageConverter<DM_PHY_UPDATE_IND> {
+        typedef hciLePhyUpdateEvt_t type;
+
+        static ReadPhyEvent convert(const hciLePhyUpdateEvt_t* evt) {
+            return PhyUpdateCompleteEvent(
+                evt->status,
+                evt->hdr.param,
+                evt->rxPhy,
+                evt->txPhy
+            );
+        }
+    };
+
+
 private:
     address_t device_random_address;
     bool use_active_scanning;

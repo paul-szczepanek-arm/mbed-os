@@ -514,6 +514,104 @@ struct GapDisconnectionCompleteEvent : public GapEvent {
     const uint8_t reason;
 };
 
+/**
+ * Carries result of read phy.
+ */
+struct ReadPhyEvent : public GapEvent {
+
+    /**
+     * Construct a connection update event for a successful process.
+     *
+     * @param status Status of the connection update event operation. If equal
+     * to 0x00 then the process was successful, otherwise the status indicates
+     * the reason of the failure.
+     *
+     * @param connection_handle Handle of the connection updated.
+     *
+     * @param connection_interval New connection interval used by the connection.
+     *
+     * @param rxPhy receive PHY mode.
+     *
+     * @param txPhy transmit PHY mode.
+     */
+    ReadPhyEvent(
+        uint8_t status,
+        connection_handle_t connection_handle,
+        uint8_t rx_phy,
+        uint8_t tx_phy
+    ) :
+        GapEvent(GapEventType::CONNECTION_UPDATE),
+        status(status),
+        connection_handle(connection_handle),
+        rx_phy(rx_phy),
+        tx_phy(tx_phy) {
+    }
+
+    /**
+     * If equal to 0, the read phy has succesfully completed otherwise
+     * the process has failled and this field represent the error associated to
+     * the faillure.
+     */
+    const uint8_t status;
+
+    /**
+     * Handle of the connection which has completed the read phy.
+     */
+    const connection_handle_t connection_handle;
+
+    const uint8_t rx_phy;
+    const uint8_t tx_phy;
+};
+
+/**
+ * Indicates updated PHY (which might not have changed).
+ */
+struct PhyUpdateCompleteEvent : public GapEvent {
+
+    /**
+     * Construct a connection update event for a successful process.
+     *
+     * @param status Status of the connection update event operation. If equal
+     * to 0x00 then the process was successful, otherwise the status indicates
+     * the reason of the failure.
+     *
+     * @param connection_handle Handle of the connection updated.
+     *
+     * @param connection_interval New connection interval used by the connection.
+     *
+     * @param rxPhy receive PHY mode.
+     *
+     * @param txPhy transmit PHY mode.
+     */
+    ReadPhyEvent(
+        uint8_t status,
+        connection_handle_t connection_handle,
+        uint8_t rx_phy,
+        uint8_t tx_phy
+    ) :
+        GapEvent(GapEventType::CONNECTION_UPDATE),
+        status(status),
+        connection_handle(connection_handle),
+        rx_phy(rx_phy),
+        tx_phy(tx_phy) {
+    }
+
+    /**
+     * If equal to 0, the read phy has succesfully completed otherwise
+     * the process has failled and this field represent the error associated to
+     * the faillure.
+     */
+    const uint8_t status;
+
+    /**
+     * Handle of the connection which has completed the read phy.
+     */
+    const connection_handle_t connection_handle;
+
+    const uint8_t rx_phy;
+    const uint8_t tx_phy;
+};
+
 } // namespace pal
 } // namespace ble
 

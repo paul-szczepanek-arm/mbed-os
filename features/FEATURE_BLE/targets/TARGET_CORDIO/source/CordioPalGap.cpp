@@ -348,7 +348,9 @@ void Gap::gap_handler(const wsfMsgHdr_t* msg) {
         &event_handler<GapAdvertisingReportMessageConverter>,
         &event_handler<DisconnectionMessageConverter>,
         &event_handler<ConnectionUpdateMessageConverter>,
-        &event_handler<RemoteConnectionParameterRequestMessageConverter>
+        &event_handler<RemoteConnectionParameterRequestMessageConverter>,
+        &event_handler<ReadPhyMessageConverter>,
+        &event_handler<PhyUpdateCompleteMessageConverter>
     };
 
     // event->hdr.param: connection handle
