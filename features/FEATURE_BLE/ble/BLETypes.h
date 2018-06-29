@@ -589,7 +589,7 @@ struct phy_t : SafeEnum<phy_t, uint8_t> {
          * 2Mbit/s LE.
          *
          * Modulation is similar to LE_1M but differs in rate. Therefore range
-         * performances are in the same bucket as LE_1M while the increased rate
+         * performances are in the same ballpark as LE_1M while the increased rate
          * minimize time spent to transfer or receive a packet which leads to a
          * better power consumption and/or faster transfer.
          *
