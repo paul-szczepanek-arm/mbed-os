@@ -1115,6 +1115,9 @@ public:
         /**
          * Function invoked when the update process of the PHY has been completed.
          *
+         * The process can be initiated by a call to the function setPhy, the
+         * local bluetooth subsystem or the peer.
+         *
          * @param status Status of the operation: BLE_ERROR_NONE in case of
          * success or an appropriate error code.
          *
