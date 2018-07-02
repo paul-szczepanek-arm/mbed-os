@@ -737,21 +737,19 @@ public:
     * @param[in] event_handler the new event handler interface implementation. Memory
     * owned by caller who is responsible for updating this pointer if interface changes.
     */
-    void set_event_handler(
-     EventHandler *event_handler
-    ) {
-     _pal_event_handler = event_handler;
+    void set_event_handler(EventHandler *event_handler) {
+        _pal_event_handler = event_handler;
     }
 
     EventHandler* get_event_handler() {
-     return _pal_event_handler;
+        return _pal_event_handler;
     }
 
 protected:
     EventHandler *_pal_event_handler;
 
 protected:
-    Gap() { }
+    Gap() : _pal_event_handler(NULL) { }
 
     virtual ~Gap() { }
 

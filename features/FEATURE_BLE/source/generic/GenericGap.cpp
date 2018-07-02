@@ -423,6 +423,8 @@ GenericGap::GenericGap(
 
     // Recover static random identity
     _random_static_identity_address = _pal_gap.get_random_address();
+
+    _pal_gap.set_event_handler(this);
 }
 
 GenericGap::~GenericGap()
