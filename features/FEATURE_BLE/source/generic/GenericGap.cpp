@@ -585,6 +585,26 @@ ble_error_t GenericGap::connect(
     );
 }
 
+ble_error_t GenericGap::readPhy(Handle_t connection) {
+   return _pal_gap.read_phy(connection);
+}
+
+ble_error_t GenericGap::setPreferedPhys(
+   const Phys_t* txPhys,
+   const Phys_t* rxPhys
+) {
+   return _pal_gap.set_prefered_phys(txPhys, rxPhys);
+}
+
+ble_error_t GenericGap::setPhy(
+   Handle_t connection,
+   const Phys_t* txPhys,
+   const Phys_t* rxPhys,
+   CodedSymbolPerBit_t codedSymbol
+) {
+   return _pal_gap.set_phy(connection, txPhys, rxPhys, codedSymbol);
+}
+
 ble_error_t GenericGap::disconnect(Handle_t connectionHandle, DisconnectionReason_t reason)
 {
     if (is_disconnection_reason_valid(reason) == false) {

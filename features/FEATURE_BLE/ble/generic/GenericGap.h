@@ -43,7 +43,8 @@ namespace generic {
  * @attention: Not part of the public interface of BLE API.
  */
 class GenericGap : public ::Gap,
-                   public pal::ConnectionEventMonitor {
+                   public pal::ConnectionEventMonitor,
+                   public pal::Gap::EventHandler {
 
 public:
     /**
@@ -131,6 +132,29 @@ public:
         BLEProtocol::AddressType_t peerAddrType,
         const ConnectionParams_t *connectionParams,
         const GapScanningParams *scanParams
+    );
+
+    /**
+     * @see Gap::readPhy
+     */
+    virtual ble_error_t readPhy(Handle_t connection);
+
+    /**
+    * @see Gap::setPreferedPhys
+    */
+    virtual ble_error_t setPreferedPhys(
+       const Phys_t* txPhys,
+       const Phys_t* rxPhys
+    );
+
+    /**
+    * @see Gap::setPhy
+    */
+    virtual ble_error_t setPhy(
+       Handle_t connection,
+       const Phys_t* txPhys,
+       const Phys_t* rxPhys,
+       CodedSymbolPerBit_t codedSymbol
     );
 
     /**
@@ -371,6 +395,31 @@ private:
 
     void on_address_rotation_timeout();
 
+    /* implements pal::Gap::EventHandler */
+private:
+    virtual void on_read_phy(
+        ble_error_t status,
+        Handle_t connection_handle,
+        ble::phy_t tx_phy,
+        ble::phy_t rx_phy
+    ) {
+        if (_eventHandler) {
+            _eventHandler->onPhyUpdateComplete(status, connection_handle, tx_phy, rx_phy);
+        }
+    }
+
+    virtual void on_phy_update_complete(
+        ble_error_t status,
+        Handle_t connection_handle,
+        ble::phy_t tx_phy,
+        ble::phy_t rx_phy
+    ) {
+        if (_eventHandler) {
+            _eventHandler->onPhyUpdateComplete(status, connection_handle, tx_phy, rx_phy);
+        }
+    }
+
+private:
     pal::EventQueue& _event_queue;
     pal::Gap &_pal_gap;
     pal::GenericAccessService &_gap_service;

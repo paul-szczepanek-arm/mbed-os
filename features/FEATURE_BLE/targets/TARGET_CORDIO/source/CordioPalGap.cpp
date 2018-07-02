@@ -326,6 +326,90 @@ ble_error_t Gap::set_address_resolution(
     return BLE_ERROR_NONE;
 }
 
+ble_error_t read_phy(connection_handle_t connection) {
+    HciLeReadPhyCmd(connection);
+    return BLE_ERROR_NONE;
+}
+
+uint8_t convert_to_phys_value(const phys_t* phys) {
+    uint8_t value = 0;
+
+    if (phys) {
+        if (phys->le_1m) {
+            value |= 0x01;
+        }
+
+        if (phys->le_2m) {
+            value |= 0x02;
+        }
+
+        if (phys->le_coded) {
+            value |= 0x04;
+        }
+    }
+
+    return value;
+}
+
+phy_t convert_to_phy_enum(uint8_t value) {
+    switch(value) {
+        case 0x00:
+            return phy_t::LE_1M;
+        case 0x01:
+            return phy_t::LE_2M;
+        case 0x02:
+            return phy_t::LE_CODED;
+        default:
+            return phy_t::LE_1M;
+    }
+}
+
+ble_error_t set_prefered_phys(
+    const phys_t* tx_phys,
+    const phys_t* rx_phys
+) {
+    uint8_t all_phys = 0;
+    if (!tx_phys) {
+        all_phys |= 0x01;
+    }
+    if (!rx_phys) {
+        all_phys |= 0x02;
+    }
+
+    HciLeSetDefaultPhyCmd(
+        all_phys,
+        convert_to_phys_value(tx_phys),
+        convert_to_phys_value(rx_phys)
+    );
+
+    return BLE_ERROR_NONE;
+}
+
+ble_error_t set_phy(
+    connection_handle_t connection,
+    const phys_t* tx_phys,
+    const phys_t* rx_phys,
+    coded_symbol_per_bit_t coded_symbol
+) {
+    uint8_t all_phys = 0;
+    if (!tx_phys) {
+        all_phys |= 0x01;
+    }
+    if (!rx_phys) {
+        all_phys |= 0x02;
+    }
+
+    HciLeSetPhyCmd(
+        connection,
+        all_phys,
+        convert_to_phys_value(tx_phys),
+        convert_to_phys_value(rx_phys),
+        coded_symbol.value()
+    );
+
+    return BLE_ERROR_NONE;
+}
+
 // singleton of the ARM Cordio client
 Gap& Gap::get_gap() {
     static Gap _gap;
@@ -342,15 +426,47 @@ void Gap::gap_handler(const wsfMsgHdr_t* msg) {
         return;
     }
 
+    connection_handle_t handle = (connection_handle_t)msg->param;
+
+    ble_error_t status = BLE_ERROR_NONE;
+    if (pal::hci_error_code_t::SUCCESS != msg->status) {
+        status = BLE_ERROR_UNSPECIFIED;
+    }
+
+    switch(msg->event) {
+        case DM_PHY_READ_IND:
+            if (get_gap()._pal_event_handler) {
+                const hciLeReadPhyCmdCmplEvt_t* evt = (const hciLeReadPhyCmdCmplEvt_t*)msg;
+
+                get_gap()._pal_event_handler->on_read_phy(
+                    status,
+                    handle,
+                    convert_to_phy_enum(evt->txPhy),
+                    convert_to_phy_enum(evt->rxPhy)
+                );
+            }
+            break;
+        case DM_PHY_UPDATE_IND:
+            if (get_gap()._pal_event_handler) {
+                const hciLePhyUpdateEvt_t* evt = (const hciLePhyUpdateEvt_t*)msg;
+
+                get_gap()._pal_event_handler->on_phy_update_complete(
+                    status,
+                    handle,
+                    convert_to_phy_enum(evt->txPhy),
+                    convert_to_phy_enum(evt->rxPhy)
+                );
+            }
+            break;
+    }
+
     // all handlers are stored in a static array
     static const event_handler_t handlers[] = {
         &event_handler<ConnectionCompleteMessageConverter>,
         &event_handler<GapAdvertisingReportMessageConverter>,
         &event_handler<DisconnectionMessageConverter>,
         &event_handler<ConnectionUpdateMessageConverter>,
-        &event_handler<RemoteConnectionParameterRequestMessageConverter>,
-        &event_handler<ReadPhyMessageConverter>,
-        &event_handler<PhyUpdateCompleteMessageConverter>
+        &event_handler<RemoteConnectionParameterRequestMessageConverter>
     };
 
     // event->hdr.param: connection handle

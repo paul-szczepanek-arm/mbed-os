@@ -129,6 +129,20 @@ public:
         bool enable
     );
 
+    virtual ble_error_t read_phy(connection_handle_t connection);
+
+    virtual ble_error_t set_prefered_phys(
+        const phys_t* tx_phys,
+        const phys_t* rx_phys
+    );
+
+    virtual ble_error_t set_phy(
+        connection_handle_t connection,
+        const phys_t* tx_phys,
+        const phys_t* rx_phys,
+        coded_symbol_per_bit_t coded_symbol
+    );
+
     // singleton of the ARM Cordio client
     static Gap& get_gap();
 
@@ -250,33 +264,6 @@ private:
             );
         }
     };
-
-    struct ReadPhyMessageConverter : public MessageConverter<DM_PHY_READ_IND> {
-        typedef hciLeReadPhyCmdCmplEvt_t type;
-
-        static ReadPhyEvent convert(const hciLeReadPhyCmdCmplEvt_t* evt) {
-            return ReadPhyEvent(
-                evt->status,
-                evt->hdr.param,
-                evt->rxPhy,
-                evt->txPhy
-            );
-        }
-    };
-
-    struct PhyUpdateCompleteMessageConverter : public MessageConverter<DM_PHY_UPDATE_IND> {
-        typedef hciLePhyUpdateEvt_t type;
-
-        static ReadPhyEvent convert(const hciLePhyUpdateEvt_t* evt) {
-            return PhyUpdateCompleteEvent(
-                evt->status,
-                evt->hdr.param,
-                evt->rxPhy,
-                evt->txPhy
-            );
-        }
-    };
-
 
 private:
     address_t device_random_address;
