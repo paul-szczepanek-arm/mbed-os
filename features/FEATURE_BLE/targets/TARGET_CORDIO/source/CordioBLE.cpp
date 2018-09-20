@@ -108,10 +108,10 @@ BLE::~BLE() { }
  */
 BLE& BLE::deviceInstance()
 {
-    static BLE instance(
+    static BLE* instance = new BLE(
         ble_cordio_get_hci_driver()
     );
-    return instance;
+    return *instance;
 }
 
 ble_error_t BLE::init(
