@@ -108,10 +108,6 @@ public:
         return true;
     };
 
-    virtual void set_tx_continuous_wave(uint32_t freq, int8_t power, uint16_t time)
-    {
-    };
-
     virtual void lock(void)
     {
     };
