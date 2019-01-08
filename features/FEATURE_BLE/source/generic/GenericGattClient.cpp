@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#if BLE_ROLE_GATT_CLIENT
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -1436,3 +1438,5 @@ uint16_t GenericGattClient::get_mtu(connection_handle_t connection) const {
 
 } // namespace pal
 } // namespace ble
+
+#endif // BLE_ROLE_GATT_CLIENT

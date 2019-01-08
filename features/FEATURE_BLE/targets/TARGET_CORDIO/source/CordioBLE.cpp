@@ -156,7 +156,11 @@ ble_error_t BLE::shutdown()
     _hci_driver->terminate();
 
     getGattServer().reset();
+
+#if BLE_ROLE_GATT_CLIENT
     getGattClient().reset();
+#endif // BLE_ROLE_GATT_CLIENT
+
     getGap().reset();
     _event_queue.clear();
 
@@ -198,6 +202,7 @@ const GattServer& BLE::getGattServer() const
     return cordio::GattServer::getInstance();
 }
 
+#if BLE_ROLE_GATT_CLIENT
 generic::GenericGattClient& BLE::getGattClient()
 {
     static generic::GenericGattClient gatt_client(&getPalGattClient());
@@ -213,6 +218,7 @@ pal::AttClientToGattClientAdapter& BLE::getPalGattClient()
 
     return pal_client;
 }
+#endif // BLE_ROLE_GATT_CLIENT
 
 SecurityManager& BLE::getSecurityManager()
 {

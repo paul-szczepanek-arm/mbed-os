@@ -254,6 +254,8 @@ GattServer& BLE::gattServer()
     return transport->getGattServer();
 }
 
+#if BLE_ROLE_GATT_CLIENT
+
 const GattClient& BLE::gattClient() const
 {
     if (!transport) {
@@ -271,6 +273,8 @@ GattClient& BLE::gattClient()
 
     return transport->getGattClient();
 }
+
+#endif // BLE_ROLE_GATT_CLIENT
 
 const SecurityManager& BLE::securityManager() const
 {

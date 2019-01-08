@@ -102,10 +102,12 @@ public:
      */
     virtual const GattServer &getGattServer() const;
 
+#if BLE_ROLE_GATT_CLIENT
     /**
      * @see BLEInstanceBase::getGattClient
      */
     virtual generic::GenericGattClient &getGattClient();
+#endif // BLE_ROLE_GATT_CLIENT
 
     /**
      * Get the PAL Gatt Client.
@@ -168,7 +170,11 @@ private:
     public:
         SigningEventMonitorProxy(BLE &ble) : _ble(ble) { }
         virtual void set_signing_event_handler(pal::SigningEventMonitor::EventHandler *handler) {
+
+#if BLE_ROLE_GATT_CLIENT
             _ble.getGattClient().set_signing_event_handler(handler);
+#endif // BLE_ROLE_GATT_CLIENT
+
             _ble.getGattServer().set_signing_event_handler(handler);
         }
     private:
