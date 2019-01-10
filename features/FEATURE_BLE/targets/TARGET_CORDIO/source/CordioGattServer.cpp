@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#if BLE_ROLE_GATT_SERVER
+
 #include <algorithm>
 #include "CordioBLE.h"
 #include "CordioGattServer.h"
@@ -1290,3 +1292,5 @@ GattServer::GattServer() :
 } // namespace cordio
 } // namespace vendor
 } // namespace ble
+
+#endif // BLE_ROLE_GATT_SERVER

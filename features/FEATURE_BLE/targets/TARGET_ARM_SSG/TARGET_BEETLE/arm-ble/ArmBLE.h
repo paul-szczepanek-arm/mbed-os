@@ -46,12 +46,14 @@ public:
     virtual const Gap &getGap() const {
         return ArmGap::getInstance();
     };
+#if BLE_ROLE_GATT_SERVER
     virtual GattServer &getGattServer() {
         return ArmGattServer::getInstance();
     };
     virtual const GattServer &getGattServer() const {
         return ArmGattServer::getInstance();
     };
+#endif // BLE_ROLE_GATT_SERVER
     virtual GattClient &getGattClient() {
         return ArmGattClient::getInstance();
     };

@@ -92,6 +92,7 @@ public:
      */
     virtual const generic::GenericGap& getGap() const;
 
+#if BLE_ROLE_GATT_SERVER
     /**
      * @see BLEInstanceBase::getGattServer
      */
@@ -101,6 +102,7 @@ public:
      * @see BLEInstanceBase::getGattServer
      */
     virtual const GattServer &getGattServer() const;
+#endif // BLE_ROLE_GATT_SERVER
 
 #if BLE_ROLE_GATT_CLIENT
     /**
@@ -175,7 +177,9 @@ private:
             _ble.getGattClient().set_signing_event_handler(handler);
 #endif // BLE_ROLE_GATT_CLIENT
 
+#if BLE_ROLE_GATT_SERVER
             _ble.getGattServer().set_signing_event_handler(handler);
+#endif // BLE_ROLE_GATT_SERVER
         }
     private:
         BLE &_ble;

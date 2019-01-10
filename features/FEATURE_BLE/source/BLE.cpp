@@ -236,6 +236,8 @@ Gap &BLE::gap()
     return transport->getGap();
 }
 
+#if BLE_ROLE_GATT_SERVER
+
 const GattServer& BLE::gattServer() const
 {
     if (!transport) {
@@ -253,6 +255,8 @@ GattServer& BLE::gattServer()
 
     return transport->getGattServer();
 }
+
+#endif // BLE_ROLE_GATT_SERVER
 
 #if BLE_ROLE_GATT_CLIENT
 
