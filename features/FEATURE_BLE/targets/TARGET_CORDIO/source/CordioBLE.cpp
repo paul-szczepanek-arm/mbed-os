@@ -224,6 +224,8 @@ pal::AttClientToGattClientAdapter& BLE::getPalGattClient()
 }
 #endif // BLE_ROLE_GATT_CLIENT
 
+#if BLE_ROLE_SECURITY
+
 SecurityManager& BLE::getSecurityManager()
 {
     static SigningEventMonitorProxy signing_event_monitor(*this);
@@ -241,6 +243,8 @@ const SecurityManager& BLE::getSecurityManager() const
     const BLE &self = const_cast<BLE&>(*this);
     return const_cast<const SecurityManager&>(self.getSecurityManager());
 }
+
+#endif // BLE_ROLE_SECURITY
 
 void BLE::waitForEvent()
 {

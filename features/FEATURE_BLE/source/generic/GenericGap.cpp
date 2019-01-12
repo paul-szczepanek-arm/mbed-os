@@ -1778,6 +1778,7 @@ BLE_DEPRECATED_API_USE_END()
         e.peer_resolvable_private_address.data()
     );
 
+#if BLE_ROLE_SECURITY
     // Now starts pairing or authentication procedures if required
     if (needs_pairing) {
         SecurityManager &sm = createBLEInstance()->getSecurityManager();
@@ -1787,6 +1788,7 @@ BLE_DEPRECATED_API_USE_END()
         // TODO: GAP Authentication != Security Manager authentication
         // Needs to be implemented
     }
+#endif // BLE_ROLE_SECURITY
 }
 
 void GenericGap::on_disconnection_complete(const pal::GapDisconnectionCompleteEvent &e)

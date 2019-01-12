@@ -280,6 +280,8 @@ GattClient& BLE::gattClient()
 
 #endif // BLE_ROLE_GATT_CLIENT
 
+#if BLE_ROLE_SECURITY
+
 const SecurityManager& BLE::securityManager() const
 {
     if (!transport) {
@@ -297,6 +299,8 @@ SecurityManager& BLE::securityManager()
 
     return transport->getSecurityManager();
 }
+
+#endif // BLE_ROLE_SECURITY
 
 void BLE::waitForEvent(void)
 {
