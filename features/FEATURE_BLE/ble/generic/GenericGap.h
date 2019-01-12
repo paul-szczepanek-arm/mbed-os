@@ -175,6 +175,7 @@ public:
      */
     virtual bool isPeriodicAdvertisingActive(advertising_handle_t handle);
 
+#if BLE_ROLE_OBSERVER
     /** @copydoc Gap::setScanParameters
      */
     virtual ble_error_t setScanParameters(const ScanParameters &params);
@@ -186,6 +187,7 @@ public:
         duplicates_filter_t filtering,
         scan_period_t period
     );
+#endif // BLE_ROLE_OBSERVER
 
     /** @copydoc Gap::createSync
      */
@@ -272,10 +274,12 @@ public:
      */
     virtual ble_error_t stopAdvertising();
 
+#if BLE_ROLE_OBSERVER
     /**
      * @see Gap::stopScan
      */
     virtual ble_error_t stopScan();
+#endif // BLE_ROLE_OBSERVER
 
     /**
      * @see Gap::connect

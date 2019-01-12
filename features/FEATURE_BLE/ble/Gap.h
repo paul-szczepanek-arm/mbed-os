@@ -49,7 +49,10 @@ public:
     using ble::Gap::stopAdvertising;
     using ble::Gap::connect;
     using ble::Gap::disconnect;
+
+#if BLE_ROLE_OBSERVER
     using ble::Gap::startScan;
+#endif // BLE_ROLE_OBSERVER
 
     /**
      * Address-type for BLEProtocol addresses.
@@ -1702,6 +1705,7 @@ public:
     )
     void clearScanResponse(void);
 
+#if BLE_ROLE_OBSERVER
     /**
      * Set the parameters used during a scan procedure.
      *
@@ -1911,6 +1915,8 @@ public:
         T *object,
         void (T::*callbackMember)(const AdvertisementCallbackParams_t *params)
     );
+
+#endif // BLE_ROLE_OBSERVER
 
     /**
      * Enable radio-notification events.
@@ -2623,6 +2629,8 @@ private:
 #pragma diag_suppress 1361
 #endif
 
+#if BLE_ROLE_OBSERVER
+
 template<typename T>
 ble_error_t Gap::startScan(
     T *object,
@@ -2640,6 +2648,7 @@ ble_error_t Gap::startScan(
     return err;
 }
 
+#endif // BLE_ROLE_OBSERVER
 
 template<typename T>
 void Gap::onConnection(T *tptr, void (T::*mptr)(const ConnectionCallbackParams_t *))

@@ -566,6 +566,8 @@ ble_error_t GenericGap::stopAdvertising()
     return BLE_ERROR_NONE;
 }
 
+#if BLE_ROLE_OBSERVER
+
 ble_error_t GenericGap::stopScan()
 {
     ble_error_t err;
@@ -595,6 +597,8 @@ ble_error_t GenericGap::stopScan()
     return BLE_ERROR_NONE;
 }
 
+#endif // BLE_ROLE_OBSERVER
+
 ble_error_t GenericGap::connect(
     const Address_t peerAddr,
     PeerAddressType_t peerAddrType,
@@ -619,8 +623,10 @@ ble_error_t GenericGap::connect(
         return BLE_ERROR_PARAM_OUT_OF_RANGE;
     }
 
+#if BLE_ROLE_OBSERVER
     // Force scan stop before initiating the scan used for connection
     stopScan();
+#endif // BLE_ROLE_OBSERVER
 
     return _pal_gap.create_connection(
         scanParams->getInterval(),
@@ -2928,6 +2934,8 @@ void GenericGap::on_remote_connection_parameter(
     }
 }
 
+#if BLE_ROLE_OBSERVER
+
 ble_error_t GenericGap::setScanParameters(const ScanParameters &params)
 {
     useVersionTwoAPI();
@@ -3024,6 +3032,8 @@ ble_error_t GenericGap::startScan(
 
     return BLE_ERROR_NONE;
 }
+
+#endif // BLE_ROLE_OBSERVER
 
 ble_error_t GenericGap::createSync(
     peer_address_type_t peerAddressType,

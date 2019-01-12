@@ -451,6 +451,8 @@ ble_error_t Gap::accumulateScanResponse(
     return rc;
 }
 
+#if BLE_ROLE_OBSERVER
+
 void Gap::clearScanResponse(void)
 {
     _scanResponse.clear();
@@ -543,6 +545,8 @@ ble_error_t Gap::startScan(
 
     return err;
 }
+
+#endif // BLE_ROLE_OBSERVER
 
 GapAdvertisingParams &Gap::getAdvertisingParams(void)
 {
