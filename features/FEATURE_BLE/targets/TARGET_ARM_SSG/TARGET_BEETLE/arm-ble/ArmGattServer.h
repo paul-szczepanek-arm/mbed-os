@@ -18,7 +18,7 @@
 #ifndef _ARM_GATT_SERVER_H_
 #define _ARM_GATT_SERVER_H_
 
-#if BLE_ROLE_GATT_SERVER
+#if BLE_FEATURE_GATT_SERVER
 
 #include <stddef.h>
 
@@ -67,6 +67,6 @@ private:
     const ArmGattServer& operator=(const ArmGattServer &);
 };
 
-#endif // BLE_ROLE_GATT_SERVER
+#endif // BLE_FEATURE_GATT_SERVER
 
 #endif /* _ARM_GATT_SERVER_H_ */
