@@ -81,10 +81,12 @@ ble_error_t Gap::set_advertising_parameters(
         advertising_channel_map.value()
     );
 
+#if BLE_FEATURE_WHITELIST
     DmDevSetFilterPolicy(
         DM_FILT_POLICY_MODE_ADV,
         advertising_filter_policy.value()
     );
+#endif // BLE_FEATURE_WHITELIST
 
     DmAdvConfig(
         DM_ADV_HANDLE_DEFAULT,
@@ -151,10 +153,12 @@ ble_error_t Gap::set_scan_parameters(
     use_active_scanning = active_scanning;
     DmScanSetInterval(HCI_INIT_PHY_LE_1M_BIT, &scan_interval, &scan_window);
     DmScanSetAddrType(own_address_type.value());
+#if BLE_FEATURE_WHITELIST
     DmDevSetFilterPolicy(
         DM_FILT_POLICY_MODE_SCAN,
         filter_policy.value()
     );
+#endif // BLE_FEATURE_WHITELIST
     return BLE_ERROR_NONE;
 }
 
@@ -195,7 +199,9 @@ ble_error_t Gap::create_connection(
 )
 {
     DmConnSetScanInterval(scan_interval, scan_window);
+#if BLE_FEATURE_WHITELIST
     DmDevSetFilterPolicy(DM_FILT_POLICY_MODE_INIT, initiator_policy.value());
+#endif // BLE_FEATURE_WHITELIST
     DmConnSetAddrType(own_address_type.value());
 
     hciConnSpec_t conn_spec = {
@@ -973,10 +979,12 @@ ble_error_t Gap::set_extended_scan_parameters(
         const_cast<uint16_t *>(scan_window)
     );
 
+#if BLE_FEATURE_WHITELIST
     DmDevSetFilterPolicy(
         DM_FILT_POLICY_MODE_SCAN,
         filter_policy.value()
     );
+#endif // BLE_FEATURE_WHITELIST
 
     return BLE_ERROR_NONE;
 }
@@ -1109,8 +1117,9 @@ ble_error_t Gap::extended_create_connection(
         const_cast<uint16_t *>(scan_intervals),
         const_cast<uint16_t *>(scan_windows)
     );
-
+#if BLE_FEATURE_WHITELIST
     DmDevSetFilterPolicy(DM_FILT_POLICY_MODE_INIT, initiator_policy.value());
+#endif // BLE_FEATURE_WHITELIST
     DmConnSetAddrType(own_address_type.value());
 
     // At most 3 phys are in used
