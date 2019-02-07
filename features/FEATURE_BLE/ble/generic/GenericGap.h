@@ -68,8 +68,10 @@ public:
     GenericGap(
         pal::EventQueue &event_queue,
         pal::Gap &pal_gap,
-        pal::GenericAccessService &generic_access_service,
-        pal::SecurityManager &pal_sm
+        pal::GenericAccessService &generic_access_service
+#if BLE_FEATURE_SECURITY
+        , pal::SecurityManager &pal_sm
+#endif
     );
 
     /**
@@ -175,7 +177,6 @@ public:
      */
     virtual bool isPeriodicAdvertisingActive(advertising_handle_t handle);
 
-#if BLE_ROLE_OBSERVER
     /** @copydoc Gap::setScanParameters
      */
     virtual ble_error_t setScanParameters(const ScanParameters &params);
@@ -187,7 +188,6 @@ public:
         duplicates_filter_t filtering,
         scan_period_t period
     );
-#endif // BLE_ROLE_OBSERVER
 
     /** @copydoc Gap::createSync
      */
@@ -274,12 +274,10 @@ public:
      */
     virtual ble_error_t stopAdvertising();
 
-#if BLE_ROLE_OBSERVER
     /**
      * @see Gap::stopScan
      */
     virtual ble_error_t stopScan();
-#endif // BLE_ROLE_OBSERVER
 
     /**
      * @see Gap::connect
@@ -729,7 +727,9 @@ private:
     pal::EventQueue &_event_queue;
     pal::Gap &_pal_gap;
     pal::GenericAccessService &_gap_service;
+#if BLE_FEATURE_SECURITY
     pal::SecurityManager &_pal_sm;
+#endif
     BLEProtocol::AddressType_t _address_type;
     ble::address_t _address;
     pal::initiator_policy_t _initiator_policy_mode;

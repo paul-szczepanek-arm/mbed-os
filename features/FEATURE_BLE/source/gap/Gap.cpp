@@ -149,8 +149,6 @@ bool Gap::isPeriodicAdvertisingActive(advertising_handle_t handle)
     return false;
 }
 
-#if BLE_ROLE_OBSERVER
-
 ble_error_t Gap::setScanParameters(const ScanParameters &params)
 {
     useVersionTwoAPI();
@@ -175,8 +173,6 @@ ble_error_t Gap::stopScan()
        is supported. */
     return BLE_ERROR_NOT_IMPLEMENTED;
 }
-
-#endif // BLE_ROLE_OBSERVER
 
 ble_error_t Gap::createSync(
     peer_address_type_t peerAddressType,

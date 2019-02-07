@@ -36,10 +36,14 @@ CordioSecurityManager::CordioSecurityManager() :
     _lesc_keys_generated(false),
     _public_key_x(),
     _pending_privacy_control_blocks(NULL),
-    _processing_privacy_control_block(false),
-    _peer_csrks()
+    _processing_privacy_control_block(false)
+#if BLE_FEATURE_SIGNING
+    , _peer_csrks()
+#endif
 {
-
+#if !(BLE_FEATURE_SECURITY)
+#error "Security Manager feature disabledin the config file"
+#endif
 }
 
 CordioSecurityManager::~CordioSecurityManager()
@@ -57,7 +61,9 @@ ble_error_t CordioSecurityManager::initialize()
     _use_default_passkey = false;
     _default_passkey = 0;
     _lesc_keys_generated = false;
+#if BLE_FEATURE_SIGNING
     memset(_peer_csrks, 0, sizeof(_peer_csrks));
+#endif
 
 #if 0
     // FIXME: need help from the stack or local calculation
@@ -70,13 +76,17 @@ ble_error_t CordioSecurityManager::initialize()
 
 ble_error_t CordioSecurityManager::terminate()
 {
+#if BLE_FEATURE_SIGNING
     cleanup_peer_csrks();
+#endif // BLE_FEATURE_SIGNING
     return BLE_ERROR_NONE;
 }
 
 ble_error_t CordioSecurityManager::reset()
 {
+#if BLE_FEATURE_SIGNING
     cleanup_peer_csrks();
+#endif // BLE_FEATURE_SIGNING
     initialize();
     return BLE_ERROR_NONE;
 }
@@ -302,6 +312,7 @@ ble_error_t CordioSecurityManager::set_irk(const irk_t& irk)
     return BLE_ERROR_NONE;
 }
 
+#if BLE_FEATURE_SIGNING
 ble_error_t CordioSecurityManager::set_csrk(
     const csrk_t& csrk,
     sign_count_t sign_counter
@@ -356,6 +367,7 @@ ble_error_t CordioSecurityManager::remove_peer_csrk(connection_handle_t connecti
     AttsSetCsrk(connection, NULL, false);
     return BLE_ERROR_NONE;
 }
+#endif // BLE_FEATURE_SIGNING
 
 ////////////////////////////////////////////////////////////////////////////
 // Global parameters
@@ -667,12 +679,13 @@ bool CordioSecurityManager::sm_handler(const wsfMsgHdr_t* msg) {
                         irk_t(reinterpret_cast<uint8_t*>(evt->keyData.irk.key))
                     );
                     break;
-
+#if BLE_FEATURE_SIGNING
                 case DM_KEY_CSRK:
                     handler->on_keys_distributed_csrk(
                         connection, evt->keyData.csrk.key
                     );
                     break;
+#endif // BLE_FEATURE_SIGNING
             }
 
             return true;
@@ -949,6 +962,7 @@ void CordioSecurityManager::process_privacy_control_blocks(bool cb_completed)
     _pending_privacy_control_blocks = next;
 }
 
+#if BLE_FEATURE_SIGNING
 void CordioSecurityManager::cleanup_peer_csrks() {
     for (size_t i = 0; i < DM_CONN_MAX; ++i) {
         if (_peer_csrks[i]) {
@@ -957,6 +971,7 @@ void CordioSecurityManager::cleanup_peer_csrks() {
         }
     }
 }
+#endif // BLE_FEATURE_SIGNING
 
 } // cordio
 } // vendor

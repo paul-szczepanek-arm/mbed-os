@@ -17,8 +17,6 @@
 #ifndef MBED_BLE_GENERIC_GATT_CLIENT
 #define MBED_BLE_GENERIC_GATT_CLIENT
 
-#if BLE_FEATURE_GATT_CLIENT
-
 #include <algorithm>
 #include "ble/GattClient.h"
 #include "ble/pal/PalGattClient.h"
@@ -35,7 +33,9 @@ namespace generic {
  * @attention: Not part of the public interface of BLE API.
  */
 class GenericGattClient : public GattClient,
+#if BLE_FEATURE_SIGNING
                           public pal::SigningEventMonitor,
+#endif // BLE_FEATURE_SIGNING
                           public pal::GattClient::EventHandler {
 public:
 
@@ -140,10 +140,12 @@ public:
 	 */
     virtual ble_error_t reset(void);
 
+#if BLE_FEATURE_SIGNING
     /**
      * @see ble::pal::SigningEventMonitor::set_signing_event_handler
      */
     virtual void set_signing_event_handler(pal::SigningEventMonitor::EventHandler *signing_event_handler);
+#endif // BLE_FEATURE_SIGNING
 
     /**
      *  Return the user registered event handler.
@@ -175,14 +177,14 @@ private:
 
     pal::GattClient* const _pal_client;
     ServiceDiscovery::TerminationCallback_t _termination_callback;
+#if BLE_FEATURE_SIGNING
     pal::SigningEventMonitor::EventHandler* _signing_event_handler;
+#endif
     mutable ProcedureControlBlock* control_blocks;
     bool _is_reseting;
 };
 
 }
 }
-
-#endif // BLE_FEATURE_GATT_CLIENT
 
 #endif /* MBED_BLE_GENERIC_GATT_CLIENT */

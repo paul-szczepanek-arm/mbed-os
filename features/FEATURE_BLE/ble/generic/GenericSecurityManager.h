@@ -34,8 +34,11 @@ typedef SecurityManager::SecurityIOCapabilities_t SecurityIOCapabilities_t;
 
 class GenericSecurityManager : public SecurityManager,
                                public pal::SecurityManager::EventHandler,
-                               public pal::ConnectionEventMonitor::EventHandler,
-                               public pal::SigningEventMonitor::EventHandler {
+                               public pal::ConnectionEventMonitor::EventHandler
+#if BLE_FEATURE_SIGNING
+                               , public pal::SigningEventMonitor::EventHandler
+#endif // BLE_FEATURE_SIGNING
+                               {
 public:
 
     /* implements SecurityManager */
@@ -560,6 +563,7 @@ public:
         connection_handle_t connection
     );
 
+#if BLE_FEATURE_SIGNING
     /** @copydoc ble::pal::SecurityManager::on_signed_write_received
      */
     virtual void on_signed_write_received(
@@ -576,6 +580,7 @@ public:
     /** @copydoc ble::pal::SecurityManager::on_signed_write
      */
     virtual void on_signed_write();
+#endif // BLE_FEATURE_SIGNING
 
     /** @copydoc ble::pal::SecurityManager::on_slave_security_request
      */

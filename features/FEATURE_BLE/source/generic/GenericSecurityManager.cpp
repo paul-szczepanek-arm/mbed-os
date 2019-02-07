@@ -1225,6 +1225,7 @@ void GenericSecurityManager::on_valid_mic_timeout(connection_handle_t connection
     (void)connection;
 }
 
+#if BLE_FEATURE_SIGNING
 void GenericSecurityManager::on_signed_write_received(
     connection_handle_t connection,
     sign_count_t sign_counter
@@ -1266,6 +1267,7 @@ void GenericSecurityManager::on_signed_write() {
     MBED_ASSERT(_db);
     _db->set_local_sign_counter(_db->get_local_sign_counter() + 1);
 }
+#endif // BLE_FEATURE_SIGNING
 
 void GenericSecurityManager::on_slave_security_request(
     connection_handle_t connection,

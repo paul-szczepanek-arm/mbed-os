@@ -424,12 +424,16 @@ microsecond_t minSupervisionTimeout(
 GenericGap::GenericGap(
     pal::EventQueue &event_queue,
     pal::Gap &pal_gap,
-    pal::GenericAccessService &generic_access_service,
-    pal::SecurityManager &pal_sm
+    pal::GenericAccessService &generic_access_service
+#if BLE_FEATURE_SECURITY
+    , pal::SecurityManager &pal_sm
+#endif
 ) : _event_queue(event_queue),
     _pal_gap(pal_gap),
     _gap_service(generic_access_service),
+#if BLE_FEATURE_SECURITY
     _pal_sm(pal_sm),
+#endif
     _address_type(LegacyAddressType::PUBLIC),
     _initiator_policy_mode(pal::initiator_policy_t::NO_FILTER),
     _scanning_filter_policy(pal::scanning_filter_policy_t::NO_FILTER),
@@ -566,8 +570,6 @@ ble_error_t GenericGap::stopAdvertising()
     return BLE_ERROR_NONE;
 }
 
-#if BLE_ROLE_OBSERVER
-
 ble_error_t GenericGap::stopScan()
 {
     ble_error_t err;
@@ -597,8 +599,6 @@ ble_error_t GenericGap::stopScan()
     return BLE_ERROR_NONE;
 }
 
-#endif // BLE_ROLE_OBSERVER
-
 ble_error_t GenericGap::connect(
     const Address_t peerAddr,
     PeerAddressType_t peerAddrType,
@@ -623,10 +623,8 @@ ble_error_t GenericGap::connect(
         return BLE_ERROR_PARAM_OUT_OF_RANGE;
     }
 
-#if BLE_ROLE_OBSERVER
     // Force scan stop before initiating the scan used for connection
     stopScan();
-#endif // BLE_ROLE_OBSERVER
 
     return _pal_gap.create_connection(
         scanParams->getInterval(),
@@ -643,7 +641,6 @@ ble_error_t GenericGap::connect(
         /* maximum_connection_event_length */ 0
     );
 }
-
 
 ble_error_t GenericGap::connect(
     const Address_t peerAddr,
@@ -2006,8 +2003,11 @@ bool GenericGap::getUnresolvableRandomAddress(ble::address_t &address)
 {
     do {
         byte_array_t<8> random_data;
-
+#if BLE_FEATURE_SECURITY
         ble_error_t ret = _pal_sm.get_random_data(random_data);
+#else
+        ble_error_t ret = BLE_ERROR_NOT_IMPLEMENTED;
+#endif // BLE_FEATURE_SECURITY
         if (ret != BLE_ERROR_NONE) {
             // Abort
             return false;
@@ -2934,8 +2934,6 @@ void GenericGap::on_remote_connection_parameter(
     }
 }
 
-#if BLE_ROLE_OBSERVER
-
 ble_error_t GenericGap::setScanParameters(const ScanParameters &params)
 {
     useVersionTwoAPI();
@@ -3032,8 +3030,6 @@ ble_error_t GenericGap::startScan(
 
     return BLE_ERROR_NONE;
 }
-
-#endif // BLE_ROLE_OBSERVER
 
 ble_error_t GenericGap::createSync(
     peer_address_type_t peerAddressType,
