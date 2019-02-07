@@ -21,9 +21,8 @@
 
 #include "blecommon.h"
 #include "ble/Gap.h"
-#include "GattClient.h"
 #include "GattServer.h"
-
+#include "GattClient.h"
 #include "SecurityManager.h"
 
 #include "ble/FunctionPointerWithContext.h"
