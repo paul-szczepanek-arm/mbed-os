@@ -26,6 +26,7 @@
 #include "ble/gap/ScanParameters.h"
 #include "ble/gap/AdvertisingParameters.h"
 #include "ble/gap/Events.h"
+#include "BLERoles.h"
 
 namespace ble {
 
@@ -274,6 +275,7 @@ public:
      * Definition of the general handler of Gap related events.
      */
     struct EventHandler {
+#if BLE_ROLE_BROADCASTER
         /**
          * Called when an advertising device receive a scan response.
          *
@@ -302,7 +304,8 @@ public:
         virtual void onAdvertisingEnd(const AdvertisingEndEvent &event)
         {
         }
-
+#endif // BLE_ROLE_BROADCASTER
+#if BLE_ROLE_OBSERVER
         /**
          * Called when a scanner receives an advertising or a scan response packet.
          *
@@ -324,7 +327,8 @@ public:
         virtual void onScanTimeout(const ScanTimeoutEvent &event)
         {
         }
-
+#endif // BLE_ROLE_OBSERVER
+#if BLE_FEATURE_PERIODIC_ADVERTISING
         /**
          * Called when first advertising packet in periodic advertising is received.
          *
@@ -369,7 +373,8 @@ public:
         )
         {
         }
-
+#endif // BLE_FEATURE_PERIODIC_ADVERTISING
+#if BLE_FEATURE_CONNECTABLE
         /**
          * Called when connection attempt ends or an advertising device has been
          * connected.
@@ -430,7 +435,8 @@ public:
         virtual void onDisconnectionComplete(const DisconnectionCompleteEvent &event)
         {
         }
-
+#endif // BLE_FEATURE_CONNECTABLE
+#if BLE_FEATURE_PHY_MANAGEMENT
         /**
          * Function invoked when the current transmitter and receiver PHY have
          * been read for a given connection.
@@ -511,7 +517,7 @@ public:
         )
         {
         }
-
+#endif // BLE_FEATURE_PHY_MANAGEMENT
     protected:
         /**
          * Prevent polymorphic deletion and avoid unnecessary virtual destructor
@@ -541,7 +547,7 @@ public:
     virtual bool isFeatureSupported(controller_supported_features_t feature);
 
     /*                                     advertising                                           */
-
+#if BLE_ROLE_BROADCASTER
     /** Return currently available number of supported advertising sets.
      *  This may change at runtime.
      *
@@ -679,7 +685,8 @@ public:
      * @return True if advertising is active on this set.
      */
     virtual bool isAdvertisingActive(advertising_handle_t handle);
-
+#endif // BLE_ROLE_BROADCASTER
+#if BLE_FEATURE_PERIODIC_ADVERTISING
     /** Set periodic advertising parameters for a given advertising set.
      *
      * @param handle Advertising set handle.
@@ -744,9 +751,9 @@ public:
      * @version 5+
      */
     virtual bool isPeriodicAdvertisingActive(advertising_handle_t handle);
-
+#endif // BLE_FEATURE_PERIODIC_ADVERTISING
     /*                                     scanning                                              */
-
+#if BLE_ROLE_OBSERVER
     /** Set new scan parameters.
      *
      * @param params Scan parameters, @see GapScanParameters for details.
@@ -784,7 +791,8 @@ public:
      * @retval BLE_ERROR_NONE if successfully stopped scanning procedure.
      */
     virtual ble_error_t stopScan();
-
+#endif // BLE_ROLE_OBSERVER
+#if BLE_FEATURE_PERIODIC_ADVERTISING
     /** Synchronize with periodic advertising from an advertiser and begin receiving periodic
      *  advertising packets.
      *
@@ -886,7 +894,8 @@ public:
      * @return Number of devices that can be added to the periodic advertiser list.
      */
     virtual uint8_t getMaxPeriodicAdvertiserListSize();
-
+#endif // BLE_FEATURE_PERIODIC_ADVERTISING
+#if BLE_FEATURE_CONNECTABLE
     /**
      * Initiate a connection to a peer.
      *
@@ -1059,7 +1068,8 @@ public:
         connection_handle_t connectionHandle,
         local_disconnection_reason_t reason
     );
-
+#endif // BLE_FEATURE_CONNECTABLE
+#if BLE_FEATURE_PHY_MANAGEMENT
     /**
      * Read the PHY used by the transmitter and the receiver on a connection.
      *
@@ -1128,7 +1138,8 @@ public:
         const phy_set_t *rxPhys,
         coded_symbol_per_bit_t codedSymbol
     );
-
+#endif // BLE_FEATURE_PHY_MANAGEMENT
+#if BLE_FEATURE_PRIVACY
     /**
      * Default peripheral privacy configuration.
      */
@@ -1221,14 +1232,10 @@ public:
     virtual ble_error_t getCentralPrivacyConfiguration(
         central_privay_configuration_t *configuration
     );
-
-protected:
+#endif // BLE_FEATURE_PRIVACY
 
 #if !defined(DOXYGEN_ONLY)
-
-    /* Override the following in the underlying adaptation layer to provide the
-     * functionality of scanning. */
-
+protected:
     /** Can only be called if use_non_deprecated_scan_api() hasn't been called.
      *  This guards against mixed use of deprecated and nondeprecated API.
      */
@@ -1243,25 +1250,19 @@ protected:
     {
     }
 
-#endif
-
-protected:
-
-#if !defined(DOXYGEN_ONLY)
-
     /**
      * Construct a Gap instance.
      */
     Gap() : _eventHandler(NULL)
     {
     }
+#endif // !defined(DOXYGEN_ONLY)
 
+protected:
     /**
      * Event handler provided by the application.
      */
     EventHandler *_eventHandler;
-
-#endif
 };
 
 /**

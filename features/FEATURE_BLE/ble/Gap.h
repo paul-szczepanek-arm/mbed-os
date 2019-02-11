@@ -42,14 +42,20 @@
  */
 class Gap : public ble::Gap {
 public:
+#if BLE_ROLE_BROADCASTER
     using ble::Gap::setAdvertisingParameters;
     using ble::Gap::setAdvertisingPayload;
     using ble::Gap::setAdvertisingScanResponse;
     using ble::Gap::startAdvertising;
     using ble::Gap::stopAdvertising;
+#endif // BLE_ROLE_BROADCASTER
+#if BLE_FEATURE_CONNECTABLE
     using ble::Gap::connect;
     using ble::Gap::disconnect;
+#endif // BLE_FEATURE_CONNECTABLE
+#if BLE_ROLE_OBSERVER
     using ble::Gap::startScan;
+#endif
 
     /**
      * Address-type for BLEProtocol addresses.
@@ -383,6 +389,7 @@ public:
         CENTRAL = 0x2,
     };
 
+#if BLE_ROLE_BROADCASTER
     /**
      * Representation of a scanned advertising packet.
      *
@@ -457,7 +464,9 @@ public:
      */
     typedef FunctionPointerWithContext<const AdvertisementCallbackParams_t *>
         AdvertisementReportCallback_t;
+#endif // BLE_ROLE_BROADCASTER
 
+#if BLE_FEATURE_CONNECTABLE
     /**
      * Connection events.
      *
@@ -648,6 +657,7 @@ public:
         {
         }
     };
+#endif // BLE_FEATURE_CONNECTABLE
 
     /**
      * @copydoc ble::peripheral_privacy_configuration_t
@@ -827,6 +837,7 @@ public:
         RandomAddressType_t *addressType
     );
 
+#if BLE_ROLE_BROADCASTER
     /**
      * Get the minimum advertising interval in milliseconds, which can be used
      * for connectable advertising types.
@@ -884,7 +895,8 @@ public:
         "Use stopAdvertising(advertising_handle_t) instead."
     )
     virtual ble_error_t stopAdvertising(void);
-
+#endif //BLE_ROLE_BROADCASTER
+#if BLE_FEATURE_CONNECTABLE
     /**
      * Initiate a connection to a peer.
      *
@@ -1083,7 +1095,8 @@ public:
         Handle_t handle,
         const ConnectionParams_t *params
     );
-
+#endif // BLE_FEATURE_CONNECTABLE
+#if BLE_FEATURE_GATT_SERVER
     /**
      * Set the value of the device name characteristic in the Generic Access
      * Service.
@@ -1170,7 +1183,8 @@ public:
            is supported. */
         return BLE_ERROR_NOT_IMPLEMENTED;
     }
-
+#endif // BLE_FEATURE_GATT_SERVER
+#if BLE_ROLE_BROADCASTER
     /**
      * Set the radio's transmit power.
      *
@@ -1204,7 +1218,8 @@ public:
     virtual void getPermittedTxPowerValues(
         const int8_t **valueArrayPP, size_t *countP
     );
-
+#endif // BLE_ROLE_BROADCASTER
+#if BLE_FEATURE_WHITELIST
     /**
      * Get the maximum size of the whitelist.
      *
@@ -1341,8 +1356,10 @@ public:
         "Deprecated since addition of extended advertising support."
     )
     virtual InitiatorPolicyMode_t getInitiatorPolicyMode(void) const;
+#endif // BLE_FEATURE_WHITELIST
 
 protected:
+#if BLE_ROLE_OBSERVER
     /* Override the following in the underlying adaptation layer to provide the
       functionality of scanning. */
 
@@ -1364,6 +1381,7 @@ protected:
         "implement startScan(duplicates_filter_t, scan_duration_t, period)"
     )
     virtual ble_error_t startRadioScan(const GapScanningParams &scanningParams);
+#endif // BLE_ROLE_OBSERVER
 
     /*
      * APIs with nonvirtual implementations.
@@ -1385,6 +1403,7 @@ public:
     )
     GapState_t getState(void) const;
 
+#if BLE_ROLE_BROADCASTER
     /**
      * Set the advertising type to use during the advertising procedure.
      *
@@ -1701,7 +1720,8 @@ public:
         "Use setAdvertisingScanResponse() instead."
     )
     void clearScanResponse(void);
-
+#endif // BLE_ROLE_BROADCASTER
+#if BLE_ROLE_OBSERVER
     /**
      * Set the parameters used during a scan procedure.
      *
@@ -1911,6 +1931,7 @@ public:
         T *object,
         void (T::*callbackMember)(const AdvertisementCallbackParams_t *params)
     );
+#endif // BLE_ROLE_OBSERVER
 
     /**
      * Enable radio-notification events.
@@ -1936,6 +1957,7 @@ public:
     virtual ble_error_t initRadioNotification(void);
 
 private:
+#if BLE_ROLE_BROADCASTER
     /**
      * Set the advertising data and scan response in the vendor subsytem.
      *
@@ -2022,7 +2044,7 @@ public:
         "Use setAdvertisingParameters() instead."
     )
     void setAdvertisingParams(const GapAdvertisingParams &newParams);
-
+#endif // BLE_ROLE_BROADCASTER
     /* Event handlers. */
 public:
 
@@ -2063,7 +2085,7 @@ public:
         "Use setEventHandler() instead."
     )
     TimeoutEventCallbackChain_t &onTimeout();
-
+#if BLE_FEATURE_CONNECTABLE
     /**
      * Register a callback handling connection events.
      *
@@ -2173,7 +2195,7 @@ public:
         "Use setEventHandler() instead."
     )
     DisconnectionEventCallbackChain_t &onDisconnection();
-
+#endif //BLE_FEATURE_CONNECTABLE
     /**
      * Set the radio-notification events handler.
      *
@@ -2281,19 +2303,27 @@ public:
         /* Clear Gap state */
         state.advertising = 0;
         state.connected = 0;
+#if BLE_FEATURE_CONNECTABLE
         connectionCount = 0;
+#endif
 
         /* Clear scanning state */
+#if BLE_ROLE_OBSERVER
         scanningActive = false;
+#endif
 
+#if BLE_ROLE_BROADCASTER
         /* Clear advertising and scanning data */
         _advPayload.clear();
         _scanResponse.clear();
+#endif // BLE_ROLE_BROADCASTER
 
         /* Clear callbacks */
         timeoutCallbackChain.clear();
+#if BLE_FEATURE_CONNECTABLE
         connectionCallChain.clear();
         disconnectionCallChain.clear();
+#endif // BLE_FEATURE_CONNECTABLE
         radioNotificationCallback = NULL;
         onAdvertisementReport = NULL;
         _eventHandler = NULL;
@@ -2306,18 +2336,32 @@ protected:
      * Construct a Gap instance.
      */
     Gap() :
+#if BLE_ROLE_BROADCASTER
         _advParams(),
         _advPayload(),
+#endif // BLE_ROLE_BROADCASTER
+#if BLE_ROLE_OBSERVER
         _scanningParams(),
+#endif
+#if BLE_ROLE_BROADCASTER
         _scanResponse(),
+#endif
+#if BLE_FEATURE_CONNECTABLE
         connectionCount(0),
+#endif
         state(),
+#if BLE_ROLE_OBSERVER
         scanningActive(false),
+#endif
         timeoutCallbackChain(),
-        radioNotificationCallback(),
-        onAdvertisementReport(),
-        connectionCallChain(),
-        disconnectionCallChain()
+        radioNotificationCallback()
+#if BLE_ROLE_OBSERVER
+        , onAdvertisementReport()
+#endif
+#if BLE_FEATURE_CONNECTABLE
+        , connectionCallChain()
+        , disconnectionCallChain()
+#endif // BLE_FEATURE_CONNECTABLE
     {
         _advPayload.clear();
         _scanResponse.clear();
@@ -2325,6 +2369,7 @@ protected:
 
     /* Entry points for the underlying stack to report events back to the user. */
 public:
+#if BLE_FEATURE_CONNECTABLE
     /**
      * Notify all registered connection event handlers of a connection event.
      *
@@ -2429,7 +2474,8 @@ public:
         DisconnectionCallbackParams_t callbackParams(handle, reason);
         disconnectionCallChain.call(&callbackParams);
     }
-
+#endif // BLE_FEATURE_CONNECTABLE
+#if BLE_ROLE_OBSERVER
     /**
      * Forward a received advertising packet to all registered event handlers
      * listening for scanned packet events.
@@ -2499,7 +2545,7 @@ public:
         const uint8_t *advertisingData,
         BLEProtocol::AddressType_t addressType = BLEProtocol::AddressType::RANDOM_STATIC
     );
-
+#endif // BLE_ROLE_OBSERVER
     /**
      * Notify the occurrence of a timeout event to all registered timeout events
      * handler.
@@ -2529,6 +2575,7 @@ public:
     }
 
 protected:
+#if BLE_ROLE_BROADCASTER
     /**
      * Current advertising parameters.
      */
@@ -2538,31 +2585,36 @@ protected:
      * Current advertising data.
      */
     GapAdvertisingData _advPayload;
-
+#endif // BLE_ROLE_BROADCASTER
+#if BLE_ROLE_OBSERVER
     /**
      * Current scanning parameters.
      */
     GapScanningParams _scanningParams;
-
+#endif // BLE_ROLE_OBSERVER
+#if BLE_ROLE_BROADCASTER
     /**
      * Current scan response.
      */
     GapAdvertisingData _scanResponse;
-
+#endif BLE_ROLE_BROADCASTER
+#if BLE_FEATURE_CONNECTABLE
     /**
      * Number of open connections.
      */
     uint8_t connectionCount;
+#endif // BLE_FEATURE_CONNECTABLE
 
     /**
      * Current GAP state.
      */
     GapState_t state;
-
+#if BLE_ROLE_OBSERVER
     /**
      * Active scanning flag.
      */
     bool scanningActive;
+#endif // BLE_ROLE_OBSERVER
 
 protected:
     /**
@@ -2576,12 +2628,14 @@ protected:
      */
     RadioNotificationEventCallback_t radioNotificationCallback;
 
+#if BLE_ROLE_OBSERVER
     /**
      * The registered callback handler for scanned advertisement packet
      * notifications.
      */
     AdvertisementReportCallback_t onAdvertisementReport;
-
+#endif // BLE_ROLE_OBSERVER
+#if BLE_FEATURE_CONNECTABLE
     /**
      * Callchain containing all registered callback handlers for connection
      * events.
@@ -2593,7 +2647,7 @@ protected:
      * events.
      */
     DisconnectionEventCallbackChain_t disconnectionCallChain;
-
+#endif // BLE_FEATURE_CONNECTABLE
 private:
     /**
      * Callchain containing all registered callback handlers for shutdown
@@ -2623,6 +2677,7 @@ private:
 #pragma diag_suppress 1361
 #endif
 
+#if BLE_ROLE_OBSERVER
 template<typename T>
 ble_error_t Gap::startScan(
     T *object,
@@ -2639,7 +2694,9 @@ ble_error_t Gap::startScan(
 
     return err;
 }
+#endif // BLE_ROLE_OBSERVER
 
+#if BLE_FEATURE_CONNECTABLE
 template<typename T>
 void Gap::onConnection(T *tptr, void (T::*mptr)(const ConnectionCallbackParams_t *))
 {
@@ -2651,6 +2708,7 @@ void Gap::onDisconnection(T *tptr, void (T::*mptr)(const DisconnectionCallbackPa
 {
     disconnectionCallChain.add(tptr, mptr);
 }
+#endif //BLE_FEATURE_CONNECTABLE
 
 template<typename T>
 void Gap::onRadioNotification(T *tptr, void (T::*mptr)(bool))

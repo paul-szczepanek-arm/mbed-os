@@ -15,6 +15,7 @@
  */
 
 #include "ble/gap/Gap.h"
+#include "BLERoles.h"
 
 namespace ble {
 
@@ -23,6 +24,7 @@ bool Gap::isFeatureSupported(controller_supported_features_t feature)
     return false;
 }
 
+#if BLE_ROLE_BROADCASTER
 uint8_t Gap::getMaxAdvertisingSetNumber()
 {
     /* Requesting action from porter(s): override this API if this capability is supported. */
@@ -110,7 +112,9 @@ bool Gap::isAdvertisingActive(advertising_handle_t handle)
 {
     return false;
 }
+#endif // BLE_ROLE_BROADCASTER
 
+#if BLE_FEATURE_PERIODIC_ADVERTISING
 ble_error_t Gap::setPeriodicAdvertisingParameters(
     advertising_handle_t handle,
     periodic_interval_t periodicAdvertisingIntervalMin,
@@ -148,7 +152,9 @@ bool Gap::isPeriodicAdvertisingActive(advertising_handle_t handle)
     /* Requesting action from porter(s): override this API if this capability is supported. */
     return false;
 }
+#endif // BLE_FEATURE_PERIODIC_ADVERTISING
 
+#if BLE_ROLE_OBSERVER
 ble_error_t Gap::setScanParameters(const ScanParameters &params)
 {
     useVersionTwoAPI();
@@ -173,7 +179,8 @@ ble_error_t Gap::stopScan()
        is supported. */
     return BLE_ERROR_NOT_IMPLEMENTED;
 }
-
+#endif // BLE_ROLE_OBSERVER
+#if BLE_FEATURE_PERIODIC_ADVERTISING
 ble_error_t Gap::createSync(
     peer_address_type_t peerAddressType,
     const address_t &peerAddress,
@@ -238,7 +245,9 @@ uint8_t Gap::getMaxPeriodicAdvertiserListSize()
     /* Requesting action from porter(s): override this API if this capability is supported. */
     return 0;
 }
+#endif // BLE_FEATURE_PERIODIC_ADVERTISING
 
+#if BLE_FEATURE_CONNECTABLE
 ble_error_t Gap::connect(
     peer_address_type_t peerAddressType,
     const address_t &peerAddress,
@@ -303,7 +312,9 @@ ble_error_t Gap::disconnect(
     // Forward to the old implementation for now.
     return BLE_ERROR_NOT_IMPLEMENTED;
 }
+#endif BLE_FEATURE_CONNECTABLE
 
+#if BLE_FEATURE_PHY_MANAGEMENT
 ble_error_t Gap::readPhy(connection_handle_t connection)
 {
     return BLE_ERROR_NOT_IMPLEMENTED;
@@ -326,6 +337,7 @@ ble_error_t Gap::setPhy(
 {
     return BLE_ERROR_NOT_IMPLEMENTED;
 }
+#endif // BLE_FEATURE_PHY_MANAGEMENT
 
 /* -------------------- Future deprecation ------------------------- */
 
@@ -339,6 +351,7 @@ const central_privay_configuration_t Gap::default_central_privacy_configuration 
     /* resolution_strategy */ central_privay_configuration_t::RESOLVE_AND_FORWARD
 };
 
+#if BLE_FEATURE_PRIVACY
 ble_error_t Gap::enablePrivacy(bool enable)
 {
     return BLE_ERROR_NOT_IMPLEMENTED;
@@ -371,7 +384,7 @@ ble_error_t Gap::getCentralPrivacyConfiguration(
 {
     return BLE_ERROR_NOT_IMPLEMENTED;
 }
-
+#endif // BLE_FEATURE_PRIVACY
 
 } // namespace ble
 
