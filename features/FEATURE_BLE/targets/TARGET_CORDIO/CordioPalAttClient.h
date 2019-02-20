@@ -33,13 +33,8 @@ namespace vendor {
 namespace cordio {
 
 class CordioAttClient : public ::ble::pal::AttClient {
-
 public:
-    CordioAttClient() : ::ble::pal::AttClient(), _local_sign_counter(0) {
-#if !(BLE_FEATURE_ATT)
-#error "Both GattClient and GattSever disabled in config file."
-#endif
-    }
+    CordioAttClient() : ::ble::pal::AttClient(), _local_sign_counter(0) { }
 
     virtual ~CordioAttClient() { }
 
@@ -326,6 +321,7 @@ public:
      */
     static void att_client_handler(const attEvt_t* event)
     {
+#if BLE_FEATURE_GATT_CLIENT
         // all handlers are stored in a static array
         static const event_handler_t handlers[] = {
             &timeout_event_handler,
@@ -358,6 +354,7 @@ public:
                 return;
             }
         }
+#endif // BLE_FEATURE_GATT_CLIENT
 
 #if BLE_FEATURE_GATT_SERVER
         // pass events not handled to the server side

@@ -16,7 +16,7 @@
 
 #include <algorithm>
 #include "CordioBLE.h"
-#include "CordioGattServer.h"
+#include "CordioattServer.h"
 #include "mbed.h"
 #include "wsf_types.h"
 #include "att_api.h"
@@ -1272,6 +1272,7 @@ bool GattServer::is_update_authorized(
     }
 }
 
+#if BLE_FEATURE_GATT_SERVER
 GattServer::GattServer() :
     ::GattServer(),
 #if BLE_FEATURE_SIGNING
@@ -1289,10 +1290,8 @@ GattServer::GattServer() :
     allocated_blocks(NULL),
     currentHandle(0)
 {
-#if !(BLE_FEATURE_GATT_SERVER)
-#error "GattSever disabled in config file."
-#endif
 }
+#endif // BLE_FEATURE_GATT_SERVER
 
 } // namespace cordio
 } // namespace vendor
