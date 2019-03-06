@@ -1404,7 +1404,7 @@ int serial_writable(serial_t *obj)
     int instance = uart_object->instance;
 
     return (!core_util_atomic_load_bool(&nordic_nrf5_uart_state[instance].tx_in_progress) &&
-            (nrf_uarte_event_extra_check(nordic_nrf5_uart_register[instance], NRF_UARTE_EVENT_TXDRDY)));
+            (nrf_uarte_event_check(nordic_nrf5_uart_register[instance], NRF_UARTE_EVENT_TXDRDY)));
 }
 
 const PinMap *serial_tx_pinmap()
