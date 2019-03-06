@@ -40,11 +40,10 @@
 
 #if DEVICE_QSPI
 
+#include <string.h>
 #include "nrf_drv_common.h"
 #include "PeripheralPins.h"
-#include "nrfx_glue.h"
 #include "nrfx_qspi.h"
-#include "string.h"
 
 /* 
 TODO
@@ -458,8 +457,8 @@ qspi_status_t sfdp_read(qspi_t *obj, const qspi_command_t *command, void *data, 
         qspi_cinstr_config.io3_level = true;
         qspi_cinstr_config.wipwait   = false;
         qspi_cinstr_config.wren      = false;
-        /*qspi_cinstr_config.lfen      = true;
-        qspi_cinstr_config.lfstop    = false;*/
+        qspi_cinstr_config.lfen      = true;
+        qspi_cinstr_config.lfstop    = false;
 
         // read the SFDP data, cmd + 8 bytes at a time
         uint8_t sfdp_data[SFDP_READ_LEN];
@@ -470,9 +469,9 @@ qspi_status_t sfdp_read(qspi_t *obj, const qspi_command_t *command, void *data, 
             static uint32_t rx_i = 0;
             memset(sfdp_data, 0, SFDP_READ_LEN);
 
-            /*if (i == (SFDP_READ_MAX - 1) ){
+            if (i == (SFDP_READ_MAX - 1) ){
                 qspi_cinstr_config.lfstop = true;
-            }*/
+            }
 
             ret_code = nrfx_qspi_cinstr_xfer(&qspi_cinstr_config, sfdp_data, sfdp_data);
             if (ret_code != NRF_SUCCESS) {
@@ -489,7 +488,7 @@ qspi_status_t sfdp_read(qspi_t *obj, const qspi_command_t *command, void *data, 
 
         // re-send just the SFDP CMD to offset the next read by DWORD
         uint8_t sfdp_cmd[SFDP_CMD_LEN] = { 0 };
-        /*qspi_cinstr_config.lfstop = false;*/
+        qspi_cinstr_config.lfstop = false;
         qspi_cinstr_config.length = NRF_QSPI_CINSTR_LEN_5B;
 
         ret_code = nrfx_qspi_cinstr_xfer(&qspi_cinstr_config, sfdp_cmd, sfdp_cmd);
@@ -504,9 +503,9 @@ qspi_status_t sfdp_read(qspi_t *obj, const qspi_command_t *command, void *data, 
             static uint32_t rx_i = DWORD_LEN;  // offset sfdp_rx data start
             memset(sfdp_data, 0, SFDP_READ_LEN);
 
-            /*if (i == (SFDP_READ_MAX - 1) ){
+            if (i == (SFDP_READ_MAX - 1) ){
                 qspi_cinstr_config.lfstop = true;
-            }*/
+            }
 
             ret_code = nrfx_qspi_cinstr_xfer(&qspi_cinstr_config, sfdp_data, sfdp_data);
             if (ret_code != NRF_SUCCESS) {
