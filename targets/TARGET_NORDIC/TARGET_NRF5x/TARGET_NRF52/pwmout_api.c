@@ -39,10 +39,8 @@
 #if DEVICE_PWMOUT
 
 #include "hal/pwmout_api.h"
-
-#include "pinmap_ex.h"
-#include "nrf_drv_pwm.h"
 #include "PeripheralPins.h"
+#include "pinmap_ex.h"
 #include "nrfx_pwm.h"
 
 #if 0

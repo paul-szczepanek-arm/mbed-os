@@ -45,12 +45,10 @@
 #include "nrf_atfifo.h"
 #include "app_util_platform.h"
 #include "pinmap_ex.h"
-#include "nrf_drv_ppi.h"
-#include "nrf_drv_gpiote.h"
-#include "PeripheralPins.h"
 #include "nrfx_glue.h"
 #include "nrfx_gpiote.h"
 #include "nrfx_ppi.h"
+#include "PeripheralPins.h"
 
 #include "platform/mbed_critical.h"
 
