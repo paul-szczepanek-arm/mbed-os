@@ -250,11 +250,14 @@ TEST_F(Test_LoRaWANStack, connect)
     equeue_stub.call_cb_immediately = true;
     loramac_mcps_confirm_t conf;
     LoRaMac_stub::mcps_conf_ptr = &conf;
-    radio._ev->tx_done();
+    conf.req_type = MCPS_CONFIRMED;
 
     loramac_mcps_indication_t ind;
     LoRaMac_stub::mcps_ind_ptr = &ind;
     ind.status = LORAMAC_EVENT_INFO_STATUS_OK;
+    ind.is_ack_recvd = true;
+
+    radio._ev->tx_done();
 
     loramac_mlme_indication_t mlme_ind;
     mlme_ind.indication_type = MLME_JOIN_ACCEPT;
@@ -479,6 +482,7 @@ TEST_F(Test_LoRaWANStack, handle_rx)
     loramac_mlme_confirm_t mlme;
     LoRaMac_stub::mlme_conf_ptr = &mlme;
     mlme.status = LORAMAC_EVENT_INFO_STATUS_OK;
+    mlme.type = MLME_SCHEDULE_UPLINK;
     LoRaMac_stub::bool_value = true;
     conf.req_type = MCPS_PROPRIETARY;
 
@@ -505,8 +509,8 @@ TEST_F(Test_LoRaWANStack, handle_rx)
     //data == NULL || LENGTH == 0 (2 cases)
     EXPECT_TRUE(LORAWAN_STATUS_PARAMETER_INVALID == object->handle_rx(NULL, 0, port, flags, false));
     uint8_t data[50];
-    EXPECT_TRUE(LORAWAN_STATUS_PARAMETER_INVALID == object->handle_rx(data, 0, port, flags, false));
 
+    EXPECT_TRUE(LORAWAN_STATUS_PARAMETER_INVALID == object->handle_rx(data, 0, port, flags, false));
     //validate_params returns Would block
     port = 43;
     EXPECT_TRUE(LORAWAN_STATUS_WOULD_BLOCK == object->handle_rx(data, 50, port, flags, true));
@@ -674,6 +678,7 @@ TEST_F(Test_LoRaWANStack, acquire_rx_metadata)
     loramac_mlme_confirm_t mlme;
     mlme.status = LORAMAC_EVENT_INFO_STATUS_OK;
     LoRaMac_stub::mlme_conf_ptr = &mlme;
+    mlme.type = MLME_SCHEDULE_UPLINK;
 
     //Visit mlme_confirm_handler here also
     mlme.status = LORAMAC_EVENT_INFO_STATUS_CRYPTO_FAIL;
@@ -751,6 +756,7 @@ TEST_F(Test_LoRaWANStack, interrupt_functions)
     equeue_stub.void_ptr = &ptr;
     equeue_stub.call_cb_immediately = true;
     loramac_mcps_confirm_t conf;
+    conf.status = LORAMAC_EVENT_INFO_STATUS_OK;
     LoRaMac_stub::mcps_conf_ptr = &conf;
     radio._ev->tx_done();
 
@@ -760,6 +766,7 @@ TEST_F(Test_LoRaWANStack, interrupt_functions)
     loramac_mlme_confirm_t mlme;
     LoRaMac_stub::mlme_conf_ptr = &mlme;
     mlme.status = LORAMAC_EVENT_INFO_STATUS_OK;
+    mlme.type = MLME_SCHEDULE_UPLINK;
     LoRaMac_stub::bool_value = false;
     radio._ev->rx_done(NULL, 0, 0, 0);
 
@@ -812,6 +819,7 @@ TEST_F(Test_LoRaWANStack, process_transmission)
     equeue_stub.void_ptr = &ptr;
     equeue_stub.call_cb_immediately = true;
     loramac_mcps_confirm_t conf;
+    conf.status = LORAMAC_EVENT_INFO_STATUS_OK;
     LoRaMac_stub::mcps_conf_ptr = &conf;
     radio._ev->tx_done();
 
@@ -821,6 +829,7 @@ TEST_F(Test_LoRaWANStack, process_transmission)
     loramac_mlme_confirm_t mlme;
     LoRaMac_stub::mlme_conf_ptr = &mlme;
     mlme.status = LORAMAC_EVENT_INFO_STATUS_OK;
+    mlme.type = MLME_SCHEDULE_UPLINK;
     LoRaMac_stub::bool_value = false;
     radio._ev->rx_done(NULL, 0, 0, 0);
 
@@ -867,6 +876,7 @@ TEST_F(Test_LoRaWANStack, process_reception)
     equeue_stub.void_ptr = &ptr;
     equeue_stub.call_cb_immediately = true;
     loramac_mcps_confirm_t conf;
+    conf.status = LORAMAC_EVENT_INFO_STATUS_OK;
     memset(&conf, 0, sizeof(&conf));
     LoRaMac_stub::mcps_conf_ptr = &conf;
     radio._ev->tx_done();
@@ -878,6 +888,7 @@ TEST_F(Test_LoRaWANStack, process_reception)
     loramac_mlme_confirm_t mlme;
     LoRaMac_stub::mlme_conf_ptr = &mlme;
     mlme.status = LORAMAC_EVENT_INFO_STATUS_OK;
+    mlme.type = MLME_SCHEDULE_UPLINK;
     LoRaMac_stub::bool_value = true;
     conf.req_type = MCPS_PROPRIETARY;
 
