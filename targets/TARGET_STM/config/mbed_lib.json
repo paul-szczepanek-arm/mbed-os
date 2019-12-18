@@ -1,0 +1,9 @@
+{
+    "name": "hal_rtc_optimised",
+    "config": {
+        "enable_binary_format": {
+            "help": "Enable binary format",
+            "value": 1
+        }
+    }
+}
