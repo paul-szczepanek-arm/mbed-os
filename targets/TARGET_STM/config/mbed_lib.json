@@ -1,0 +1,10 @@
+{
+    "name": "st_hal",
+    "config": {
+        "binary_format_enabled" : 
+        {
+          "help" : "enable binary format",
+          "value" : 1
+        }
+    }
+  }
