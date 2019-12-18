@@ -419,8 +419,8 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
   __HAL_LOCK(hrtc);
 
   hrtc->State = HAL_RTC_STATE_BUSY;
-
-  if(Format == RTC_FORMAT_BIN)
+#if (MBED_CONF_HAL_RTC_OPTIMIZE_ENABLE_BINARY_FORMAT == 1)
+  //if(Format == RTC_FORMAT_BIN)
   {
     if((hrtc->Instance->CR & RTC_CR_FMT) != (uint32_t)RESET)
     {
@@ -440,7 +440,8 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
                         ((uint32_t)RTC_ByteToBcd2(sTime->Seconds)) | \
                         (((uint32_t)sTime->TimeFormat) << 16U));
   }
-  else
+#else
+//  else
   {
     if((hrtc->Instance->CR & RTC_CR_FMT) != (uint32_t)RESET)
     {
@@ -460,6 +461,7 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
               ((uint32_t)sTime->Seconds) | \
               ((uint32_t)(sTime->TimeFormat) << 16U));
   }
+#endif
   UNUSED(tmpreg);
   /* Disable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_DISABLE(hrtc);
