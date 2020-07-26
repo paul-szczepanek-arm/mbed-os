@@ -37,7 +37,7 @@
 #include "ble/internal/pal/PalGap.h"
 #include "ble/internal/pal/GapEvents.h"
 #include "ble/internal/pal/GapTypes.h"
-#include "ble/internal/pal/EventQueue.h"
+#include "ble/internal/pal/PalEventQueue.h"
 #include "ble/internal/pal/ConnectionMonitor.h"
 
 #include "ble/Gap.h"
@@ -1239,7 +1239,7 @@ public:
 
 protected:
     Gap(
-        pal::EventQueue &event_queue,
+        pal::PalEventQueue &event_queue,
         pal::Gap &pal_gap,
         pal::GenericAccessService &generic_access_service,
         pal::SecurityManager &pal_sm
@@ -1421,7 +1421,7 @@ private:
      */
     ble::Gap::EventHandler *_eventHandler;
 
-    pal::EventQueue &_event_queue;
+    pal::PalEventQueue &_event_queue;
     pal::Gap &_pal_gap;
     pal::GenericAccessService &_gap_service;
     pal::SecurityManager &_pal_sm;

@@ -22,6 +22,7 @@
 #include "platform/mbed_assert.h"
 
 #include "ble/BLE.h"
+#include "ble/Gap.h"
 
 /**
  * BLE Battery service.

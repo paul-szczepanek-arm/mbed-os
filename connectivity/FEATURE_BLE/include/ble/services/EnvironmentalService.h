@@ -18,6 +18,7 @@
 #define __BLE_ENVIRONMENTAL_SERVICE_H__
 
 #include "ble/BLE.h"
+#include "ble/Gap.h"
 
 #if BLE_FEATURE_GATT_SERVER
 

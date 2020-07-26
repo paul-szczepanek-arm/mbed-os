@@ -308,7 +308,7 @@ const central_privacy_configuration_t Gap::default_central_privacy_configuration
 };
 
 Gap::Gap(
-    pal::EventQueue &event_queue,
+    pal::PalEventQueue &event_queue,
     pal::Gap &pal_gap,
     pal::GenericAccessService &generic_access_service,
     pal::SecurityManager &pal_sm

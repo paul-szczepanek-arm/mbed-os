@@ -36,16 +36,16 @@ namespace pal {
  * Events in the queue shall be processed at the next invocation of
  * BLEInstanceBase::processEvents.
  */
-struct EventQueue {
+struct PalEventQueue {
     /**
      * Base constructor of an event queue.
      */
-    EventQueue() { }
+    PalEventQueue() { }
 
     /**
      * Destructor, needs to be overiden in implementation
      */
-    ~EventQueue() { }
+    virtual ~PalEventQueue() { }
 
     /**
      * Post an event into the event queue.

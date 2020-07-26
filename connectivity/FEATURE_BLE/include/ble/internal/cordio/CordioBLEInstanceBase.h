@@ -30,7 +30,7 @@
 #include "ble/Gap.h"
 #include "CordioPalGenericAccessService.h"
 #include "ble/SecurityManager.h"
-#include "SimpleEventQueue.h"
+#include "SimplePalEventQueue.h"
 #include "drivers/LowPowerTimer.h"
 #include "SigningMonitor.h"
 #include "ble/internal/pal/PalSecurityManager.h"
@@ -164,7 +164,7 @@ private:
     } initialization_status;
 
     ::BLE::InstanceID_t instanceID;
-    mutable SimpleEventQueue _event_queue;
+    mutable ble::SimplePalEventQueue _event_queue;
     mbed::LowPowerTimer _timer;
     uint64_t _last_update_us;
 };

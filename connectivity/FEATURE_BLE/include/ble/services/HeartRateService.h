@@ -18,6 +18,8 @@
 #define MBED_BLE_HEART_RATE_SERVICE_H__
 
 #include "ble/BLE.h"
+#include "ble/Gap.h"
+#include "ble/GattServer.h"
 
 #if BLE_FEATURE_GATT_SERVER
 

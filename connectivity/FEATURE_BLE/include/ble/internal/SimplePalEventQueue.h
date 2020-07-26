@@ -18,7 +18,7 @@
 #define BLE_PAL_SIMPLE_EVENT_QUEUE_H_
 
 #include <new>
-#include "pal/EventQueue.h"
+#include "pal/PalEventQueue.h"
 #include "ble/internal/BLEInstanceBase.h"
 #include "ble/BLE.h"
 
@@ -27,7 +27,7 @@ namespace ble {
 /**
  * Simple implementation of the pal::EventQueue.
  */
-struct SimpleEventQueue : pal::EventQueue {
+struct SimplePalEventQueue : pal::PalEventQueue {
 
     typedef mbed::Callback<void()> event_t;
 
@@ -39,7 +39,7 @@ struct SimpleEventQueue : pal::EventQueue {
      * @param ble_instance_id The id of the ble instance associated with that
      * event queue.
      */
-    SimpleEventQueue() :
+    SimplePalEventQueue() :
         _ble_base(NULL), _ble_instance_id(0), _events(NULL) { }
 
     /**
@@ -59,7 +59,7 @@ struct SimpleEventQueue : pal::EventQueue {
     /**
      * @see ble::pal::EventQueue
      */
-    ~SimpleEventQueue()
+    ~SimplePalEventQueue()
     {
         clear();
     }

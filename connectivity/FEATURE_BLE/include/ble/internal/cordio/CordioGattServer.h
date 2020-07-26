@@ -118,6 +118,24 @@ class GattServer :
     friend ble::pal::CordioPalAttClient;
     friend CordioSigningMonitor;
     friend CordioBLEInstanceBase;
+
+// inherited typedefs have the wrong types so we have to redefine them
+public:
+    /**
+     * Event handler invoked when the GattServer is reset.
+     *
+     * @see onShutdown() reset()
+     */
+    typedef FunctionPointerWithContext<const GattServer *>
+        GattServerShutdownCallback_t;
+
+    /**
+     * Callchain of GattServerShutdownCallback_t.
+     *
+     * @see onShutdown() reset()
+     */
+    typedef CallChainOfFunctionPointersWithContext<const GattServer*>
+        GattServerShutdownCallbackChain_t;
 public:
     /**
      * Assign the event handler implementation that will be used by the

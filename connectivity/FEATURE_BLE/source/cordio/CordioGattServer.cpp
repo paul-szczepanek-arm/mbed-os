@@ -1448,7 +1448,7 @@ void GattServer::onShutdown(const GattServerShutdownCallback_t &callback)
 }
 
 template <typename T>
-void GattServer::onShutdown(T *objPtr, void (T::*memberPtr)(const GattServer *))
+void GattServer::onShutdown(T *objPtr, void (T::*memberPtr)(const ble::GattServer *))
 {
     shutdownCallChain.add(objPtr, memberPtr);
 }
