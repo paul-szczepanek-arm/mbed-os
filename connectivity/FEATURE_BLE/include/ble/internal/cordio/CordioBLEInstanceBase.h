@@ -32,7 +32,7 @@
 #include "ble/SecurityManager.h"
 #include "SimplePalEventQueue.h"
 #include "drivers/LowPowerTimer.h"
-#include "SigningMonitor.h"
+#include "PalSigningMonitor.h"
 #include "ble/internal/pal/PalSecurityManager.h"
 
 namespace ble {
@@ -118,7 +118,7 @@ public:
      *
      * @return PAL Gatt Client.
      */
-    pal::GattClient &getPalGattClient();
+    pal::PalGattClient &getPalGattClient();
 #endif // BLE_FEATURE_GATT_CLIENT
 
 #if BLE_FEATURE_SECURITY

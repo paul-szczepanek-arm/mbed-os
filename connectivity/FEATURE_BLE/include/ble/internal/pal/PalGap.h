@@ -28,10 +28,10 @@
 namespace ble {
 namespace pal {
 
-struct GapEventHandler {
+struct PalGapEventHandler {
 public:
     /**
-     * @copydoc Gap::EventHandler::onReadPhy
+     * @copydoc PalGap::EventHandler::onReadPhy
      */
     void on_read_phy(
         pal::hci_error_code_t status,
@@ -41,7 +41,7 @@ public:
     );
 
     /**
-     * @copydoc Gap::EventHandler::onDataLengthChange
+     * @copydoc PalGap::EventHandler::onDataLengthChange
      */
     void on_data_length_change(
         connection_handle_t connection_handle,
@@ -50,7 +50,7 @@ public:
     );
 
     /**
-     * @copydoc Gap::EventHandler::onPhyUpdateComplete
+     * @copydoc PalGap::EventHandler::onPhyUpdateComplete
      */
     void on_phy_update_complete(
         pal::hci_error_code_t status,
@@ -60,7 +60,7 @@ public:
     );
 
     /**
-     * Should be invoked by the Gap implementation when an enhanced
+     * Should be invoked by the PalGap implementation when an enhanced
      * connection complete event happens.
      *
      * @param status hci_error_code::SUCCESS in case of success or an error
@@ -249,7 +249,7 @@ public:
  * follow closely the definition of the HCI commands and events used
  * by that layer.
  */
-class Gap {
+class PalGap {
 public:
 
     /**
@@ -1583,12 +1583,12 @@ public:
     );
 
     /**
-    * @see Gap::readPhy
+    * @see PalGap::readPhy
     */
     ble_error_t read_phy(connection_handle_t connection);
 
     /**
-    * @see Gap::setPreferredPhys
+    * @see PalGap::setPreferredPhys
     */
     ble_error_t set_preferred_phys(
         const phy_set_t &tx_phys,
@@ -1596,7 +1596,7 @@ public:
     );
 
     /**
-    * @see Gap::setPhy
+    * @see PalGap::setPhy
     */
     ble_error_t set_phy(
         connection_handle_t connection,
@@ -1606,9 +1606,9 @@ public:
     );
 
     /**
-     * Register a callback which will handle Gap events.
+     * Register a callback which will handle PalGap events.
      *
-     * @param cb The callback object which will handle Gap events from the
+     * @param cb The callback object which will handle PalGap events from the
      * LE subsystem.
      * It accept a single parameter in input: The event received.
      */
@@ -1621,17 +1621,17 @@ public:
     * @param[in] event_handler the new event handler interface implementation. Memory
     * owned by caller who is responsible for updating this pointer if interface changes.
     */
-    void set_event_handler(GapEventHandler *event_handler);
+    void set_event_handler(PalGapEventHandler *event_handler);
 
-    GapEventHandler *get_event_handler();
+    PalGapEventHandler *get_event_handler();
 
 protected:
-    Gap() { };
-    ~Gap() { };
+    PalGap() { };
+    ~PalGap() { };
 
     /**
      * Implementation shall call this function whenever the LE subsystem
-     * generate a Gap event.
+     * generate a PalGap event.
      *
      * @param gap_event The event to emit to higher layer.
      */
@@ -1661,8 +1661,8 @@ public:
 
 private:
     // Disallow copy construction and copy assignment.
-    Gap(const Gap &);
-    Gap &operator=(const Gap &);
+    PalGap(const PalGap &);
+    PalGap &operator=(const PalGap &);
 };
 
 } // namespace pal

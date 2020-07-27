@@ -25,7 +25,7 @@ namespace pal {
 /**
  * Implemented by classes that are reacting to signing events.
  */
-class SigningMonitorEventHandler {
+class PalSigningMonitorEventHandler {
 public:
     /**
      * Set new signed write peer counter.
@@ -63,14 +63,14 @@ public:
  * Implemented by classes that need to be notified of signing events.
  * Notification is done by calling functions in the passed in event handler
  */
-class SigningMonitor {
+class PalSigningMonitor {
 public:
     /**
      * Register a handler for singing events to be used internally and serviced first.
      *
      * @param[in] signing_event_handler Event handler being registered.
      */
-    void set_signing_event_handler(SigningMonitorEventHandler *signing_event_handler);
+    void set_signing_event_handler(PalSigningMonitorEventHandler *signing_event_handler);
 };
 
 } // namespace pal

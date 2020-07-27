@@ -25,7 +25,7 @@
 #include "pal/PalGap.h"
 #include "pal/GapEvents.h"
 #include "pal/GapTypes.h"
-#include "pal/GenericAccessService.h"
+#include "pal/PalGenericAccessService.h"
 
 #include "drivers/Timeout.h"
 
@@ -309,9 +309,9 @@ const central_privacy_configuration_t Gap::default_central_privacy_configuration
 
 Gap::Gap(
     pal::PalEventQueue &event_queue,
-    pal::Gap &pal_gap,
-    pal::GenericAccessService &generic_access_service,
-    pal::SecurityManager &pal_sm
+    pal::PalGap &pal_gap,
+    pal::PalGenericAccessService &generic_access_service,
+    pal::PalSecurityManager &pal_sm
 ) : _event_queue(event_queue),
     _pal_gap(pal_gap),
     _gap_service(generic_access_service),
@@ -1796,11 +1796,11 @@ ble_error_t Gap::setAdvertisingData(
 {
     // type declarations
     typedef pal::advertising_fragment_description_t op_t;
-    typedef ble_error_t (pal::Gap::*legacy_set_data_fn_t)(
+    typedef ble_error_t (pal::PalGap::*legacy_set_data_fn_t)(
         uint8_t,
         const pal::advertising_data_t &
     );
-    typedef ble_error_t (pal::Gap::*set_data_fn_t)(
+    typedef ble_error_t (pal::PalGap::*set_data_fn_t)(
         advertising_handle_t advertising_handle,
         op_t operation,
         bool minimize_fragmentation,
@@ -1834,8 +1834,8 @@ ble_error_t Gap::setAdvertisingData(
 
         // select the pal function
         legacy_set_data_fn_t set_data = scan_response ?
-            &pal::Gap::set_scan_response_data :
-            &pal::Gap::set_advertising_data;
+            &pal::PalGap::set_scan_response_data :
+            &pal::PalGap::set_advertising_data;
 
         // set the payload
         return (_pal_gap.*set_data)(
@@ -1872,8 +1872,8 @@ ble_error_t Gap::setAdvertisingData(
 
     // select the pal function
     set_data_fn_t set_data = scan_response ?
-        &pal::Gap::set_extended_scan_response_data :
-        &pal::Gap::set_extended_advertising_data;
+        &pal::PalGap::set_extended_scan_response_data :
+        &pal::PalGap::set_extended_advertising_data;
 
     const size_t hci_length = _pal_gap.get_maximum_hci_advertising_data_length();
 

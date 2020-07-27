@@ -26,7 +26,7 @@
 #include "ble/types/CharacteristicDescriptorDiscovery.h"
 #include "ble/types/GattCallbackParamTypes.h"
 #include "ble/internal/pal/PalGattClient.h"
-#include "ble/internal/pal/SigningMonitor.h"
+#include "ble/internal/pal/PalSigningMonitor.h"
 #include "ble/GattClient.h"
 
 namespace ble {
@@ -90,8 +90,8 @@ class CordioSigningMonitor;
  */
 class GattClient :
         public ble::interface::GattClient,
-        public pal::SigningMonitor,
-        public pal::GattClientEventHandler {
+        public pal::PalSigningMonitor,
+        public pal::PalGattClientEventHandler {
 public:
     friend CordioSigningMonitor;
     friend CordioBLEInstanceBase;
@@ -589,12 +589,12 @@ private:
 public:
 
     /**
-     * @see ble::pal::SigningMonitor::set_signing_event_handler
+     * @see ble::pal::PalSigningMonitor::set_signing_event_handler
      */
-    void set_signing_event_handler(pal::SigningMonitorEventHandler *signing_event_handler);
+    void set_signing_event_handler(pal::PalSigningMonitorEventHandler *signing_event_handler);
 
     /**
-     * @see pal::GattClient::EventHandler::on_att_mtu_change
+     * @see pal::PalGattClient::EventHandler::on_att_mtu_change
      */
     void on_att_mtu_change(
         ble::connection_handle_t connection_handle,
@@ -602,7 +602,7 @@ public:
     );
 
     /**
-     * @see pal::GattClient::EventHandler::on_write_command_sent
+     * @see pal::PalGattClient::EventHandler::on_write_command_sent
      */
     void on_write_command_sent(
         ble::connection_handle_t connection_handle,
@@ -661,17 +661,17 @@ private:
      */
     GattClientShutdownCallbackChain_t shutdownCallChain;
 
-    pal::GattClient& _pal_client;
+    pal::PalGattClient& _pal_client;
     ServiceDiscovery::TerminationCallback_t _termination_callback;
-    pal::SigningMonitorEventHandler* _signing_event_handler;
+    pal::PalSigningMonitorEventHandler* _signing_event_handler;
     mutable ProcedureControlBlock* control_blocks;
     bool _is_reseting;
 
 protected:
     /**
-     * Create a GattClient from a pal::GattClient
+     * Create a PalGattClient from a pal::PalGattClient
      */
-    GattClient(pal::GattClient& pal_client);
+    GattClient(pal::PalGattClient& pal_client);
 
 #endif // !defined(DOXYGEN_ONLY)
 };

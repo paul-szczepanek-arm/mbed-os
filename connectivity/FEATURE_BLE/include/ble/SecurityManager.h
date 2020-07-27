@@ -28,8 +28,8 @@
 #include "ble/internal/pal/GapTypes.h"
 #include "ble/types/BLETypes.h"
 #include "ble/internal/SecurityDb.h"
-#include "ble/internal/pal/ConnectionMonitor.h"
-#include "ble/internal/pal/SigningMonitor.h"
+#include "ble/internal/pal/PalConnectionMonitor.h"
+#include "ble/internal/pal/PalSigningMonitor.h"
 #include "ble/internal/pal/PalSecurityManager.h"
 
 namespace ble {

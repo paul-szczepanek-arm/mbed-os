@@ -31,7 +31,7 @@ using ble::pal::connection_peer_address_type_t;
 
 namespace ble {
 
-/* Implements SecurityManager */
+/* Implements PalSecurityManager */
 
 ////////////////////////////////////////////////////////////////////////////
 // SM lifecycle management
@@ -1294,7 +1294,7 @@ void SecurityManager::on_identity_list_retrieved(
     delete [] identity_list.data();
 }
 
-/* Implements ble::pal::SecurityManagerEventHandler */
+/* Implements ble::pal::PalSecurityManagerEventHandler */
 
 ////////////////////////////////////////////////////////////////////////////
 // Pairing

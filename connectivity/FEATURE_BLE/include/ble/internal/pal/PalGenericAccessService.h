@@ -23,7 +23,7 @@
 #include "ble/Gap.h"
 
 namespace ble {
-namespace pal {
+namespace interface {
 
 /**
  * Manage state of the GAP service exposed by the GATT server.
@@ -31,16 +31,16 @@ namespace pal {
  * @see Bluetooth 4.2 Vol 3 PartC: 12 - GAP service and characteristics for GATT
  * server.
  */
-struct GenericAccessService {
+struct PalGenericAccessService {
     /**
      * Empty, default, constructor
      */
-    GenericAccessService() { }
+    PalGenericAccessService() { }
 
     /**
      * Virtual destructor
      */
-    virtual ~GenericAccessService() { }
+    virtual ~PalGenericAccessService() { }
 
     /**
      * Acquire the peripheral preferred connection parameters stored in the GAP
@@ -77,8 +77,8 @@ struct GenericAccessService {
    ) = 0;
 
 private:
-    GenericAccessService(const GenericAccessService&);
-    GenericAccessService& operator=(const GenericAccessService&);
+    PalGenericAccessService(const PalGenericAccessService&);
+    PalGenericAccessService& operator=(const PalGenericAccessService&);
 };
 
 } // namespace pal

@@ -28,8 +28,8 @@
 #include "ble/internal/pal/GapTypes.h"
 #include "ble/types/BLETypes.h"
 #include "ble/internal/SecurityDb.h"
-#include "ble/internal/pal/ConnectionMonitor.h"
-#include "ble/internal/pal/SigningMonitor.h"
+#include "ble/internal/pal/PalConnectionMonitor.h"
+#include "ble/internal/pal/PalSigningMonitor.h"
 #include "ble/internal/pal/PalSecurityManager.h"
 #include "ble/SecurityManager.h"
 
@@ -46,7 +46,7 @@ namespace ble {
  * @par Paring
  *
  * There are several ways to provide different levels of security during pairing depending on your requirements
- * and the facilities provided by the application. The process starts with initialising the SecurityManager
+ * and the facilities provided by the application. The process starts with initialising the PalSecurityManager
  * with default options for new connections. Some settings can later be changed per link or globally.
  *
  * The important settings in the init() function are the MITM requirement and IO capabilities. Man in the
@@ -97,7 +97,7 @@ namespace ble {
  *
  * First thing you need to do is to initialise the manager by calling init() with your chosen settings.
  *
- * The SecurityManager communicates with your application through events. These will trigger calls in
+ * The PalSecurityManager communicates with your application through events. These will trigger calls in
  * the EventHandler which you must provide by calling the setSecurityManagerEventHandler() function.
  *
  * The most important process is pairing. This may be triggered manually by calling requestPairing() or
@@ -105,7 +105,7 @@ namespace ble {
  * as a result of the application requiring MITM protection through requestAuthentication().
  *
  * All these can be implicitly called by using setLinkSecurity() to conveniently set the required
- * security for the link. The SecurityManager will trigger all the process required to achieve the set
+ * security for the link. The PalSecurityManager will trigger all the process required to achieve the set
  * security level. Security level can only be escalated. Asking the Security Manager for a lower
  * security level than the existing one will not fail but will result in a event informing the
  * application through linkEncryptionResult() of the current level (which remains unchanged).
@@ -130,7 +130,7 @@ namespace ble {
  * \verbatim
  *  /-------- Device 1 ---------\  *----- BLE link -----*  /----------- Device 2-----------\
  *
- * App  EventHandler      SecurityManager            SecurityManager    EventHandler      App
+ * App  EventHandler      PalSecurityManager            PalSecurityManager    EventHandler      App
  *  |        |                  |                          |                 |             |
  *  |-------------------> requestPairing()                 |                 |             |
  *  |        |                  |-----[pairing start]----->|                 |             |
@@ -151,7 +151,7 @@ namespace ble {
  * \verbatim
  *  /--------- Device 1 ---------\  *------ BLE link ------*  /--------- Device 2 ---------\
  *
- * App  EventHandler       SecurityManager              SecurityManager   EventHandler    App
+ * App  EventHandler       PalSecurityManager              PalSecurityManager   EventHandler    App
  *  |       |                    |                            |                |           |
  *  |--------------------> setLinkEncryption()                |                |           |
  *  |       |                    |<-[encryption established]->|                |           |
@@ -168,7 +168,7 @@ namespace ble {
  * \verbatim
  *  /---- Device 1 (keyboard) ---\  *------ BLE link ------*  /----- Device 2 (display) ---\
  *
- * App  EventHandler       SecurityManager              SecurityManager  EventHandler     App
+ * App  EventHandler       PalSecurityManager              PalSecurityManager  EventHandler     App
  *  |       |                    |                            |               |            |
  *  |--------------------> requestPairing()                   |               |            |
  *  |        |                   |------[pairing start]------>|               |            |
@@ -190,12 +190,12 @@ namespace ble {
  */
 class SecurityManager :
     public ble::interface::SecurityManager,
-    public ble::pal::SecurityManagerEventHandler,
-    public ble::pal::ConnectionMonitorEventHandler,
-    public ble::pal::SigningMonitorEventHandler
+    public ble::pal::PalSecurityManagerEventHandler,
+    public ble::pal::PalConnectionMonitorEventHandler,
+    public ble::pal::PalSigningMonitorEventHandler
 {
      // friends
-     friend class ble::pal::ConnectionMonitorEventHandler;
+     friend class ble::pal::PalConnectionMonitorEventHandler;
      friend CordioBLEInstanceBase;
 
     /*
@@ -248,14 +248,14 @@ public:
     ble_error_t setDatabaseFilepath(const char *dbFilepath = NULL);
 
     /**
-     * Notify all registered onShutdown callbacks that the SecurityManager is
-     * about to be shutdown and clear all SecurityManager state of the
+     * Notify all registered onShutdown callbacks that the PalSecurityManager is
+     * about to be shutdown and clear all PalSecurityManager state of the
      * associated object.
      *
      * This function is meant to be overridden in the platform-specific
      * sub-class. Nevertheless, the sub-class is only expected to reset its
-     * state and not the data held in SecurityManager members. This shall be
-     * achieved by a call to SecurityManager::reset() from the sub-class'
+     * state and not the data held in PalSecurityManager members. This shall be
+     * achieved by a call to PalSecurityManager::reset() from the sub-class'
      * reset() implementation.
      *
      * @return BLE_ERROR_NONE on success.
@@ -655,12 +655,12 @@ public:
 public:
     /**
      * Setup a callback to be invoked to notify the user application that the
-     * SecurityManager instance is about to shutdown (possibly as a result of a call
+     * PalSecurityManager instance is about to shutdown (possibly as a result of a call
      * to BLE::shutdown()).
      *
      * @note  It is possible to chain together multiple onShutdown callbacks
      * (potentially from different modules of an application) to be notified
-     * before the SecurityManager is shutdown.
+     * before the PalSecurityManager is shutdown.
      *
      * @note  It is also possible to set up a callback into a member function of
      * some object.
@@ -694,13 +694,13 @@ public:
     /* ===================================================================== */
     /*                    private implementation follows                     */
 
-    /* implements pal::SecurityManager::EventHandler */
+    /* implements pal::PalSecurityManager::EventHandler */
 public:
     ////////////////////////////////////////////////////////////////////////////
     // Pairing
     //
 
-    /** @copydoc pal::SecurityManager::on_pairing_request
+    /** @copydoc pal::PalSecurityManager::on_pairing_request
      */
     void on_pairing_request(
         connection_handle_t connection,
@@ -710,20 +710,20 @@ public:
         pal::KeyDistribution responder_dist
     );
 
-    /** @copydoc pal::SecurityManager::on_pairing_error
+    /** @copydoc pal::PalSecurityManager::on_pairing_error
      */
     void on_pairing_error(
         connection_handle_t connection,
         pairing_failure_t error
     );
 
-    /** @copydoc pal::SecurityManager::on_pairing_timed_out
+    /** @copydoc pal::PalSecurityManager::on_pairing_timed_out
      */
     void on_pairing_timed_out(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::SecurityManager::on_pairing_completed
+    /** @copydoc pal::PalSecurityManager::on_pairing_completed
      */
     void on_pairing_completed(
         connection_handle_t connection
@@ -733,30 +733,30 @@ public:
     // Security
     //
 
-    /** @copydoc pal::SecurityManager::on_valid_mic_timeout
+    /** @copydoc pal::PalSecurityManager::on_valid_mic_timeout
      */
     void on_valid_mic_timeout(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::SecurityManager::on_signed_write_received
+    /** @copydoc pal::PalSecurityManager::on_signed_write_received
      */
     void on_signed_write_received(
         connection_handle_t connection,
         uint32_t sign_coutner
     );
 
-    /** @copydoc pal::SecurityManager::on_signed_write_verification_failure
+    /** @copydoc pal::PalSecurityManager::on_signed_write_verification_failure
      */
     void on_signed_write_verification_failure(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::SecurityManager::on_signed_write
+    /** @copydoc pal::PalSecurityManager::on_signed_write
      */
     void on_signed_write();
 
-    /** @copydoc pal::SecurityManager::on_slave_security_request
+    /** @copydoc pal::PalSecurityManager::on_slave_security_request
      */
     void on_slave_security_request(
         connection_handle_t connection,
@@ -767,14 +767,14 @@ public:
     // Encryption
     //
 
-    /** @copydoc pal::SecurityManager::on_link_encryption_result
+    /** @copydoc pal::PalSecurityManager::on_link_encryption_result
      */
     void on_link_encryption_result(
         connection_handle_t connection,
         link_encryption_t result
     );
 
-    /** @copydoc pal::SecurityManager::on_link_encryption_request_timed_out
+    /** @copydoc pal::PalSecurityManager::on_link_encryption_request_timed_out
      */
     void on_link_encryption_request_timed_out(
         connection_handle_t connection
@@ -784,45 +784,45 @@ public:
     // MITM
     //
 
-    /** @copydoc pal::SecurityManager::on_passkey_display
+    /** @copydoc pal::PalSecurityManager::on_passkey_display
      */
     void on_passkey_display(
         connection_handle_t connection,
         passkey_num_t passkey
     );
 
-    /** @copydoc pal::SecurityManager::on_keypress_notification
+    /** @copydoc pal::PalSecurityManager::on_keypress_notification
      */
     void on_keypress_notification(
         connection_handle_t connection,
         Keypress_t keypress
     );
 
-    /** @copydoc pal::SecurityManager::on_passkey_request
+    /** @copydoc pal::PalSecurityManager::on_passkey_request
      */
     void on_passkey_request(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::SecurityManager::on_confirmation_request
+    /** @copydoc pal::PalSecurityManager::on_confirmation_request
      */
     void on_confirmation_request(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::SecurityManager::on_secure_connections_oob_request
+    /** @copydoc pal::PalSecurityManager::on_secure_connections_oob_request
      */
     void on_secure_connections_oob_request(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::SecurityManager::on_legacy_pairing_oob_request
+    /** @copydoc pal::PalSecurityManager::on_legacy_pairing_oob_request
      */
     void on_legacy_pairing_oob_request(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::SecurityManager::on_secure_connections_oob_generated
+    /** @copydoc pal::PalSecurityManager::on_secure_connections_oob_generated
      */
     void on_secure_connections_oob_generated(
         const oob_lesc_value_t &random,
@@ -833,21 +833,21 @@ public:
     // Keys
     //
 
-    /** @copydoc pal::SecurityManager::on_secure_connections_ltk_generated
+    /** @copydoc pal::PalSecurityManager::on_secure_connections_ltk_generated
      */
     void on_secure_connections_ltk_generated(
         connection_handle_t connection,
         const ltk_t &ltk
     );
 
-    /** @copydoc pal::SecurityManager::on_keys_distributed_ltk
+    /** @copydoc pal::PalSecurityManager::on_keys_distributed_ltk
      */
     void on_keys_distributed_ltk(
         connection_handle_t connection,
         const ltk_t &ltk
     );
 
-    /** @copydoc pal::SecurityManager::on_keys_distributed_ediv_rand
+    /** @copydoc pal::PalSecurityManager::on_keys_distributed_ediv_rand
      */
     void on_keys_distributed_ediv_rand(
         connection_handle_t connection,
@@ -855,14 +855,14 @@ public:
         const rand_t &rand
     );
 
-    /** @copydoc pal::SecurityManager::on_keys_distributed_local_ltk
+    /** @copydoc pal::PalSecurityManager::on_keys_distributed_local_ltk
      */
     void on_keys_distributed_local_ltk(
         connection_handle_t connection,
         const ltk_t &ltk
     );
 
-    /** @copydoc pal::SecurityManager::on_keys_distributed_local_ediv_rand
+    /** @copydoc pal::PalSecurityManager::on_keys_distributed_local_ediv_rand
      */
     void on_keys_distributed_local_ediv_rand(
         connection_handle_t connection,
@@ -870,14 +870,14 @@ public:
         const rand_t &rand
     );
 
-    /** @copydoc pal::SecurityManager::on_keys_distributed_irk
+    /** @copydoc pal::PalSecurityManager::on_keys_distributed_irk
      */
     void on_keys_distributed_irk(
         connection_handle_t connection,
         const irk_t &irk
     );
 
-    /** @copydoc pal::SecurityManager::on_keys_distributed_bdaddr
+    /** @copydoc pal::PalSecurityManager::on_keys_distributed_bdaddr
      */
     void on_keys_distributed_bdaddr(
         connection_handle_t connection,
@@ -885,14 +885,14 @@ public:
         const address_t &peer_identity_address
     );
 
-    /** @copydoc pal::SecurityManager::on_keys_distributed_csrk
+    /** @copydoc pal::PalSecurityManager::on_keys_distributed_csrk
      */
     void on_keys_distributed_csrk(
         connection_handle_t connection,
         const csrk_t &csrk
     );
 
-    /** @copydoc pal::SecurityManager::on_ltk_requeston_ltk_request
+    /** @copydoc pal::PalSecurityManager::on_ltk_requeston_ltk_request
      */
     void on_ltk_request(
         connection_handle_t connection,
@@ -900,19 +900,19 @@ public:
         const rand_t &rand
     );
 
-    /** @copydoc pal::SecurityManager::on_ltk_requeston_ltk_request
+    /** @copydoc pal::PalSecurityManager::on_ltk_requeston_ltk_request
      */
     void on_ltk_request(
         connection_handle_t connection
     );
 
-    /* end implements pal::SecurityManager::EventHandler */
+    /* end implements pal::PalSecurityManager::EventHandler */
 
 public:
     SecurityManager(
-        pal::SecurityManager &palImpl,
-        pal::ConnectionMonitor &connMonitorImpl,
-        pal::SigningMonitor &signingMonitorImpl
+        pal::PalSecurityManager &palImpl,
+        pal::PalConnectionMonitor &connMonitorImpl,
+        pal::PalSigningMonitor &signingMonitorImpl
     ) : _pal(palImpl),
         _connection_monitor(connMonitorImpl),
         _signing_monitor(signingMonitorImpl),
@@ -1191,9 +1191,9 @@ private:
     EventHandler* eventHandler;
     EventHandler  defaultEventHandler;
 
-    pal::SecurityManager &_pal;
-    pal::ConnectionMonitor &_connection_monitor;
-    pal::SigningMonitor &_signing_monitor;
+    pal::PalSecurityManager &_pal;
+    pal::PalConnectionMonitor &_connection_monitor;
+    pal::PalSigningMonitor &_signing_monitor;
 
     SecurityDb *_db;
 

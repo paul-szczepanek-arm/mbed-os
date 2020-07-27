@@ -78,7 +78,7 @@ namespace ble {
  * chained.
  *
  * @code
-    void setAdvertisingParameters(ble::Gap& gap) {
+    void setAdvertisingParameters(ble::PalGap& gap) {
         using namespace ble;
         gap.setAdvertisingParameters(
             LEGACY_ADVERTISING_HANDLE,

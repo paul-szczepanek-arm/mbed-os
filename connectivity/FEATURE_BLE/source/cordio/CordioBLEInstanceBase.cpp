@@ -123,7 +123,7 @@ CordioBLEInstanceBase& CordioBLEInstanceBase::deviceInstance()
     return instance;
 }
 
-class CordioSigningMonitor : public ble::pal::SigningMonitor {
+class CordioSigningMonitor : public ble::pal::PalSigningMonitor {
     void set_signing_event_handler(ble::SecurityManager *handler) {
         #if BLE_FEATURE_GATT_CLIENT
             CordioBLEInstanceBase::deviceInstance().getGattClient().set_signing_event_handler(handler);
@@ -231,7 +231,7 @@ ble::GattClient& CordioBLEInstanceBase::getGattClient()
     return gatt_client;
 }
 
-pal::GattClient& CordioBLEInstanceBase::getPalGattClient()
+pal::PalGattClient& CordioBLEInstanceBase::getPalGattClient()
 {
     static pal::AttClientToGattClientAdapter pal_gatt_client(pal::CordioPalAttClient::get_client());
     return pal_gatt_client;
@@ -348,7 +348,7 @@ void CordioBLEInstanceBase::device_manager_cb(dmEvt_t* dm_event)
 {
     if (dm_event->hdr.status == HCI_SUCCESS && dm_event->hdr.event == DM_CONN_DATA_LEN_CHANGE_IND) {
         // this event can only happen after a connection has been established therefore gap is present
-        ble::pal::GapEventHandler *handler;
+        ble::pal::PalGapEventHandler *handler;
         handler = ble::pal::CordioPalGap::get_gap().get_event_handler();
         if (handler) {
             handler->on_data_length_change(

@@ -25,9 +25,9 @@ namespace pal {
 
 /**
  * Implemented by classes that are reacting to connection changes.
- * @see ConnectionMonitor
+ * @see PalConnectionMonitor
  */
-class ConnectionMonitorEventHandler {
+class PalConnectionMonitorEventHandler {
 public:
     /**
      * Inform the Security manager of a new connection. This will create
@@ -70,12 +70,12 @@ public:
  * Implemented by classes that need to be notified of connection changes.
  * Notification is done by calling functions in the passed in event handler
  */
-class ConnectionMonitor {
+class PalConnectionMonitor {
 
 protected:
-    ConnectionMonitor() : _connection_event_handler(NULL) { }
+    PalConnectionMonitor() : _connection_event_handler(NULL) { }
 
-    ConnectionMonitorEventHandler* _connection_event_handler;
+    PalConnectionMonitorEventHandler* _connection_event_handler;
 
 public:
     /**
@@ -83,7 +83,7 @@ public:
      *
      * @param[in] connection_event_handler Event handler being registered.
      */
-    void set_connection_event_handler(ConnectionMonitorEventHandler *connection_event_handler) {
+    void set_connection_event_handler(PalConnectionMonitorEventHandler *connection_event_handler) {
         _connection_event_handler = connection_event_handler;
     }
 };

@@ -17,19 +17,19 @@
 #ifndef BLE_PAL_ATTCLIENTTOGATTCLIENTADAPTER_H_
 #define BLE_PAL_ATTCLIENTTOGATTCLIENTADAPTER_H_
 
-#include "ble/internal/pal/AttClient.h"
+#include "ble/internal/pal/PalAttClient.h"
 #include "ble/internal/pal/PalGattClient.h"
 
 namespace ble {
 namespace pal {
 
 /**
- * Adapt a pal::AttClient into a pal::GattClient.
+ * Adapt a pal::PalAttClient into a pal::PalGattClient.
  *
- * This class let vendors define their abstraction layer in term of an AttClient
- * and adapt any AttClient into a GattClient.
+ * This class let vendors define their abstraction layer in term of an PalAttClient
+ * and adapt any PalAttClient into a PalGattClient.
  */
-class AttClientToGattClientAdapter : public GattClient {
+class AttClientToGattClientAdapter : public PalGattClient {
 
 public:
     static const uint16_t END_ATTRIBUTE_HANDLE = 0xFFFF;
@@ -38,10 +38,10 @@ public:
     static const uint16_t CHARACTERISTIC_TYPE_UUID = 0x2803;
 
     /**
-     * Construct an instance of GattClient from an instance of AttClient.
+     * Construct an instance of PalGattClient from an instance of PalAttClient.
      * @param client The client to adapt.
      */
-    AttClientToGattClientAdapter(AttClient& client) :
+    AttClientToGattClientAdapter(PalAttClient& client) :
         _client(client) {
         _client.when_server_message_received(
             mbed::callback(this, &AttClientToGattClientAdapter::on_server_event)
@@ -54,14 +54,14 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::exchange_mtu
+     * @see ble::pal::PalGattClient::exchange_mtu
      */
     ble_error_t exchange_mtu(connection_handle_t connection) {
         return _client.exchange_mtu_request(connection);
     }
 
     /**
-     * @see ble::pal::GattClient::get_mtu_size
+     * @see ble::pal::PalGattClient::get_mtu_size
      */
     ble_error_t get_mtu_size(
         connection_handle_t connection_handle,
@@ -71,7 +71,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::discover_primary_service
+     * @see ble::pal::PalGattClient::discover_primary_service
      */
     ble_error_t discover_primary_service(
         connection_handle_t connection,
@@ -85,7 +85,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::discover_primary_service_by_service_uuid
+     * @see ble::pal::PalGattClient::discover_primary_service_by_service_uuid
      */
     ble_error_t discover_primary_service_by_service_uuid(
         connection_handle_t connection_handle,
@@ -104,7 +104,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::find_included_service
+     * @see ble::pal::PalGattClient::find_included_service
      */
     ble_error_t find_included_service(
         connection_handle_t connection_handle,
@@ -118,7 +118,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::discover_characteristics_of_a_service
+     * @see ble::pal::PalGattClient::discover_characteristics_of_a_service
      */
     ble_error_t discover_characteristics_of_a_service(
         connection_handle_t connection_handle,
@@ -132,7 +132,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::discover_characteristics_descriptors
+     * @see ble::pal::PalGattClient::discover_characteristics_descriptors
      */
     ble_error_t discover_characteristics_descriptors(
         connection_handle_t connection_handle,
@@ -145,7 +145,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::read_attribute_value
+     * @see ble::pal::PalGattClient::read_attribute_value
      */
     ble_error_t read_attribute_value(
         connection_handle_t connection_handle,
@@ -158,7 +158,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::read_using_characteristic_uuid
+     * @see ble::pal::PalGattClient::read_using_characteristic_uuid
      */
     ble_error_t read_using_characteristic_uuid(
         connection_handle_t connection_handle,
@@ -173,7 +173,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::read_attribute_blob
+     * @see ble::pal::PalGattClient::read_attribute_blob
      */
     ble_error_t read_attribute_blob(
         connection_handle_t connection_handle,
@@ -188,7 +188,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::read_multiple_characteristic_values
+     * @see ble::pal::PalGattClient::read_multiple_characteristic_values
      */
     ble_error_t read_multiple_characteristic_values(
         connection_handle_t connection_handle,
@@ -201,7 +201,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::write_without_response
+     * @see ble::pal::PalGattClient::write_without_response
      */
     ble_error_t write_without_response(
         connection_handle_t connection_handle,
@@ -216,7 +216,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::signed_write_without_response
+     * @see ble::pal::PalGattClient::signed_write_without_response
      */
     ble_error_t signed_write_without_response(
         connection_handle_t connection_handle,
@@ -231,7 +231,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::write_attribute
+     * @see ble::pal::PalGattClient::write_attribute
      */
     ble_error_t write_attribute(
         connection_handle_t connection_handle,
@@ -246,7 +246,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::queue_prepare_write
+     * @see ble::pal::PalGattClient::queue_prepare_write
      */
     ble_error_t queue_prepare_write(
         connection_handle_t connection_handle,
@@ -263,7 +263,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::execute_write_queue
+     * @see ble::pal::PalGattClient::execute_write_queue
      */
     ble_error_t execute_write_queue(
         connection_handle_t connection_handle,
@@ -273,21 +273,21 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::initialize
+     * @see ble::pal::PalGattClient::initialize
      */
     ble_error_t initialize() {
         return _client.initialize();
     }
 
     /**
-     * @see ble::pal::GattClient::terminate
+     * @see ble::pal::PalGattClient::terminate
      */
     ble_error_t terminate() {
         return _client.initialize();
     }
 
 private:
-    AttClient& _client;
+    PalAttClient& _client;
 };
 
 } // namespace pal

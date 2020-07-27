@@ -323,7 +323,7 @@ private:
  *
  * ReadHandler read_handler;
  *
- * GattClient& client;
+ * PalGattClient& client;
  *
  * client.onDataRead(
  *    makeFunctionPointer(&read_handler, &ReadHandler::on_data_read)

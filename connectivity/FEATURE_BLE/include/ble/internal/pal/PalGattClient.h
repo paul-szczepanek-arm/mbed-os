@@ -28,9 +28,9 @@ namespace ble {
 namespace pal {
 
 /**
- * Definition of the general handler of GattClient related events.
+ * Definition of the general handler of PalGattClient related events.
  */
-struct GattClientEventHandler {
+struct PalGattClientEventHandler {
     /**
      * Function invoked when the connections changes the ATT_MTU which controls
      * the maximum size of an attribute that can be read in a single L2CAP packet
@@ -82,10 +82,10 @@ struct GattClientEventHandler {
  * level using the primitives defined in this adaptation layer.
  *
  * If a stack expose the complete ATT layer then it is possible to provide an
- * implementation for GattClient by subclassing the AttClient class and use
+ * implementation for PalGattClient by subclassing the PalAttClient class and use
  * the class AttClientToGattClientAdapter
  */
-class GattClient {
+class PalGattClient {
 public:
 
     /**
@@ -619,7 +619,7 @@ public:
       *
       * @param event_handler The new event handler interface implementation.
       */
-     void set_event_handler(GattClientEventHandler* event_handler) {
+     void set_event_handler(PalGattClientEventHandler* event_handler) {
          _event_handler = event_handler;
      }
 
@@ -628,14 +628,14 @@ public:
       *
       * @return Currently registered event handler. NULL if no event handler is present.
       */
-     GattClientEventHandler* get_event_handler() {
+     PalGattClientEventHandler* get_event_handler() {
          return _event_handler;
      }
 
 protected:
-    GattClient() : _event_handler(NULL) { }
+    PalGattClient() : _event_handler(NULL) { }
 
-    ~GattClient() { }
+    ~PalGattClient() { }
 
     /**
      * Upon server message reception an implementation shall call this function.
@@ -671,7 +671,7 @@ protected:
     }
 
 private:
-    GattClientEventHandler* _event_handler;
+    PalGattClientEventHandler* _event_handler;
 
     /**
      * Callback called when the client receive a message from the server.
@@ -684,8 +684,8 @@ private:
     mbed::Callback<void(connection_handle_t)> _transaction_timeout_cb;
 
     // Disallow copy construction and copy assignment.
-    GattClient(const GattClient&);
-    GattClient& operator=(const GattClient&);
+    PalGattClient(const PalGattClient&);
+    PalGattClient& operator=(const PalGattClient&);
 };
 
 } // namespace pal

@@ -64,7 +64,7 @@ struct GapEventType : SafeEnum<GapEventType, uint8_t> {
 
 
 /**
- * Base class of a Gap Event.
+ * Base class of a PalGap Event.
  *
  * Client should use the field type to deduce the actual type of the event.
  */

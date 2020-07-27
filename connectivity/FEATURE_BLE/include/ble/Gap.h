@@ -36,7 +36,7 @@
 
 namespace ble {
 namespace pal {
-class GenericAccessService;
+class PalGenericAccessService;
 }
 
 /**

@@ -18,7 +18,7 @@
 #define CORDIO_PAL_ATT_CLIENT_
 
 #include "ble/GattServer.h"
-#include "pal/AttClient.h"
+#include "pal/PalAttClient.h"
 #include "pal/AttClientToGattClientAdapter.h"
 #include "pal/SimpleAttServerMessage.h"
 #include "att_api.h"
@@ -31,15 +31,15 @@
 namespace ble {
 namespace pal {
 
-class CordioPalAttClient : public ble::pal::AttClient {
+class CordioPalAttClient : public ble::pal::PalAttClient {
 
 public:
-    CordioPalAttClient() : ble::pal::AttClient(), _local_sign_counter(0) { }
+    CordioPalAttClient() : ble::pal::PalAttClient(), _local_sign_counter(0) { }
 
     ~CordioPalAttClient() { }
 
     /**
-     * @see ble::pal::AttClient::exchange_mtu_request
+     * @see ble::pal::PalAttClient::exchange_mtu_request
      */
     ble_error_t exchange_mtu_request(connection_handle_t connection)
     {
@@ -48,7 +48,7 @@ public:
     }
 
     /**
-     * @see ble::pal::GattClient::get_mtu_size
+     * @see ble::pal::PalGattClient::get_mtu_size
      */
     ble_error_t get_mtu_size(
         connection_handle_t connection_handle,
@@ -59,7 +59,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::find_information_request
+     * @see ble::pal::PalAttClient::find_information_request
      */
     ble_error_t find_information_request(
         connection_handle_t connection_handle,
@@ -75,7 +75,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::find_by_type_value_request
+     * @see ble::pal::PalAttClient::find_by_type_value_request
      */
     ble_error_t find_by_type_value_request(
         connection_handle_t connection_handle,
@@ -96,7 +96,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::read_by_type_request
+     * @see ble::pal::PalAttClient::read_by_type_request
      */
     ble_error_t read_by_type_request(
         connection_handle_t connection_handle,
@@ -115,7 +115,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::read_request
+     * @see ble::pal::PalAttClient::read_request
      */
     ble_error_t read_request(
         connection_handle_t connection_handle,
@@ -126,7 +126,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::read_blob_request
+     * @see ble::pal::PalAttClient::read_blob_request
      */
     ble_error_t read_blob_request(
         connection_handle_t connection_handle,
@@ -143,7 +143,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::read_multiple_request
+     * @see ble::pal::PalAttClient::read_multiple_request
      */
     ble_error_t read_multiple_request(
         connection_handle_t connection_handle,
@@ -158,7 +158,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::read_by_group_type_request
+     * @see ble::pal::PalAttClient::read_by_group_type_request
      */
     ble_error_t read_by_group_type_request(
         connection_handle_t connection_handle,
@@ -177,7 +177,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::write_request
+     * @see ble::pal::PalAttClient::write_request
      */
     ble_error_t write_request(
         connection_handle_t connection_handle,
@@ -194,7 +194,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::write_command
+     * @see ble::pal::PalAttClient::write_command
      */
     ble_error_t write_command(
         connection_handle_t connection_handle,
@@ -211,7 +211,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::signed_write_command
+     * @see ble::pal::PalAttClient::signed_write_command
      */
     ble_error_t signed_write_command(
         connection_handle_t connection_handle,
@@ -242,7 +242,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::prepare_write_request
+     * @see ble::pal::PalAttClient::prepare_write_request
      */
     ble_error_t prepare_write_request(
         connection_handle_t connection_handle,
@@ -263,7 +263,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::execute_write_request
+     * @see ble::pal::PalAttClient::execute_write_request
      */
     ble_error_t execute_write_request(
         connection_handle_t connection_handle,
@@ -277,7 +277,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::initialize
+     * @see ble::pal::PalAttClient::initialize
      */
     ble_error_t initialize()
     {
@@ -285,7 +285,7 @@ public:
     }
 
     /**
-     * @see ble::pal::AttClient::terminate
+     * @see ble::pal::PalAttClient::terminate
      */
     ble_error_t terminate()
     {

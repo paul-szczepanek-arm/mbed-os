@@ -951,7 +951,7 @@ struct GattClient::DescriptorDiscoveryControlBlock : public ProcedureControlBloc
 };
 
 
-GattClient::GattClient(pal::GattClient& pal_client) :
+GattClient::GattClient(pal::PalGattClient& pal_client) :
     eventHandler(NULL),
 	_pal_client(pal_client),
 	_termination_callback(),
@@ -1341,7 +1341,7 @@ ble_error_t GattClient::reset(void) {
 #if BLE_FEATURE_SIGNING
 
 void GattClient::set_signing_event_handler(
-	pal::SigningMonitorEventHandler *signing_event_handler
+	pal::PalSigningMonitorEventHandler *signing_event_handler
 ) {
     _signing_event_handler = signing_event_handler;
 }

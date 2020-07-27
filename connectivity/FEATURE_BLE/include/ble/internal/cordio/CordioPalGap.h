@@ -8,9 +8,9 @@ namespace ble {
 namespace pal {
 
 /**
- * Implementation of ble::pal::Gap for the Cordio stack.
+ * Implementation of ble::pal::PalGap for the Cordio stack.
  */
-class CordioPalGap : public ble::pal::Gap {
+class CordioPalGap : public ble::pal::PalGap {
 public:
     CordioPalGap() : use_active_scanning(false), _pal_event_handler(NULL) { };
     ~CordioPalGap() { };
@@ -306,9 +306,9 @@ public:
     * @param[in] event_handler the new event handler interface implementation. Memory
     * owned by caller who is responsible for updating this pointer if interface changes.
     */
-    void set_event_handler(GapEventHandler *event_handler);
+    void set_event_handler(PalGapEventHandler *event_handler);
 
-    GapEventHandler *get_event_handler();
+    PalGapEventHandler *get_event_handler();
 
 private:
 
@@ -480,7 +480,7 @@ private:
     );
 
 private:
-    GapEventHandler* _pal_event_handler;
+    PalGapEventHandler* _pal_event_handler;
     address_t device_random_address;
     bool use_active_scanning;
     uint8_t extended_scan_type[3];

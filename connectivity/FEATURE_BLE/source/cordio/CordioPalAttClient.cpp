@@ -26,13 +26,13 @@ void CordioPalAttClient::att_client_handler(const attEvt_t* event)
 #if BLE_FEATURE_GATT_CLIENT
     if (event->hdr.status == ATT_SUCCESS && event->hdr.event == ATT_MTU_UPDATE_IND) {
         ble::CordioBLEInstanceBase& ble = ble::CordioBLEInstanceBase::deviceInstance();
-        GattClientEventHandler *handler = ble.getPalGattClient().get_event_handler();
+        PalGattClientEventHandler *handler = ble.getPalGattClient().get_event_handler();
         if (handler) {
             handler->on_att_mtu_change(event->hdr.param, event->mtu);
         }
     } else if (event->hdr.event == ATTC_WRITE_CMD_RSP) {
         ble::CordioBLEInstanceBase& ble = ble::CordioBLEInstanceBase::deviceInstance();
-        GattClientEventHandler *handler = ble.getPalGattClient().get_event_handler();
+        PalGattClientEventHandler *handler = ble.getPalGattClient().get_event_handler();
         if (handler) {
             handler->on_write_command_sent(
                 event->hdr.param,

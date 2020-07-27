@@ -38,26 +38,26 @@
 #include "ble/internal/pal/GapEvents.h"
 #include "ble/internal/pal/GapTypes.h"
 #include "ble/internal/pal/PalEventQueue.h"
-#include "ble/internal/pal/ConnectionMonitor.h"
+#include "ble/internal/pal/PalConnectionMonitor.h"
 
 #include "ble/Gap.h"
 
 namespace ble {
 namespace pal {
-class GenericAccessService;
-class SecurityManager;
+class PalGenericAccessService;
+class PalSecurityManager;
 }
 class CordioBLEInstanceBase;
 
 class Gap :
     public ble::interface::Gap,
-    public pal::ConnectionMonitor,
-    public pal::GapEventHandler
+    public pal::PalConnectionMonitor,
+    public pal::PalGapEventHandler
 {
     // Friendship with base classes
-    friend pal::ConnectionMonitor;
-    friend pal::GapEventHandler;
-    friend pal::Gap;
+    friend pal::PalConnectionMonitor;
+    friend pal::PalGapEventHandler;
+    friend pal::PalGap;
     friend CordioBLEInstanceBase;
     /**
      * Gap shutdown event handler.
@@ -1240,9 +1240,9 @@ public:
 protected:
     Gap(
         pal::PalEventQueue &event_queue,
-        pal::Gap &pal_gap,
-        pal::GenericAccessService &generic_access_service,
-        pal::SecurityManager &pal_sm
+        pal::PalGap &pal_gap,
+        pal::PalGenericAccessService &generic_access_service,
+        pal::PalSecurityManager &pal_sm
     );
     ~Gap();
 private:
@@ -1303,7 +1303,7 @@ private:
 
     void prepare_legacy_advertising_set();
 
-    /* implements pal::Gap::EventHandler */
+    /* implements pal::PalGap::EventHandler */
 private:
     void on_read_phy(
         pal::hci_error_code_t hci_status,
@@ -1422,9 +1422,9 @@ private:
     ble::Gap::EventHandler *_eventHandler;
 
     pal::PalEventQueue &_event_queue;
-    pal::Gap &_pal_gap;
-    pal::GenericAccessService &_gap_service;
-    pal::SecurityManager &_pal_sm;
+    pal::PalGap &_pal_gap;
+    pal::PalGenericAccessService &_gap_service;
+    pal::PalSecurityManager &_pal_sm;
     ble::own_address_type_t _address_type;
     ble::address_t _address;
     pal::initiator_policy_t _initiator_policy_mode;

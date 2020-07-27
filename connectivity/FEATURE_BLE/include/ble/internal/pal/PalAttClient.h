@@ -39,7 +39,7 @@ namespace pal {
  *
  * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F
  */
-struct AttClient  {
+struct PalAttClient  {
 public:
     /**
      * Initialization of the instance. An implementation can use this function
@@ -629,9 +629,9 @@ public:
      }
 
 protected:
-    AttClient() { }
+    PalAttClient() { }
 
-    ~AttClient() { }
+    ~PalAttClient() { }
 
     /**
      * Upon server message reception an implementation shall call this function.
@@ -677,8 +677,8 @@ private:
     mbed::Callback<void(connection_handle_t)> _transaction_timeout_cb;
 
     // Disallow copy construction and copy assignment.
-    AttClient(const AttClient&);
-    AttClient& operator=(const AttClient&);
+    PalAttClient(const PalAttClient&);
+    PalAttClient& operator=(const PalAttClient&);
 };
 
 

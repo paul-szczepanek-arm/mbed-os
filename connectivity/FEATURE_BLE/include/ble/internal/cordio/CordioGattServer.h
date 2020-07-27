@@ -26,14 +26,14 @@
 
 #include <stddef.h>
 #include "ble/types/blecommon.h"
-#include "pal/SigningMonitor.h"
+#include "pal/PalSigningMonitor.h"
 #include "ble/Gap.h"
 #include "wsf_types.h"
 #include "att_api.h"
 #include "SecurityManager.h"
 
 #include "ble/BLE.h"
-#include "ble/internal/pal/SigningMonitor.h"
+#include "ble/internal/pal/PalSigningMonitor.h"
 
 /*! Maximum count of characteristics that can be stored for authorisation purposes */
 #define MAX_CHARACTERISTIC_AUTHORIZATION_CNT 20
@@ -113,7 +113,7 @@ class CordioSigningMonitor;
  */
 class GattServer :
         public ble::interface::GattServer,
-        public pal::SigningMonitor {
+        public pal::PalSigningMonitor {
     friend ble::BLE;
     friend ble::pal::CordioPalAttClient;
     friend CordioSigningMonitor;
@@ -622,7 +622,7 @@ public:
 
 private:
     void set_signing_event_handler(
-        pal::SigningMonitorEventHandler *signing_event_handler
+        pal::PalSigningMonitorEventHandler *signing_event_handler
     );
 
     void add_default_services();
@@ -741,7 +741,7 @@ private:
      */
     EventCallback_t confirmationReceivedCallback;
 
-    pal::SigningMonitorEventHandler *_signing_event_handler;
+    pal::PalSigningMonitorEventHandler *_signing_event_handler;
 
     attsCccSet_t cccds[MAX_CCCD_CNT];
     uint16_t cccd_values[MAX_CCCD_CNT];

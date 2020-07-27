@@ -26,14 +26,14 @@
 
 #include <stddef.h>
 #include "ble/types/blecommon.h"
-#include "pal/SigningMonitor.h"
+#include "pal/PalSigningMonitor.h"
 #include "ble/Gap.h"
 #include "wsf_types.h"
 #include "att_api.h"
 #include "SecurityManager.h"
 
 #include "ble/BLE.h"
-#include "ble/internal/pal/SigningMonitor.h"
+#include "ble/internal/pal/PalSigningMonitor.h"
 
 /*! Maximum count of characteristics that can be stored for authorisation purposes */
 #define MAX_CHARACTERISTIC_AUTHORIZATION_CNT 20

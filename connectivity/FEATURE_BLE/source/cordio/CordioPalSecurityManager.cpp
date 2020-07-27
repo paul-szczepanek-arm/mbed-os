@@ -587,7 +587,7 @@ CordioPalSecurityManager& CordioPalSecurityManager::get_security_manager()
 
 bool CordioPalSecurityManager::sm_handler(const wsfMsgHdr_t* msg) {
     CordioPalSecurityManager& self = get_security_manager();
-    SecurityManagerEventHandler* handler = self.get_event_handler();
+    PalSecurityManagerEventHandler* handler = self.get_event_handler();
 
     if ((msg == NULL) || (handler == NULL)) {
         return false;
@@ -1034,12 +1034,12 @@ void CordioPalSecurityManager::cleanup_peer_csrks() {
     }
 }
 
-void CordioPalSecurityManager::set_event_handler(SecurityManagerEventHandler *event_handler
+void CordioPalSecurityManager::set_event_handler(PalSecurityManagerEventHandler *event_handler
 ) {
     _pal_event_handler = event_handler;
 }
 
-SecurityManagerEventHandler* CordioPalSecurityManager::get_event_handler() {
+PalSecurityManagerEventHandler* CordioPalSecurityManager::get_event_handler() {
     return _pal_event_handler;
 }
 

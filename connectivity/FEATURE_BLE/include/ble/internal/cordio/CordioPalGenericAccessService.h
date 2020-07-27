@@ -1,7 +1,7 @@
 #ifndef CORDIO_PAL_GENERIC_ACCESS_SERVICE_
 #define CORDIO_PAL_GENERIC_ACCESS_SERVICE_
 
-#include "ble/internal/pal/GenericAccessService.h"
+#include "ble/internal/pal/PalGenericAccessService.h"
 #include "ble/GattServer.h"
 #include "ble/Gap.h"
 
@@ -9,9 +9,9 @@ namespace ble {
 namespace pal {
 
 /**
- * Implementation of ble::pal::GenericAccessService for the Cordio stack.
+ * Implementation of ble::pal::PalGenericAccessService for the Cordio stack.
  */
-class CordioPalGenericAccessService : public ble::pal::GenericAccessService {
+class CordioPalGenericAccessService : public ble::pal::PalGenericAccessService {
 public:
     CordioPalGenericAccessService() { }
 

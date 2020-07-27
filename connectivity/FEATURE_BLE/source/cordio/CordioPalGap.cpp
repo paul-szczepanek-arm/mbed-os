@@ -541,7 +541,7 @@ void CordioPalGap::gap_handler(const wsfMsgHdr_t *msg)
     }
 
     connection_handle_t handle = (connection_handle_t) msg->param;
-    ble::pal::GapEventHandler *handler = get_gap()._pal_event_handler;
+    ble::pal::PalGapEventHandler *handler = get_gap()._pal_event_handler;
 
 
     switch (msg->event) {
@@ -1493,12 +1493,12 @@ void CordioPalGap::when_gap_event_received(mbed::Callback<void(const GapEvent &)
     _gap_event_cb = cb;
 }
 
-void CordioPalGap::set_event_handler(GapEventHandler *event_handler)
+void CordioPalGap::set_event_handler(PalGapEventHandler *event_handler)
 {
     _pal_event_handler = event_handler;
 }
 
-GapEventHandler* CordioPalGap::get_event_handler()
+PalGapEventHandler* CordioPalGap::get_event_handler()
 {
     return _pal_event_handler;
 }
