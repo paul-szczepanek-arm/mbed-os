@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 
-#include "ble/BLE.h"
-#include "ble/internal/BLEInstanceBase.h"
+#include "ble/internal/cordio/CordioPalSigningMonitor.h"
+#include "ble/internal/cordio/CordioBLEInstanceBase.h"
+#include "ble/internal/cordio/CordioGattClient.h"
 
-BLEInstanceBase::~BLEInstanceBase()
-{
-    // empty destructor
-}
-
-void BLEInstanceBase::signalEventsToProcess(BLE::InstanceID_t id)
-{
-    BLE::Instance(id).signalEventsToProcess();
+void PalSigningMonitor::set_signing_event_handler(SecurityManager *handler) {
+#if BLE_FEATURE_GATT_CLIENT
+    CordioBLEInstanceBase::deviceInstance().getGattClient().set_signing_event_handler(handler);
+#endif // BLE_FEATURE_GATT_CLIENT
+#if BLE_FEATURE_GATT_SERVER
+    CordioBLEInstanceBase::deviceInstance().getGattServer().set_signing_event_handler(handler);
+#endif // BLE_FEATURE_GATT_SERVER
 }

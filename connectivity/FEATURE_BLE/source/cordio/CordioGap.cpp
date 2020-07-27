@@ -1,5 +1,5 @@
 /* mbed Microcontroller Library
- * Copyright (c) 2017-2020 ARM Limited
+ * Copyright (c) 2006-2020 ARM Limited
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,18 +22,17 @@
 #include "ble/internal/BLEInstanceBase.h"
 #include "ble/Gap.h"
 #include "ble/SecurityManager.h"
-#include "pal/PalGap.h"
-#include "pal/GapEvents.h"
-#include "pal/GapTypes.h"
-#include "pal/PalGenericAccessService.h"
+#include "ble/internal/pal/PalGap.h"
+#include "ble/internal/pal/GapEvents.h"
+#include "ble/internal/pal/GapTypes.h"
+#include "ble/internal/pal/PalGenericAccessService.h"
+#include "ble/internal/cordio/CordioPalEventQueue.h"
 
 #include "drivers/Timeout.h"
 
 using namespace std::chrono;
 
 namespace ble {
-
-using connection_peer_address_type_t;
 
 namespace {
 
@@ -308,7 +307,7 @@ const central_privacy_configuration_t Gap::default_central_privacy_configuration
 };
 
 Gap::Gap(
-    SimplePalEventQueue &event_queue,
+    PalEventQueue &event_queue,
     PalGap &pal_gap,
     PalGenericAccessService &generic_access_service,
     PalSecurityManager &pal_sm

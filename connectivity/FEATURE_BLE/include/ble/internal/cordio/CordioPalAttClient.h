@@ -35,7 +35,7 @@ namespace ble {
 class PalAttClient : public interface::PalAttClient {
 
 public:
-    PalAttClient() : ble::PalAttClient(), _local_sign_counter(0) { }
+    PalAttClient() : _local_sign_counter(0) { }
 
     ~PalAttClient() { }
 

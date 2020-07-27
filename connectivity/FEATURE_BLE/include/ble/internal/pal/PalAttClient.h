@@ -41,7 +41,7 @@ namespace interface {
  *
  * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F
  */
-struct PalAttClient  {
+class PalAttClient  {
 public:
     /**
      * Initialization of the instance. An implementation can use this function
@@ -53,7 +53,7 @@ public:
      * @return BLE_ERROR_NONE if the request has been successfully sent or the
      * appropriate error otherwise.
      */
-    ble_error_t initialize() = 0;
+    virtual ble_error_t initialize() = 0;
 
     /**
      * Termination of the instance. An implementation can use this function
@@ -66,7 +66,7 @@ public:
      * @return BLE_ERROR_NONE if the request has been successfully sent or the
      * appropriate error otherwise.
      */
-    ble_error_t terminate() = 0;
+    virtual ble_error_t terminate() = 0;
 
     /**
      * Send an exchange MTU request which negotiate the size of the MTU used by
@@ -92,7 +92,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.2.1
      */
-    ble_error_t exchange_mtu_request(connection_handle_t connection) = 0;
+    virtual ble_error_t exchange_mtu_request(connection_handle_t connection) = 0;
 
     /**
      * Acquire the size of the mtu for a given connection.
@@ -105,7 +105,7 @@ public:
      * @return BLE_ERROR_NONE if the MTU size has been acquired or the
      * appropriate error otherwise.
      */
-    ble_error_t get_mtu_size(
+    virtual ble_error_t get_mtu_size(
         connection_handle_t connection_handle,
         uint16_t& mtu_size
     ) = 0;
@@ -141,7 +141,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.3.1
      */
-    ble_error_t find_information_request(
+    virtual ble_error_t find_information_request(
         connection_handle_t connection_handle,
         attribute_handle_range_t discovery_range
     ) = 0;
@@ -177,7 +177,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.3.3
      */
-    ble_error_t find_by_type_value_request(
+    virtual ble_error_t find_by_type_value_request(
         connection_handle_t connection_handle,
         attribute_handle_range_t discovery_range,
         uint16_t type,
@@ -221,7 +221,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.4.1
      */
-    ble_error_t read_by_type_request(
+    virtual ble_error_t read_by_type_request(
         connection_handle_t connection_handle,
         attribute_handle_range_t read_range,
         const UUID& type
@@ -260,7 +260,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.4.3
      */
-    ble_error_t read_request(
+    virtual ble_error_t read_request(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle
     ) = 0;
@@ -306,7 +306,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.4.5
      */
-    ble_error_t read_blob_request(
+    virtual ble_error_t read_blob_request(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         uint16_t offset
@@ -350,7 +350,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.4.7
      */
-    ble_error_t read_multiple_request(
+    virtual ble_error_t read_multiple_request(
         connection_handle_t connection_handle,
         const Span<const attribute_handle_t>& attribute_handles
     ) = 0;
@@ -400,7 +400,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.4.9
      */
-    ble_error_t read_by_group_type_request(
+    virtual ble_error_t read_by_group_type_request(
         connection_handle_t connection_handle,
         attribute_handle_range_t read_range,
         const UUID& group_type
@@ -453,7 +453,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.5.1
      */
-    ble_error_t write_request(
+    virtual ble_error_t write_request(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         const Span<const uint8_t>& value
@@ -473,7 +473,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.5.3
      */
-    ble_error_t write_command(
+    virtual ble_error_t write_command(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         const Span<const uint8_t>& value
@@ -498,7 +498,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.5.4
      */
-    ble_error_t signed_write_command(
+    virtual ble_error_t signed_write_command(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         const Span<const uint8_t>& value
@@ -550,7 +550,7 @@ public:
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.6.1
      *
      */
-    ble_error_t prepare_write_request(
+    virtual ble_error_t prepare_write_request(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         uint16_t offset,
@@ -594,7 +594,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.6.3
      */
-    ble_error_t execute_write_request(
+    virtual ble_error_t execute_write_request(
         connection_handle_t connection_handle,
         bool execute
     ) = 0;
@@ -607,7 +607,7 @@ public:
      * message was received and the message received. Real type of the message
      * can be obtained from its opcode.
      */
-    void when_server_message_received(
+    virtual void when_server_message_received(
         mbed::Callback<void(connection_handle_t, const AttServerMessage&)> cb
     ) = 0;
 
@@ -622,7 +622,7 @@ public:
      * timeout. To send a new ATT message, the conenction should be
      * reestablished.
      */
-     void when_transaction_timeout(
+    virtual void when_transaction_timeout(
          mbed::Callback<void(connection_handle_t)> cb
      ) = 0;
 
@@ -634,7 +634,7 @@ protected:
      * the server message.
      * @param server_message The message received from the server.
      */
-    void on_server_event(
+    virtual void on_server_event(
         connection_handle_t connection_handle,
         const AttServerMessage& server_message
     ) = 0;
@@ -647,7 +647,7 @@ protected:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.3.3
      */
-    void on_transaction_timeout(
+    virtual void on_transaction_timeout(
         connection_handle_t connection_handle
     ) = 0;
 };

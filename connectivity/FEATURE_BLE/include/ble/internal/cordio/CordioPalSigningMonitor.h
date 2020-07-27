@@ -16,21 +16,19 @@
  * limitations under the License.
  */
 
-#include "ble/internal/cordio/CordioBLEInstanceBase.h"
-#include "ble/internal/cordio/CordioGattClient.h"
+#ifndef CORDIO_PAL_SIGNING_MONITOR_H_
+#define CORDIO_PAL_SIGNING_MONITOR_H_
+
 #include "ble/internal/pal/PalSigningMonitor.h"
 
 namespace ble {
 
+class SecurityManager;
+
 class PalSigningMonitor : public interface::PalSigningMonitor {
-    void set_signing_event_handler(SecurityManager *handler) {
-#if BLE_FEATURE_GATT_CLIENT
-        CordioBLEInstanceBase::deviceInstance().getGattClient().set_signing_event_handler(handler);
-#endif // BLE_FEATURE_GATT_CLIENT
-#if BLE_FEATURE_GATT_SERVER
-        CordioBLEInstanceBase::deviceInstance().getGattServer().set_signing_event_handler(handler);
-#endif // BLE_FEATURE_GATT_SERVER
-    }
+    void set_signing_event_handler(SecurityManager *handler);
 };
 
 } // ble
+
+#endif // CORDIO_PAL_SIGNING_MONITOR_H_

@@ -19,10 +19,11 @@
 #ifndef BLE_PAL_ATTCLIENTTOGATTCLIENTADAPTER_H_
 #define BLE_PAL_ATTCLIENTTOGATTCLIENTADAPTER_H_
 
-#include "ble/internal/cordio/CordioPalAttClient.h"
 #include "ble/internal/pal/PalGattClient.h"
 
 namespace ble {
+
+class PalAttClient;
 
 /**
  * Adapt a PalAttClient into a PalGattClient.
@@ -41,24 +42,12 @@ public:
      * Construct an instance of PalGattClient from an instance of PalAttClient.
      * @param client The client to adapt.
      */
-    PalGattClient(PalAttClient& client) : _client(client)
-    {
-        _client.when_server_message_received(
-            mbed::callback(this, &PalGattClient::on_server_event)
-        );
-        _client.when_transaction_timeout(
-            mbed::callback(
-                this, &PalGattClient::on_transaction_timeout
-            )
-        );
-    }
+    PalGattClient(PalAttClient& client);
 
     /**
      * @see ble::PalGattClient::exchange_mtu
      */
-    ble_error_t exchange_mtu(connection_handle_t connection) {
-        return _client.exchange_mtu_request(connection);
-    }
+    ble_error_t exchange_mtu(connection_handle_t connection);
 
     /**
      * @see ble::PalGattClient::get_mtu_size
@@ -66,9 +55,7 @@ public:
     ble_error_t get_mtu_size(
         connection_handle_t connection_handle,
         uint16_t& mtu_size
-    ) {
-        return _client.get_mtu_size(connection_handle, mtu_size);
-    }
+    );
 
     /**
      * @see ble::PalGattClient::discover_primary_service
@@ -76,13 +63,7 @@ public:
     ble_error_t discover_primary_service(
         connection_handle_t connection,
         attribute_handle_t discovery_range_begining
-    ) {
-        return _client.read_by_group_type_request(
-            connection,
-            attribute_handle_range(discovery_range_begining, END_ATTRIBUTE_HANDLE),
-            SERVICE_TYPE_UUID
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::discover_primary_service_by_service_uuid
@@ -91,17 +72,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t discovery_range_begining,
         const UUID& uuid
-    ) {
-        return _client.find_by_type_value_request(
-            connection_handle,
-            attribute_handle_range(discovery_range_begining, END_ATTRIBUTE_HANDLE),
-            SERVICE_TYPE_UUID,
-            Span<const uint8_t>(
-                uuid.getBaseUUID(),
-                (uuid.shortOrLong() == UUID::UUID_TYPE_SHORT) ? 2 : UUID::LENGTH_OF_LONG_UUID
-            )
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::find_included_service
@@ -109,13 +80,7 @@ public:
     ble_error_t find_included_service(
         connection_handle_t connection_handle,
         attribute_handle_range_t service_range
-    ) {
-        return _client.read_by_type_request(
-            connection_handle,
-            service_range,
-            INCLUDE_TYPE_UUID
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::discover_characteristics_of_a_service
@@ -123,13 +88,7 @@ public:
     ble_error_t discover_characteristics_of_a_service(
         connection_handle_t connection_handle,
         attribute_handle_range_t discovery_range
-    ) {
-        return _client.read_by_type_request(
-            connection_handle,
-            discovery_range,
-            CHARACTERISTIC_TYPE_UUID
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::discover_characteristics_descriptors
@@ -137,12 +96,7 @@ public:
     ble_error_t discover_characteristics_descriptors(
         connection_handle_t connection_handle,
         attribute_handle_range_t descriptors_discovery_range
-    ) {
-        return _client.find_information_request(
-            connection_handle,
-            descriptors_discovery_range
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::read_attribute_value
@@ -150,12 +104,7 @@ public:
     ble_error_t read_attribute_value(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle
-    ) {
-        return _client.read_request(
-            connection_handle,
-            attribute_handle
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::read_using_characteristic_uuid
@@ -164,13 +113,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_range_t read_range,
         const UUID& uuid
-    ) {
-        return _client.read_by_type_request(
-            connection_handle,
-            read_range,
-            uuid
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::read_attribute_blob
@@ -179,13 +122,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         uint16_t offset
-    ) {
-        return _client.read_blob_request(
-            connection_handle,
-            attribute_handle,
-            offset
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::read_multiple_characteristic_values
@@ -193,12 +130,7 @@ public:
     ble_error_t read_multiple_characteristic_values(
         connection_handle_t connection_handle,
         const Span<const attribute_handle_t>& characteristic_value_handles
-    ) {
-        return _client.read_multiple_request(
-            connection_handle,
-            characteristic_value_handles
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::write_without_response
@@ -207,13 +139,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t characteristic_value_handle,
         const Span<const uint8_t>& value
-    ) {
-        return _client.write_command(
-            connection_handle,
-            characteristic_value_handle,
-            value
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::signed_write_without_response
@@ -222,13 +148,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t characteristic_value_handle,
         const Span<const uint8_t>& value
-    ) {
-        return _client.signed_write_command(
-            connection_handle,
-            characteristic_value_handle,
-            value
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::write_attribute
@@ -237,13 +157,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         const Span<const uint8_t>& value
-    ) {
-        return _client.write_request(
-            connection_handle,
-            attribute_handle,
-            value
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::queue_prepare_write
@@ -253,14 +167,7 @@ public:
         attribute_handle_t characteristic_value_handle,
         const Span<const uint8_t>& value,
         uint16_t offset
-    ) {
-        return _client.prepare_write_request(
-            connection_handle,
-            characteristic_value_handle,
-            offset,
-            value
-        );
-    }
+    );
 
     /**
      * @see ble::PalGattClient::execute_write_queue
@@ -268,23 +175,17 @@ public:
     ble_error_t execute_write_queue(
         connection_handle_t connection_handle,
         bool execute
-    ) {
-        return _client.execute_write_request(connection_handle, execute);
-    }
+    );
 
     /**
      * @see ble::PalGattClient::initialize
      */
-    ble_error_t initialize() {
-        return _client.initialize();
-    }
+    ble_error_t initialize();
 
     /**
      * @see ble::PalGattClient::terminate
      */
-    ble_error_t terminate() {
-        return _client.initialize();
-    }
+    ble_error_t terminate();
 
 private:
     PalAttClient& _client;
