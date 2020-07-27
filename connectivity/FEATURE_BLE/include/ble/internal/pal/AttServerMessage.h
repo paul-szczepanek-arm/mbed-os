@@ -21,7 +21,6 @@
 #include "ble/types/UUID.h"
 
 namespace ble {
-namespace pal {
 
 /**
  * Operation code defined for attribute operations
@@ -764,8 +763,6 @@ struct AttHandleValueIndication : public AttServerMessage {
     const Span<const uint8_t> attribute_value;
 };
 
-
-} // namespace pal
 } // namespace ble
 
 #endif /* BLE_PAL_ATT_SERVER_MESSAGE_H_ */

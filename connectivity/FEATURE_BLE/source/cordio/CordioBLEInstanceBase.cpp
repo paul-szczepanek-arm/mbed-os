@@ -39,6 +39,7 @@
 #include "ble/internal/cordio/CordioPalAttClient.h"
 #include "ble/internal/cordio/CordioPalSecurityManager.h"
 #include "ble/internal/cordio/CordioPalGap.h"
+#include "ble/internal/cordio/CordioPalSigningMonitor.h"
 
 using namespace std::chrono;
 
@@ -123,17 +124,6 @@ CordioBLEInstanceBase& CordioBLEInstanceBase::deviceInstance()
     return instance;
 }
 
-class CordioSigningMonitor : public ble::pal::PalSigningMonitor {
-    void set_signing_event_handler(ble::SecurityManager *handler) {
-        #if BLE_FEATURE_GATT_CLIENT
-            CordioBLEInstanceBase::deviceInstance().getGattClient().set_signing_event_handler(handler);
-        #endif // BLE_FEATURE_GATT_CLIENT
-        #if BLE_FEATURE_GATT_SERVER
-            CordioBLEInstanceBase::deviceInstance().getGattServer().set_signing_event_handler(handler);
-        #endif // BLE_FEATURE_GATT_SERVER
-    }
-};
-
 ble_error_t CordioBLEInstanceBase::init(
     ::BLE::InstanceID_t instanceID,
     FunctionPointerWithContext< ::BLE::InitializationCompleteCallbackContext *> initCallback)
@@ -194,12 +184,12 @@ const char* CordioBLEInstanceBase::getVersion()
 
 ble::Gap& CordioBLEInstanceBase::getGap()
 {
-    static ble::pal::CordioPalGenericAccessService cordio_gap_service;
+    static ble::PalGenericAccessService cordio_gap_service;
     static ble::Gap gap(
         _event_queue,
-        ble::pal::CordioPalGap::get_gap(),
+        ble::PalGap::get_gap(),
         cordio_gap_service,
-        ble::pal::CordioPalSecurityManager::get_security_manager()
+        ble::PalSecurityManager::get_security_manager()
     );
 
     return gap;
@@ -231,9 +221,9 @@ ble::GattClient& CordioBLEInstanceBase::getGattClient()
     return gatt_client;
 }
 
-pal::PalGattClient& CordioBLEInstanceBase::getPalGattClient()
+PalGattClient& CordioBLEInstanceBase::getPalGattClient()
 {
-    static pal::AttClientToGattClientAdapter pal_gatt_client(pal::CordioPalAttClient::get_client());
+    static PalAttClientToPalGattClientAdapter pal_gatt_client(PalAttClient::get_client());
     return pal_gatt_client;
 }
 #endif // BLE_FEATURE_GATT_CLIENT
@@ -241,9 +231,9 @@ pal::PalGattClient& CordioBLEInstanceBase::getPalGattClient()
 #if BLE_FEATURE_SECURITY
 SecurityManager& CordioBLEInstanceBase::getSecurityManager()
 {
-    static CordioSigningMonitor signing_event_monitor;
+    static PalSigningMonitor signing_event_monitor;
     static ble::SecurityManager m_instance(
-        ble::pal::CordioPalSecurityManager::get_security_manager(),
+        ble::PalSecurityManager::get_security_manager(),
         getGap(),
         signing_event_monitor
     );
@@ -287,7 +277,7 @@ void CordioBLEInstanceBase::processEvents()
     }
 
 #if BLE_FEATURE_SECURITY
-    if (ble::pal::CordioPalSecurityManager::get_security_manager().sm_handler(msg)) {
+    if (ble::PalSecurityManager::get_security_manager().sm_handler(msg)) {
         return;
     }
 #endif // BLE_FEATURE_SECURITY
@@ -339,7 +329,7 @@ void CordioBLEInstanceBase::processEvents()
 #endif // MBED_CONF_CORDIO_ROUTE_UNHANDLED_COMMAND_COMPLETE_EVENTS
 
         default:
-            ble::pal::CordioPalGap::gap_handler(msg);
+            ble::PalGap::gap_handler(msg);
             break;
     }
 }
@@ -348,8 +338,8 @@ void CordioBLEInstanceBase::device_manager_cb(dmEvt_t* dm_event)
 {
     if (dm_event->hdr.status == HCI_SUCCESS && dm_event->hdr.event == DM_CONN_DATA_LEN_CHANGE_IND) {
         // this event can only happen after a connection has been established therefore gap is present
-        ble::pal::PalGapEventHandler *handler;
-        handler = ble::pal::CordioPalGap::get_gap().get_event_handler();
+        ble::PalGapEventHandler *handler;
+        handler = ble::PalGap::get_gap().get_event_handler();
         if (handler) {
             handler->on_data_length_change(
                 dm_event->hdr.param,
@@ -549,7 +539,7 @@ void CordioBLEInstanceBase::stack_setup()
 
 #if BLE_FEATURE_ATT
 #if BLE_FEATURE_GATT_CLIENT
-    AttRegister((attCback_t) ble::pal::CordioPalAttClient::att_client_handler);
+    AttRegister((attCback_t) ble::PalAttClient::att_client_handler);
 #else
     AttRegister((attCback_t) ble::GattServer::att_cb);
 #endif // BLE_FEATURE_GATT_CLIENT

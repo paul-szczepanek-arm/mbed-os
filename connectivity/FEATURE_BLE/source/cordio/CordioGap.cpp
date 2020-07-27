@@ -33,7 +33,7 @@ using namespace std::chrono;
 
 namespace ble {
 
-using pal::connection_peer_address_type_t;
+using connection_peer_address_type_t;
 
 namespace {
 
@@ -272,16 +272,16 @@ static bool is_in_whitelist(
 }
 
 /*
- * Convert a peer_address_type_t into a pal::whitelist_address_type_t.
+ * Convert a peer_address_type_t into a whitelist_address_type_t.
  */
-static pal::whitelist_address_type_t to_whitelist_address_type(
+static whitelist_address_type_t to_whitelist_address_type(
     peer_address_type_t address_type
 )
 {
     return (address_type == peer_address_type_t::PUBLIC
         || address_type == peer_address_type_t::PUBLIC_IDENTITY) ?
-        pal::whitelist_address_type_t::PUBLIC_DEVICE_ADDRESS :
-        pal::whitelist_address_type_t::RANDOM_DEVICE_ADDRESS;
+        whitelist_address_type_t::PUBLIC_DEVICE_ADDRESS :
+        whitelist_address_type_t::RANDOM_DEVICE_ADDRESS;
 }
 
 microsecond_t minSupervisionTimeout(
@@ -308,18 +308,18 @@ const central_privacy_configuration_t Gap::default_central_privacy_configuration
 };
 
 Gap::Gap(
-    pal::PalEventQueue &event_queue,
-    pal::PalGap &pal_gap,
-    pal::PalGenericAccessService &generic_access_service,
-    pal::PalSecurityManager &pal_sm
+    SimplePalEventQueue &event_queue,
+    PalGap &pal_gap,
+    PalGenericAccessService &generic_access_service,
+    PalSecurityManager &pal_sm
 ) : _event_queue(event_queue),
     _pal_gap(pal_gap),
     _gap_service(generic_access_service),
     _pal_sm(pal_sm),
     _address_type(own_address_type_t::PUBLIC),
-    _initiator_policy_mode(pal::initiator_policy_t::NO_FILTER),
-    _scanning_filter_policy(pal::scanning_filter_policy_t::NO_FILTER),
-    _advertising_filter_policy(pal::advertising_filter_policy_t::NO_FILTER),
+    _initiator_policy_mode(initiator_policy_t::NO_FILTER),
+    _scanning_filter_policy(scanning_filter_policy_t::NO_FILTER),
+    _advertising_filter_policy(advertising_filter_policy_t::NO_FILTER),
     _whitelist(),
     _privacy_enabled(false),
     _peripheral_privacy_configuration(default_peripheral_privacy_configuration),
@@ -450,7 +450,7 @@ ble_error_t Gap::stopScan()
     _scan_enabled = false;
 
     if (is_extended_advertising_available()) {
-        err = _pal_gap.extended_scan_enable(false, pal::duplicates_filter_t::DISABLE, 0, 0);
+        err = _pal_gap.extended_scan_enable(false, duplicates_filter_t::DISABLE, 0, 0);
     } else {
         err = _pal_gap.scan_enable(false, false);
     }
@@ -509,7 +509,7 @@ ble_error_t Gap::connect(
             connectionParams.getScanIntervalArray()[0],
             connectionParams.getScanWindowArray()[0],
             connectionParams.getFilter(),
-            (pal::connection_peer_address_type_t::type) peerAddressType.value(),
+            (connection_peer_address_type_t::type) peerAddressType.value(),
             peerAddress,
             connectionParams.getOwnAddressType(),
             connectionParams.getMinConnectionIntervalArray()[0],
@@ -522,7 +522,7 @@ ble_error_t Gap::connect(
     }
 
     // ensure scan is stopped.
-    _pal_gap.extended_scan_enable(false, pal::duplicates_filter_t::DISABLE, 0, 0);
+    _pal_gap.extended_scan_enable(false, duplicates_filter_t::DISABLE, 0, 0);
 
     // reduce the address type to public or random
     peer_address_type_t adjusted_address_type(peer_address_type_t::PUBLIC);
@@ -616,7 +616,7 @@ ble_error_t Gap::rejectConnectionParametersUpdate(
 {
     return _pal_gap.reject_connection_parameter_request(
         connectionHandle,
-        pal::hci_error_code_t::UNACCEPTABLE_CONNECTION_PARAMETERS
+        hci_error_code_t::UNACCEPTABLE_CONNECTION_PARAMETERS
     );
 }
 
@@ -658,14 +658,14 @@ ble_error_t Gap::setPhy(
 
 
 void Gap::on_read_phy(
-    pal::hci_error_code_t hci_status,
+    hci_error_code_t hci_status,
     ble::connection_handle_t connection_handle,
     phy_t tx_phy,
     phy_t rx_phy
 )
 {
     ble_error_t status = BLE_ERROR_NONE;
-    if (hci_status != pal::hci_error_code_t::SUCCESS) {
+    if (hci_status != hci_error_code_t::SUCCESS) {
         status = BLE_ERROR_UNSPECIFIED;
     }
 
@@ -688,14 +688,14 @@ void Gap::on_data_length_change(
 
 
 void Gap::on_phy_update_complete(
-    pal::hci_error_code_t hci_status,
+    hci_error_code_t hci_status,
     ble::connection_handle_t connection_handle,
     phy_t tx_phy,
     phy_t rx_phy
 )
 {
     ble_error_t status = BLE_ERROR_NONE;
-    if (hci_status != pal::hci_error_code_t::SUCCESS) {
+    if (hci_status != hci_error_code_t::SUCCESS) {
         status = BLE_ERROR_UNSPECIFIED;
     }
 
@@ -1023,33 +1023,33 @@ void Gap::process_advertising_timeout()
 }
 
 
-void Gap::on_gap_event_received(const pal::GapEvent &e)
+void Gap::on_gap_event_received(const GapEvent &e)
 {
     switch (e.type.value()) {
 #if BLE_ROLE_OBSERVER
-        case pal::GapEventType::ADVERTISING_REPORT:
-            on_advertising_report(static_cast<const pal::GapAdvertisingReportEvent &>(e));
+        case GapEventType::ADVERTISING_REPORT:
+            on_advertising_report(static_cast<const GapAdvertisingReportEvent &>(e));
             break;
 #endif // BLE_ROLE_OBSERVER
 #if BLE_FEATURE_CONNECTABLE
-        case pal::GapEventType::CONNECTION_COMPLETE:
-            on_connection_complete(static_cast<const pal::GapConnectionCompleteEvent &>(e));
+        case GapEventType::CONNECTION_COMPLETE:
+            on_connection_complete(static_cast<const GapConnectionCompleteEvent &>(e));
             break;
 
-        case pal::GapEventType::CONNECTION_UPDATE:
-            on_connection_update(static_cast<const pal::GapConnectionUpdateEvent &>(e));
+        case GapEventType::CONNECTION_UPDATE:
+            on_connection_update(static_cast<const GapConnectionUpdateEvent &>(e));
             break;
 
-        case pal::GapEventType::DISCONNECTION_COMPLETE:
-            on_disconnection_complete(static_cast<const pal::GapDisconnectionCompleteEvent &>(e));
+        case GapEventType::DISCONNECTION_COMPLETE:
+            on_disconnection_complete(static_cast<const GapDisconnectionCompleteEvent &>(e));
             break;
 
-        case pal::GapEventType::REMOTE_CONNECTION_PARAMETER_REQUEST:
-            on_connection_parameter_request(static_cast<const pal::GapRemoteConnectionParameterRequestEvent &>(e));
+        case GapEventType::REMOTE_CONNECTION_PARAMETER_REQUEST:
+            on_connection_parameter_request(static_cast<const GapRemoteConnectionParameterRequestEvent &>(e));
             break;
 #endif // BLE_FEATURE_CONNECTABLE
-        case pal::GapEventType::UNEXPECTED_ERROR:
-            on_unexpected_error(static_cast<const pal::GapUnexpectedErrorEvent &>(e));
+        case GapEventType::UNEXPECTED_ERROR:
+            on_unexpected_error(static_cast<const GapUnexpectedErrorEvent &>(e));
             break;
 
         default:
@@ -1058,16 +1058,16 @@ void Gap::on_gap_event_received(const pal::GapEvent &e)
 }
 
 
-void Gap::on_advertising_report(const pal::GapAdvertisingReportEvent &e)
+void Gap::on_advertising_report(const GapAdvertisingReportEvent &e)
 {
     for (size_t i = 0; i < e.size(); ++i) {
-        pal::GapAdvertisingReportEvent::advertising_t advertising = e[i];
+        GapAdvertisingReportEvent::advertising_t advertising = e[i];
 
 #if BLE_FEATURE_PRIVACY
         // Check if the address hasn't been resolved
         if (_privacy_enabled &&
             _central_privacy_configuration.resolution_strategy == central_privacy_configuration_t::RESOLVE_AND_FILTER &&
-            advertising.address_type == pal::connection_peer_address_type_t::RANDOM_ADDRESS &&
+            advertising.address_type == connection_peer_address_type_t::RANDOM_ADDRESS &&
             is_random_private_resolvable_address(advertising.address.data())
             ) {
             // Filter it out
@@ -1087,19 +1087,19 @@ void Gap::on_advertising_report(const pal::GapAdvertisingReportEvent &e)
             // Conversion table available at BLUETOOTH SPECIFICATION Version 5.0 | Vol 2, Part E
             // 7.7.65.13
             switch (advertising.type.value()) {
-                case pal::received_advertising_type_t::ADV_IND:
+                case received_advertising_type_t::ADV_IND:
                     event_type = 0x13;
                     break;
-                case pal::received_advertising_type_t::ADV_DIRECT_IND:
+                case received_advertising_type_t::ADV_DIRECT_IND:
                     event_type = 0x15;
                     break;
-                case pal::received_advertising_type_t::ADV_SCAN_IND:
+                case received_advertising_type_t::ADV_SCAN_IND:
                     event_type = 0x12;
                     break;
-                case pal::received_advertising_type_t::ADV_NONCONN_IND:
+                case received_advertising_type_t::ADV_NONCONN_IND:
                     event_type = 0x10;
                     break;
-                case pal::received_advertising_type_t::SCAN_RESPONSE:
+                case received_advertising_type_t::SCAN_RESPONSE:
                     event_type = 0x1B;
                     break;
             }
@@ -1125,9 +1125,9 @@ void Gap::on_advertising_report(const pal::GapAdvertisingReportEvent &e)
 }
 
 
-void Gap::on_connection_complete(const pal::GapConnectionCompleteEvent &e)
+void Gap::on_connection_complete(const GapConnectionCompleteEvent &e)
 {
-    if (e.status != pal::hci_error_code_t::SUCCESS) {
+    if (e.status != hci_error_code_t::SUCCESS) {
         if (_eventHandler) {
             _eventHandler->onConnectionComplete(
                 ConnectionCompleteEvent(
@@ -1172,7 +1172,7 @@ void Gap::on_connection_complete(const pal::GapConnectionCompleteEvent &e)
                     // Reject connection request - the user will get notified through a callback
                     _pal_gap.disconnect(
                         e.connection_handle,
-                        pal::local_disconnection_reason_t::AUTHENTICATION_FAILURE
+                        local_disconnection_reason_t::AUTHENTICATION_FAILURE
                     );
                     return;
 
@@ -1254,9 +1254,9 @@ void Gap::on_connection_complete(const pal::GapConnectionCompleteEvent &e)
 }
 
 
-void Gap::on_disconnection_complete(const pal::GapDisconnectionCompleteEvent &e)
+void Gap::on_disconnection_complete(const GapDisconnectionCompleteEvent &e)
 {
-    if (e.status == pal::hci_error_code_t::SUCCESS) {
+    if (e.status == hci_error_code_t::SUCCESS) {
         // signal internal stack
         if (_connection_event_handler) {
             _connection_event_handler->on_disconnected(
@@ -1280,7 +1280,7 @@ void Gap::on_disconnection_complete(const pal::GapDisconnectionCompleteEvent &e)
 }
 
 
-void Gap::on_connection_parameter_request(const pal::GapRemoteConnectionParameterRequestEvent &e)
+void Gap::on_connection_parameter_request(const GapRemoteConnectionParameterRequestEvent &e)
 {
     if (_user_manage_connection_parameter_requests) {
         if (_eventHandler) {
@@ -1310,7 +1310,7 @@ void Gap::on_connection_parameter_request(const pal::GapRemoteConnectionParamete
 }
 
 
-void Gap::on_connection_update(const pal::GapConnectionUpdateEvent &e)
+void Gap::on_connection_update(const GapConnectionUpdateEvent &e)
 {
     if (!_eventHandler) {
         return;
@@ -1318,7 +1318,7 @@ void Gap::on_connection_update(const pal::GapConnectionUpdateEvent &e)
 
     _eventHandler->onConnectionParametersUpdateComplete(
         ConnectionParametersUpdateCompleteEvent(
-            e.status == pal::hci_error_code_t::SUCCESS ? BLE_ERROR_NONE : BLE_ERROR_UNSPECIFIED,
+            e.status == hci_error_code_t::SUCCESS ? BLE_ERROR_NONE : BLE_ERROR_UNSPECIFIED,
             e.connection_handle,
             conn_interval_t(e.connection_interval),
             e.connection_latency,
@@ -1328,14 +1328,14 @@ void Gap::on_connection_update(const pal::GapConnectionUpdateEvent &e)
 }
 
 
-void Gap::on_unexpected_error(const pal::GapUnexpectedErrorEvent &e)
+void Gap::on_unexpected_error(const GapUnexpectedErrorEvent &e)
 {
     // TODO: add feature in interface to notify the user that the connection
     // has been updated.
 }
 
 
-pal::own_address_type_t Gap::get_own_address_type(AddressUseType_t address_use_type)
+own_address_type_t Gap::get_own_address_type(AddressUseType_t address_use_type)
 {
 #if BLE_FEATURE_PRIVACY
     if (_privacy_enabled) {
@@ -1353,23 +1353,23 @@ pal::own_address_type_t Gap::get_own_address_type(AddressUseType_t address_use_t
 
         // An non resolvable private address should be generated
         if (use_non_resolvable_address) {
-            return pal::own_address_type_t::RANDOM;
+            return own_address_type_t::RANDOM;
         }
 
         switch (_address_type.value()) {
             case own_address_type_t::PUBLIC:
-                return pal::own_address_type_t::RESOLVABLE_PRIVATE_ADDRESS_PUBLIC_FALLBACK;
+                return own_address_type_t::RESOLVABLE_PRIVATE_ADDRESS_PUBLIC_FALLBACK;
             default:
-                return pal::own_address_type_t::RESOLVABLE_PRIVATE_ADDRESS_RANDOM_FALLBACK;
+                return own_address_type_t::RESOLVABLE_PRIVATE_ADDRESS_RANDOM_FALLBACK;
         }
     }
 #endif // BLE_FEATURE_PRIVACY
 
     switch (_address_type.value()) {
         case own_address_type_t::PUBLIC:
-            return pal::own_address_type_t::PUBLIC;
+            return own_address_type_t::PUBLIC;
         default:
-            return pal::own_address_type_t::RANDOM;
+            return own_address_type_t::RANDOM;
     }
 }
 
@@ -1672,7 +1672,7 @@ ble_error_t Gap::setAdvertisingParameters(
             return BLE_ERROR_INVALID_PARAM;
         }
 
-        pal::advertising_channel_map_t channel_map(
+        advertising_channel_map_t channel_map(
             params.getChannel37(),
             params.getChannel38(),
             params.getChannel39()
@@ -1713,12 +1713,12 @@ ble_error_t Gap::setExtendedAdvertisingParameters(
         return BLE_ERROR_INVALID_PARAM;
     }
 
-    pal::advertising_event_properties_t event_properties(params.getType());
+    advertising_event_properties_t event_properties(params.getType());
     event_properties.include_tx_power = params.getTxPowerInHeader();
     event_properties.omit_advertiser_address = params.getAnonymousAdvertising();
     event_properties.use_legacy_pdu = params.getUseLegacyPDU();
 
-    pal::advertising_channel_map_t channel_map(
+    advertising_channel_map_t channel_map(
         params.getChannel37(),
         params.getChannel38(),
         params.getChannel39()
@@ -1795,12 +1795,12 @@ ble_error_t Gap::setAdvertisingData(
 )
 {
     // type declarations
-    typedef pal::advertising_fragment_description_t op_t;
-    typedef ble_error_t (pal::PalGap::*legacy_set_data_fn_t)(
+    typedef advertising_fragment_description_t op_t;
+    typedef ble_error_t (PalGap::*legacy_set_data_fn_t)(
         uint8_t,
-        const pal::advertising_data_t &
+        const advertising_data_t &
     );
-    typedef ble_error_t (pal::PalGap::*set_data_fn_t)(
+    typedef ble_error_t (PalGap::*set_data_fn_t)(
         advertising_handle_t advertising_handle,
         op_t operation,
         bool minimize_fragmentation,
@@ -1834,13 +1834,13 @@ ble_error_t Gap::setAdvertisingData(
 
         // select the pal function
         legacy_set_data_fn_t set_data = scan_response ?
-            &pal::PalGap::set_scan_response_data :
-            &pal::PalGap::set_advertising_data;
+            &PalGap::set_scan_response_data :
+            &PalGap::set_advertising_data;
 
         // set the payload
         return (_pal_gap.*set_data)(
             payload.size(),
-            pal::advertising_data_t(payload.data(), payload.size())
+            advertising_data_t(payload.data(), payload.size())
         );
 #if BLE_FEATURE_EXTENDED_ADVERTISING
     }
@@ -1872,8 +1872,8 @@ ble_error_t Gap::setAdvertisingData(
 
     // select the pal function
     set_data_fn_t set_data = scan_response ?
-        &pal::PalGap::set_extended_scan_response_data :
-        &pal::PalGap::set_extended_advertising_data;
+        &PalGap::set_extended_scan_response_data :
+        &PalGap::set_extended_advertising_data;
 
     const size_t hci_length = _pal_gap.get_maximum_hci_advertising_data_length();
 
@@ -2089,7 +2089,7 @@ ble_error_t Gap::setPeriodicAdvertisingPayload(
         return BLE_ERROR_INVALID_PARAM;
     }
 
-    typedef pal::advertising_fragment_description_t op_t;
+    typedef advertising_fragment_description_t op_t;
 
     const size_t hci_length = _pal_gap.get_maximum_hci_advertising_data_length();
     size_t i = 0;
@@ -2202,17 +2202,17 @@ bool Gap::isPeriodicAdvertisingActive(advertising_handle_t handle)
 
 
 void Gap::on_enhanced_connection_complete(
-    pal::hci_error_code_t status,
+    hci_error_code_t status,
     connection_handle_t connection_handle,
-    pal::connection_role_t own_role,
-    pal::connection_peer_address_type_t peer_address_type,
+    connection_role_t own_role,
+    connection_peer_address_type_t peer_address_type,
     const ble::address_t &peer_address,
     const ble::address_t &local_resolvable_private_address,
     const ble::address_t &peer_resolvable_private_address,
     uint16_t connection_interval,
     uint16_t connection_latency,
     uint16_t supervision_timeout,
-    pal::clock_accuracy_t master_clock_accuracy
+    clock_accuracy_t master_clock_accuracy
 )
 {
     if (!_eventHandler) {
@@ -2221,7 +2221,7 @@ void Gap::on_enhanced_connection_complete(
 
     _eventHandler->onConnectionComplete(
         ConnectionCompleteEvent(
-            (status == pal::hci_error_code_t::SUCCESS) ? BLE_ERROR_NONE : BLE_ERROR_INTERNAL_STACK_FAILURE,
+            (status == hci_error_code_t::SUCCESS) ? BLE_ERROR_NONE : BLE_ERROR_INTERNAL_STACK_FAILURE,
             (connection_handle_t) connection_handle,
             own_role,
             (peer_address_type_t::type) peer_address_type.value(),
@@ -2239,15 +2239,15 @@ void Gap::on_enhanced_connection_complete(
 
 void Gap::on_extended_advertising_report(
     advertising_event_t event_type,
-    const pal::connection_peer_address_type_t *address_type,
+    const connection_peer_address_type_t *address_type,
     const ble::address_t &address,
     phy_t primary_phy,
     const phy_t *secondary_phy,
     advertising_sid_t advertising_sid,
-    pal::advertising_power_t tx_power,
-    pal::rssi_t rssi,
+    advertising_power_t tx_power,
+    rssi_t rssi,
     uint16_t periodic_advertising_interval,
-    pal::direct_address_type_t direct_address_type,
+    direct_address_type_t direct_address_type,
     const ble::address_t &direct_address,
     uint8_t data_length,
     const uint8_t *data
@@ -2258,7 +2258,7 @@ void Gap::on_extended_advertising_report(
     if (_privacy_enabled &&
         _central_privacy_configuration.resolution_strategy == central_privacy_configuration_t::RESOLVE_AND_FILTER &&
         address_type != NULL &&
-        *address_type == pal::connection_peer_address_type_t::RANDOM_ADDRESS &&
+        *address_type == connection_peer_address_type_t::RANDOM_ADDRESS &&
         is_random_private_resolvable_address(address.data())
     ) {
         return;
@@ -2291,14 +2291,14 @@ void Gap::on_extended_advertising_report(
 
 
 void Gap::on_periodic_advertising_sync_established(
-    pal::hci_error_code_t error,
-    pal::sync_handle_t sync_handle,
+    hci_error_code_t error,
+    sync_handle_t sync_handle,
     advertising_sid_t advertising_sid,
-    pal::connection_peer_address_type_t advertiser_address_type,
+    connection_peer_address_type_t advertiser_address_type,
     const ble::address_t &advertiser_address,
     phy_t advertiser_phy,
     uint16_t periodic_advertising_interval,
-    pal::clock_accuracy_t clock_accuracy
+    clock_accuracy_t clock_accuracy
 )
 {
     if (!_eventHandler) {
@@ -2307,7 +2307,7 @@ void Gap::on_periodic_advertising_sync_established(
 
     _eventHandler->onPeriodicAdvertisingSyncEstablished(
         PeriodicAdvertisingSyncEstablishedEvent(
-            (error == pal::hci_error_code_t::SUCCESS) ? BLE_ERROR_NONE : BLE_ERROR_INTERNAL_STACK_FAILURE,
+            (error == hci_error_code_t::SUCCESS) ? BLE_ERROR_NONE : BLE_ERROR_INTERNAL_STACK_FAILURE,
             sync_handle,
             advertising_sid,
             static_cast<ble::peer_address_type_t::type>(advertiser_address_type.value()),
@@ -2321,10 +2321,10 @@ void Gap::on_periodic_advertising_sync_established(
 
 
 void Gap::on_periodic_advertising_report(
-    pal::sync_handle_t sync_handle,
-    pal::advertising_power_t tx_power,
-    pal::rssi_t rssi,
-    pal::advertising_data_status_t data_status,
+    sync_handle_t sync_handle,
+    advertising_power_t tx_power,
+    rssi_t rssi,
+    advertising_data_status_t data_status,
     uint8_t data_length,
     const uint8_t *data
 )
@@ -2345,7 +2345,7 @@ void Gap::on_periodic_advertising_report(
 }
 
 
-void Gap::on_periodic_advertising_sync_loss(pal::sync_handle_t sync_handle)
+void Gap::on_periodic_advertising_sync_loss(sync_handle_t sync_handle)
 {
     if (!_eventHandler) {
         return;
@@ -2358,7 +2358,7 @@ void Gap::on_periodic_advertising_sync_loss(pal::sync_handle_t sync_handle)
 
 
 void Gap::on_advertising_set_terminated(
-    pal::hci_error_code_t status,
+    hci_error_code_t status,
     advertising_handle_t advertising_handle,
     connection_handle_t connection_handle,
     uint8_t number_of_completed_extended_advertising_events
@@ -2375,7 +2375,7 @@ void Gap::on_advertising_set_terminated(
             advertising_handle,
             connection_handle,
             number_of_completed_extended_advertising_events,
-            status == pal::hci_error_code_t::SUCCESS
+            status == hci_error_code_t::SUCCESS
         )
     );
 }
@@ -2383,7 +2383,7 @@ void Gap::on_advertising_set_terminated(
 
 void Gap::on_scan_request_received(
     advertising_handle_t advertising_handle,
-    pal::connection_peer_address_type_t scanner_address_type,
+    connection_peer_address_type_t scanner_address_type,
     const ble::address_t &address
 )
 {
@@ -2402,7 +2402,7 @@ void Gap::on_scan_request_received(
 
 
 void Gap::on_connection_update_complete(
-    pal::hci_error_code_t status,
+    hci_error_code_t status,
     connection_handle_t connection_handle,
     uint16_t connection_interval,
     uint16_t connection_latency,
@@ -2415,7 +2415,7 @@ void Gap::on_connection_update_complete(
 
     _eventHandler->onConnectionParametersUpdateComplete(
         ConnectionParametersUpdateCompleteEvent(
-            status == pal::hci_error_code_t::SUCCESS ? BLE_ERROR_NONE : BLE_ERROR_UNSPECIFIED,
+            status == hci_error_code_t::SUCCESS ? BLE_ERROR_NONE : BLE_ERROR_UNSPECIFIED,
             connection_handle,
             conn_interval_t(connection_interval),
             slave_latency_t(connection_latency),
@@ -2650,7 +2650,7 @@ ble_error_t Gap::addDeviceToPeriodicAdvertiserList(
     }
 
     return _pal_gap.add_device_to_periodic_advertiser_list(
-        (pal::advertising_peer_address_type_t::type) peerAddressType.value(),
+        (advertising_peer_address_type_t::type) peerAddressType.value(),
         peerAddress,
         sid
     );
@@ -2678,7 +2678,7 @@ ble_error_t Gap::removeDeviceFromPeriodicAdvertiserList(
     }
 
     return _pal_gap.remove_device_from_periodic_advertiser_list(
-        (pal::advertising_peer_address_type_t::type) peerAddressType.value(),
+        (advertising_peer_address_type_t::type) peerAddressType.value(),
         peerAddress,
         sid
     );

@@ -21,7 +21,6 @@
 #include "ble/types/BLETypes.h"
 
 namespace ble {
-namespace pal {
 
 /**
  * Enumeration of GAP event types
@@ -514,7 +513,6 @@ struct GapDisconnectionCompleteEvent : public GapEvent {
     const uint8_t reason;
 };
 
-} // namespace pal
 } // namespace ble
 
 #endif /* BLE_PAL_GAP_MESSAGE_H_ */

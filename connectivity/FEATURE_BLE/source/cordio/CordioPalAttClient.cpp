@@ -19,9 +19,8 @@
 #include "CordioPalAttClient.h"
 
 namespace ble {
-namespace pal {
 
-void CordioPalAttClient::att_client_handler(const attEvt_t* event)
+void PalAttClient::att_client_handler(const attEvt_t* event)
 {
 #if BLE_FEATURE_GATT_CLIENT
     if (event->hdr.status == ATT_SUCCESS && event->hdr.event == ATT_MTU_UPDATE_IND) {
@@ -81,5 +80,4 @@ void CordioPalAttClient::att_client_handler(const attEvt_t* event)
 #endif // BLE_FEATURE_GATT_SERVER
 }
 
-} // pal
 } // ble

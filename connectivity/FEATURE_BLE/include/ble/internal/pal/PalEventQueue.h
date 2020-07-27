@@ -20,7 +20,7 @@
 #include "platform/Callback.h"
 
 namespace ble {
-namespace pal {
+namespace interface {
 
 /**
  * Simple interface which allow upper layer to post an event into the event
@@ -62,7 +62,7 @@ struct PalEventQueue {
     virtual bool post(const mbed::Callback<void()>& event) = 0;
 };
 
-} // namespace pal
+} // namespace interface
 } // namespace ble
 
 #endif /* BLE_PAL_EVENT_QUEUE_H_ */

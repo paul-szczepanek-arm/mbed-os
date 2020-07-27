@@ -20,13 +20,12 @@
 #include "ble/internal/pal/AttServerMessage.h"
 
 namespace ble {
-namespace pal {
 
 /**
- * Simple implementation of ble::pal::AttFindInformationResponse.
+ * Simple implementation of ble::AttFindInformationResponse.
  * It should fit for any vendor stack exposing a proper ATT interface.
  */
-struct SimpleAttFindInformationResponse : public AttFindInformationResponse {
+struct PalSimpleAttFindInformationResponse : public AttFindInformationResponse {
     /**
      * Format of the UUID in the response.
      */
@@ -42,7 +41,7 @@ struct SimpleAttFindInformationResponse : public AttFindInformationResponse {
      * @param information_data The information data whose format is determined
      * by the Format field
      */
-    SimpleAttFindInformationResponse(
+    PalSimpleAttFindInformationResponse(
         Format format, Span<const uint8_t> information_data
     ) : AttFindInformationResponse(),
         _format(format), _information_data(information_data),
@@ -50,14 +49,14 @@ struct SimpleAttFindInformationResponse : public AttFindInformationResponse {
     }
 
     /**
-     * @see ble::pal::AttFindInformationResponse::size
+     * @see ble::AttFindInformationResponse::size
      */
     virtual size_t size() const {
         return _information_data.size() / _item_size;
     }
 
     /**
-     * @see ble::pal::AttFindInformationResponse::operator[]
+     * @see ble::AttFindInformationResponse::operator[]
      */
     virtual information_data_t operator[](size_t index) const  {
         const uint8_t* item = &_information_data[index * _item_size];
@@ -88,28 +87,28 @@ private:
 
 
 /**
- * Simple implementation of ble::pal::AttFindByTypeValueResponse.
+ * Simple implementation of ble::AttFindByTypeValueResponse.
  * It should fit for any vendor stack exposing a proper ATT interface.
  */
-struct SimpleAttFindByTypeValueResponse : public AttFindByTypeValueResponse {
+struct PalSimpleAttFindByTypeValueResponse : public AttFindByTypeValueResponse {
     /**
      * Construct a AttFindByTypeValueResponse from a raw array containing the
      * Handle Informations.
      * @param handles raw array containing one or more Handle Informations.
      */
-    SimpleAttFindByTypeValueResponse(Span<const uint8_t> handles) :
+    PalSimpleAttFindByTypeValueResponse(Span<const uint8_t> handles) :
         AttFindByTypeValueResponse(), _handles(handles) {
     }
 
     /**
-     * @see ble::pal::AttFindByTypeValueResponse::size
+     * @see ble::AttFindByTypeValueResponse::size
      */
     virtual std::size_t size() const {
         return _handles.size() / item_size;
     }
 
     /**
-     * @see ble::pal::AttFindByTypeValueResponse::operator[]
+     * @see ble::AttFindByTypeValueResponse::operator[]
      */
     virtual attribute_handle_range_t operator[](size_t index) const {
         attribute_handle_range_t result;
@@ -126,10 +125,10 @@ private:
 
 
 /**
- * Simple implementation of ble::pal::AttReadByTypeResponse.
+ * Simple implementation of ble::AttReadByTypeResponse.
  * It should fit for any vendor stack exposing a proper ATT interface.
  */
-struct SimpleAttReadByTypeResponse : public AttReadByTypeResponse {
+struct PalSimpleAttReadByTypeResponse : public AttReadByTypeResponse {
     /**
      * Construct an AttReadByTypeResponse from the size of each attribute
      * handle-value pair and a list of attribute data.
@@ -137,21 +136,21 @@ struct SimpleAttReadByTypeResponse : public AttReadByTypeResponse {
      * @param attribute_data Raw bytes array containing the list of attribute
      * data.
      */
-    SimpleAttReadByTypeResponse(
+    PalSimpleAttReadByTypeResponse(
         uint8_t element_size, Span<const uint8_t> attribute_data
     ) : AttReadByTypeResponse(),
         _attribute_data(attribute_data), _element_size(element_size) {
     }
 
     /**
-     * @see ble::pal::AttReadByTypeResponse::size
+     * @see ble::AttReadByTypeResponse::size
      */
     virtual size_t size() const {
         return _attribute_data.size() / _element_size;
     }
 
     /**
-     * @see ble::pal::AttReadByTypeResponse::operator[]
+     * @see ble::AttReadByTypeResponse::operator[]
      */
     virtual attribute_data_t operator[](size_t index) const {
         const uint8_t* item = &_attribute_data[index * _element_size];
@@ -176,31 +175,31 @@ private:
 
 
 /**
- * Simple implementation of ble::pal::AttReadByGroupTypeResponse.
+ * Simple implementation of ble::AttReadByGroupTypeResponse.
  * It should fit for any vendor stack exposing a proper ATT interface.
  */
-struct SimpleAttReadByGroupTypeResponse : public AttReadByGroupTypeResponse {
+struct PalSimpleAttReadByGroupTypeResponse : public AttReadByGroupTypeResponse {
     /**
      * Construct an instance of AttReadByGroupTypeResponse from the size of each
      * attribute data and a byte array containing the list of attribute data.
      * @param element_size The size of each Attribute Data
      * @param attribute_data Byte array containing the list of Attribute Data.
      */
-    SimpleAttReadByGroupTypeResponse(
+    PalSimpleAttReadByGroupTypeResponse(
         uint8_t element_size, Span<const uint8_t> attribute_data
     ) : AttReadByGroupTypeResponse(),
         _attribute_data(attribute_data), _element_size(element_size) {
     }
 
     /**
-     * @see ble::pal::AttReadByGroupTypeResponse::size
+     * @see ble::AttReadByGroupTypeResponse::size
      */
     virtual size_t size() const {
         return _attribute_data.size() / _element_size;
     }
 
     /**
-     * @see ble::pal::AttReadByGroupTypeResponse::operator[]
+     * @see ble::AttReadByGroupTypeResponse::operator[]
      */
     virtual attribute_data_t operator[](size_t index) const {
         const uint8_t* item = &_attribute_data[index * _element_size];
@@ -226,7 +225,6 @@ private:
     uint8_t _element_size;
 };
 
-}  // namespace pal
 }  // namespace ble
 
 #endif /* BLE_PAL_SIMPLEATTSERVERMESSAGE_H_ */

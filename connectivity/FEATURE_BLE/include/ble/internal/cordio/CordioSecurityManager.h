@@ -29,9 +29,10 @@
 #include "ble/types/BLETypes.h"
 #include "ble/internal/SecurityDb.h"
 #include "ble/internal/pal/PalConnectionMonitor.h"
-#include "ble/internal/pal/PalSigningMonitor.h"
-#include "ble/internal/pal/PalSecurityManager.h"
+#include "ble/internal/cordio/CordioPalSigningMonitor.h"
+#include "ble/internal/cordio/CordioPalSecurityManager.h"
 #include "ble/SecurityManager.h"
+#include "ble/internal/cordio/CordioBLEInstanceBase.h"
 
 namespace ble {
 
@@ -190,12 +191,12 @@ namespace ble {
  */
 class SecurityManager :
     public ble::interface::SecurityManager,
-    public ble::pal::PalSecurityManagerEventHandler,
-    public ble::pal::PalConnectionMonitorEventHandler,
-    public ble::pal::PalSigningMonitorEventHandler
+    public ble::PalSecurityManagerEventHandler,
+    public ble::PalConnectionMonitorEventHandler,
+    public ble::PalSigningMonitorEventHandler
 {
      // friends
-     friend class ble::pal::PalConnectionMonitorEventHandler;
+     friend class ble::PalConnectionMonitorEventHandler;
      friend CordioBLEInstanceBase;
 
     /*
@@ -694,36 +695,36 @@ public:
     /* ===================================================================== */
     /*                    private implementation follows                     */
 
-    /* implements pal::PalSecurityManager::EventHandler */
+    /* implements PalSecurityManager::EventHandler */
 public:
     ////////////////////////////////////////////////////////////////////////////
     // Pairing
     //
 
-    /** @copydoc pal::PalSecurityManager::on_pairing_request
+    /** @copydoc PalSecurityManager::on_pairing_request
      */
     void on_pairing_request(
         connection_handle_t connection,
         bool use_oob,
-        pal::AuthenticationMask authentication,
-        pal::KeyDistribution initiator_dist,
-        pal::KeyDistribution responder_dist
+        AuthenticationMask authentication,
+        KeyDistribution initiator_dist,
+        KeyDistribution responder_dist
     );
 
-    /** @copydoc pal::PalSecurityManager::on_pairing_error
+    /** @copydoc PalSecurityManager::on_pairing_error
      */
     void on_pairing_error(
         connection_handle_t connection,
         pairing_failure_t error
     );
 
-    /** @copydoc pal::PalSecurityManager::on_pairing_timed_out
+    /** @copydoc PalSecurityManager::on_pairing_timed_out
      */
     void on_pairing_timed_out(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::PalSecurityManager::on_pairing_completed
+    /** @copydoc PalSecurityManager::on_pairing_completed
      */
     void on_pairing_completed(
         connection_handle_t connection
@@ -733,48 +734,48 @@ public:
     // Security
     //
 
-    /** @copydoc pal::PalSecurityManager::on_valid_mic_timeout
+    /** @copydoc PalSecurityManager::on_valid_mic_timeout
      */
     void on_valid_mic_timeout(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::PalSecurityManager::on_signed_write_received
+    /** @copydoc PalSecurityManager::on_signed_write_received
      */
     void on_signed_write_received(
         connection_handle_t connection,
         uint32_t sign_coutner
     );
 
-    /** @copydoc pal::PalSecurityManager::on_signed_write_verification_failure
+    /** @copydoc PalSecurityManager::on_signed_write_verification_failure
      */
     void on_signed_write_verification_failure(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::PalSecurityManager::on_signed_write
+    /** @copydoc PalSecurityManager::on_signed_write
      */
     void on_signed_write();
 
-    /** @copydoc pal::PalSecurityManager::on_slave_security_request
+    /** @copydoc PalSecurityManager::on_slave_security_request
      */
     void on_slave_security_request(
         connection_handle_t connection,
-        pal::AuthenticationMask authentication
+        AuthenticationMask authentication
     );
 
     ////////////////////////////////////////////////////////////////////////////
     // Encryption
     //
 
-    /** @copydoc pal::PalSecurityManager::on_link_encryption_result
+    /** @copydoc PalSecurityManager::on_link_encryption_result
      */
     void on_link_encryption_result(
         connection_handle_t connection,
         link_encryption_t result
     );
 
-    /** @copydoc pal::PalSecurityManager::on_link_encryption_request_timed_out
+    /** @copydoc PalSecurityManager::on_link_encryption_request_timed_out
      */
     void on_link_encryption_request_timed_out(
         connection_handle_t connection
@@ -784,45 +785,45 @@ public:
     // MITM
     //
 
-    /** @copydoc pal::PalSecurityManager::on_passkey_display
+    /** @copydoc PalSecurityManager::on_passkey_display
      */
     void on_passkey_display(
         connection_handle_t connection,
         passkey_num_t passkey
     );
 
-    /** @copydoc pal::PalSecurityManager::on_keypress_notification
+    /** @copydoc PalSecurityManager::on_keypress_notification
      */
     void on_keypress_notification(
         connection_handle_t connection,
         Keypress_t keypress
     );
 
-    /** @copydoc pal::PalSecurityManager::on_passkey_request
+    /** @copydoc PalSecurityManager::on_passkey_request
      */
     void on_passkey_request(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::PalSecurityManager::on_confirmation_request
+    /** @copydoc PalSecurityManager::on_confirmation_request
      */
     void on_confirmation_request(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::PalSecurityManager::on_secure_connections_oob_request
+    /** @copydoc PalSecurityManager::on_secure_connections_oob_request
      */
     void on_secure_connections_oob_request(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::PalSecurityManager::on_legacy_pairing_oob_request
+    /** @copydoc PalSecurityManager::on_legacy_pairing_oob_request
      */
     void on_legacy_pairing_oob_request(
         connection_handle_t connection
     );
 
-    /** @copydoc pal::PalSecurityManager::on_secure_connections_oob_generated
+    /** @copydoc PalSecurityManager::on_secure_connections_oob_generated
      */
     void on_secure_connections_oob_generated(
         const oob_lesc_value_t &random,
@@ -833,21 +834,21 @@ public:
     // Keys
     //
 
-    /** @copydoc pal::PalSecurityManager::on_secure_connections_ltk_generated
+    /** @copydoc PalSecurityManager::on_secure_connections_ltk_generated
      */
     void on_secure_connections_ltk_generated(
         connection_handle_t connection,
         const ltk_t &ltk
     );
 
-    /** @copydoc pal::PalSecurityManager::on_keys_distributed_ltk
+    /** @copydoc PalSecurityManager::on_keys_distributed_ltk
      */
     void on_keys_distributed_ltk(
         connection_handle_t connection,
         const ltk_t &ltk
     );
 
-    /** @copydoc pal::PalSecurityManager::on_keys_distributed_ediv_rand
+    /** @copydoc PalSecurityManager::on_keys_distributed_ediv_rand
      */
     void on_keys_distributed_ediv_rand(
         connection_handle_t connection,
@@ -855,14 +856,14 @@ public:
         const rand_t &rand
     );
 
-    /** @copydoc pal::PalSecurityManager::on_keys_distributed_local_ltk
+    /** @copydoc PalSecurityManager::on_keys_distributed_local_ltk
      */
     void on_keys_distributed_local_ltk(
         connection_handle_t connection,
         const ltk_t &ltk
     );
 
-    /** @copydoc pal::PalSecurityManager::on_keys_distributed_local_ediv_rand
+    /** @copydoc PalSecurityManager::on_keys_distributed_local_ediv_rand
      */
     void on_keys_distributed_local_ediv_rand(
         connection_handle_t connection,
@@ -870,29 +871,29 @@ public:
         const rand_t &rand
     );
 
-    /** @copydoc pal::PalSecurityManager::on_keys_distributed_irk
+    /** @copydoc PalSecurityManager::on_keys_distributed_irk
      */
     void on_keys_distributed_irk(
         connection_handle_t connection,
         const irk_t &irk
     );
 
-    /** @copydoc pal::PalSecurityManager::on_keys_distributed_bdaddr
+    /** @copydoc PalSecurityManager::on_keys_distributed_bdaddr
      */
     void on_keys_distributed_bdaddr(
         connection_handle_t connection,
-        pal::advertising_peer_address_type_t peer_address_type,
+        advertising_peer_address_type_t peer_address_type,
         const address_t &peer_identity_address
     );
 
-    /** @copydoc pal::PalSecurityManager::on_keys_distributed_csrk
+    /** @copydoc PalSecurityManager::on_keys_distributed_csrk
      */
     void on_keys_distributed_csrk(
         connection_handle_t connection,
         const csrk_t &csrk
     );
 
-    /** @copydoc pal::PalSecurityManager::on_ltk_requeston_ltk_request
+    /** @copydoc PalSecurityManager::on_ltk_requeston_ltk_request
      */
     void on_ltk_request(
         connection_handle_t connection,
@@ -900,25 +901,25 @@ public:
         const rand_t &rand
     );
 
-    /** @copydoc pal::PalSecurityManager::on_ltk_requeston_ltk_request
+    /** @copydoc PalSecurityManager::on_ltk_requeston_ltk_request
      */
     void on_ltk_request(
         connection_handle_t connection
     );
 
-    /* end implements pal::PalSecurityManager::EventHandler */
+    /* end implements PalSecurityManager::EventHandler */
 
 public:
     SecurityManager(
-        pal::PalSecurityManager &palImpl,
-        pal::PalConnectionMonitor &connMonitorImpl,
-        pal::PalSigningMonitor &signingMonitorImpl
+        PalSecurityManager &palImpl,
+        PalConnectionMonitor &connMonitorImpl,
+        PalSigningMonitor &signingMonitorImpl
     ) : _pal(palImpl),
         _connection_monitor(connMonitorImpl),
         _signing_monitor(signingMonitorImpl),
         _db(NULL),
         _default_authentication(0),
-        _default_key_distribution(pal::KeyDistribution::KEY_DISTRIBUTION_ALL),
+        _default_key_distribution(KeyDistribution::KEY_DISTRIBUTION_ALL),
         _pairing_authorisation_required(false),
         _legacy_pairing_allowed(true),
         _master_sends_keys(false),
@@ -1131,16 +1132,16 @@ private:
     struct ControlBlock_t {
         ControlBlock_t();
 
-        pal::KeyDistribution get_initiator_key_distribution() {
-            return pal::KeyDistribution(initiator_key_distribution);
+        KeyDistribution get_initiator_key_distribution() {
+            return KeyDistribution(initiator_key_distribution);
         };
-        pal::KeyDistribution get_responder_key_distribution() {
-            return pal::KeyDistribution(responder_key_distribution);
+        KeyDistribution get_responder_key_distribution() {
+            return KeyDistribution(responder_key_distribution);
         };
-        void set_initiator_key_distribution(pal::KeyDistribution mask) {
+        void set_initiator_key_distribution(KeyDistribution mask) {
             initiator_key_distribution = mask.value();
         };
-        void set_responder_key_distribution(pal::KeyDistribution mask) {
+        void set_responder_key_distribution(KeyDistribution mask) {
             responder_key_distribution = mask.value();
         };
 
@@ -1191,9 +1192,9 @@ private:
     EventHandler* eventHandler;
     EventHandler  defaultEventHandler;
 
-    pal::PalSecurityManager &_pal;
-    pal::PalConnectionMonitor &_connection_monitor;
-    pal::PalSigningMonitor &_signing_monitor;
+    PalSecurityManager &_pal;
+    PalConnectionMonitor &_connection_monitor;
+    PalSigningMonitor &_signing_monitor;
 
     SecurityDb *_db;
 
@@ -1206,8 +1207,8 @@ private:
     address_t _oob_temporary_key_creator_address; /**< device which generated and sent the TK */
     oob_tk_t _oob_temporary_key; /**< used for legacy pairing */
 
-    pal::AuthenticationMask _default_authentication;
-    pal::KeyDistribution _default_key_distribution;
+    AuthenticationMask _default_authentication;
+    KeyDistribution _default_key_distribution;
 
     bool _pairing_authorisation_required;
     bool _legacy_pairing_allowed;

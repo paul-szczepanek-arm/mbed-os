@@ -19,7 +19,6 @@
 #include "dm_api.h"
 
 namespace ble {
-namespace pal {
 
 namespace {
 bool dummy_gap_event_handler(const wsfMsgHdr_t *msg)
@@ -29,7 +28,7 @@ bool dummy_gap_event_handler(const wsfMsgHdr_t *msg)
 }
 
 
-bool CordioPalGap::is_feature_supported(
+bool PalGap::is_feature_supported(
     ble::controller_supported_features_t feature
 )
 {
@@ -63,7 +62,7 @@ bool CordioPalGap::is_feature_supported(
 }
 
 
-ble_error_t CordioPalGap::initialize()
+ble_error_t PalGap::initialize()
 {
     for (size_t i = 0; i < DM_NUM_ADV_SETS; ++i) {
         direct_adv_cb[i] = direct_adv_cb_t();
@@ -72,7 +71,7 @@ ble_error_t CordioPalGap::initialize()
 }
 
 
-ble_error_t CordioPalGap::terminate()
+ble_error_t PalGap::terminate()
 {
     for (size_t i = 0; i < DM_NUM_ADV_SETS; ++i) {
         direct_adv_cb[i] = direct_adv_cb_t();
@@ -81,19 +80,19 @@ ble_error_t CordioPalGap::terminate()
 }
 
 
-address_t CordioPalGap::get_device_address()
+address_t PalGap::get_device_address()
 {
     return address_t(HciGetBdAddr());
 }
 
 
-address_t CordioPalGap::get_random_address()
+address_t PalGap::get_random_address()
 {
     return device_random_address;
 }
 
 
-ble_error_t CordioPalGap::set_random_address(const address_t &address)
+ble_error_t PalGap::set_random_address(const address_t &address)
 {
     device_random_address = address;
     DmDevSetRandAddr(const_cast<uint8_t *>(address.data()));
@@ -101,7 +100,7 @@ ble_error_t CordioPalGap::set_random_address(const address_t &address)
 }
 
 
-ble_error_t CordioPalGap::set_advertising_parameters(
+ble_error_t PalGap::set_advertising_parameters(
     uint16_t advertising_interval_min,
     uint16_t advertising_interval_max,
     advertising_type_t advertising_type,
@@ -148,7 +147,7 @@ ble_error_t CordioPalGap::set_advertising_parameters(
 }
 
 
-ble_error_t CordioPalGap::set_advertising_data(
+ble_error_t PalGap::set_advertising_data(
     uint8_t advertising_data_length,
     const advertising_data_t &advertising_data
 )
@@ -164,7 +163,7 @@ ble_error_t CordioPalGap::set_advertising_data(
 }
 
 
-ble_error_t CordioPalGap::set_scan_response_data(
+ble_error_t PalGap::set_scan_response_data(
     uint8_t scan_response_data_length,
     const advertising_data_t &scan_response_data
 )
@@ -180,7 +179,7 @@ ble_error_t CordioPalGap::set_scan_response_data(
 }
 
 
-ble_error_t CordioPalGap::advertising_enable(bool enable)
+ble_error_t PalGap::advertising_enable(bool enable)
 {
     if (enable) {
         // The Cordio stack requires to start direct advertising with
@@ -231,7 +230,7 @@ ble_error_t CordioPalGap::advertising_enable(bool enable)
 }
 
 
-ble_error_t CordioPalGap::set_scan_parameters(
+ble_error_t PalGap::set_scan_parameters(
     bool active_scanning,
     uint16_t scan_interval,
     uint16_t scan_window,
@@ -252,7 +251,7 @@ ble_error_t CordioPalGap::set_scan_parameters(
 }
 
 
-ble_error_t CordioPalGap::scan_enable(
+ble_error_t PalGap::scan_enable(
     bool enable,
     bool filter_duplicates
 )
@@ -274,7 +273,7 @@ ble_error_t CordioPalGap::scan_enable(
 }
 
 
-ble_error_t CordioPalGap::create_connection(
+ble_error_t PalGap::create_connection(
     uint16_t scan_interval,
     uint16_t scan_window,
     initiator_policy_t initiator_policy,
@@ -320,7 +319,7 @@ ble_error_t CordioPalGap::create_connection(
 }
 
 
-ble_error_t CordioPalGap::cancel_connection_creation()
+ble_error_t PalGap::cancel_connection_creation()
 {
     DmConnClose(
         DM_CLIENT_ID_APP,
@@ -331,20 +330,20 @@ ble_error_t CordioPalGap::cancel_connection_creation()
 }
 
 
-uint8_t CordioPalGap::read_white_list_capacity()
+uint8_t PalGap::read_white_list_capacity()
 {
     return HciGetWhiteListSize();
 }
 
 
-ble_error_t CordioPalGap::clear_whitelist()
+ble_error_t PalGap::clear_whitelist()
 {
     DmDevWhiteListClear();
     return BLE_ERROR_NONE;
 }
 
 
-ble_error_t CordioPalGap::add_device_to_whitelist(
+ble_error_t PalGap::add_device_to_whitelist(
     whitelist_address_type_t address_type,
     address_t address
 )
@@ -357,7 +356,7 @@ ble_error_t CordioPalGap::add_device_to_whitelist(
 }
 
 
-ble_error_t CordioPalGap::remove_device_from_whitelist(
+ble_error_t PalGap::remove_device_from_whitelist(
     whitelist_address_type_t address_type,
     address_t address
 )
@@ -370,7 +369,7 @@ ble_error_t CordioPalGap::remove_device_from_whitelist(
 }
 
 
-ble_error_t CordioPalGap::connection_parameters_update(
+ble_error_t PalGap::connection_parameters_update(
     connection_handle_t connection,
     uint16_t connection_interval_min,
     uint16_t connection_interval_max,
@@ -401,7 +400,7 @@ ble_error_t CordioPalGap::connection_parameters_update(
 }
 
 
-ble_error_t CordioPalGap::accept_connection_parameter_request(
+ble_error_t PalGap::accept_connection_parameter_request(
     connection_handle_t connection_handle,
     uint16_t interval_min,
     uint16_t interval_max,
@@ -424,7 +423,7 @@ ble_error_t CordioPalGap::accept_connection_parameter_request(
 }
 
 
-ble_error_t CordioPalGap::reject_connection_parameter_request(
+ble_error_t PalGap::reject_connection_parameter_request(
     connection_handle_t connection_handle,
     hci_error_code_t rejection_reason
 )
@@ -437,7 +436,7 @@ ble_error_t CordioPalGap::reject_connection_parameter_request(
 }
 
 
-ble_error_t CordioPalGap::disconnect(
+ble_error_t PalGap::disconnect(
     connection_handle_t connection,
     local_disconnection_reason_t disconnection_reason
 )
@@ -451,14 +450,14 @@ ble_error_t CordioPalGap::disconnect(
 }
 
 
-bool CordioPalGap::is_privacy_supported()
+bool PalGap::is_privacy_supported()
 {
     // We only support controller-based privacy, so return whether the controller supports it
     return HciLlPrivacySupported();
 }
 
 
-ble_error_t CordioPalGap::set_address_resolution(
+ble_error_t PalGap::set_address_resolution(
     bool enable
 )
 {
@@ -467,7 +466,7 @@ ble_error_t CordioPalGap::set_address_resolution(
 }
 
 
-ble_error_t CordioPalGap::read_phy(connection_handle_t connection)
+ble_error_t PalGap::read_phy(connection_handle_t connection)
 {
     if (is_feature_supported(controller_supported_features_t::LE_2M_PHY)
         || is_feature_supported(controller_supported_features_t::LE_CODED_PHY)) {
@@ -478,7 +477,7 @@ ble_error_t CordioPalGap::read_phy(connection_handle_t connection)
 }
 
 
-ble_error_t CordioPalGap::set_preferred_phys(
+ble_error_t PalGap::set_preferred_phys(
     const phy_set_t &tx_phys,
     const phy_set_t &rx_phys
 )
@@ -493,7 +492,7 @@ ble_error_t CordioPalGap::set_preferred_phys(
 }
 
 
-ble_error_t CordioPalGap::set_phy(
+ble_error_t PalGap::set_phy(
     connection_handle_t connection,
     const phy_set_t &tx_phys,
     const phy_set_t &rx_phys,
@@ -522,9 +521,9 @@ ble_error_t CordioPalGap::set_phy(
 
 // singleton of the ARM Cordio client
 
-CordioPalGap &CordioPalGap::get_gap()
+PalGap &PalGap::get_gap()
 {
-    static CordioPalGap _gap;
+    static PalGap _gap;
     return _gap;
 }
 
@@ -532,7 +531,7 @@ CordioPalGap &CordioPalGap::get_gap()
  * Callback which handle wsfMsgHdr_t and forward them to emit_gap_event.
  */
 
-void CordioPalGap::gap_handler(const wsfMsgHdr_t *msg)
+void PalGap::gap_handler(const wsfMsgHdr_t *msg)
 {
     typedef bool (*event_handler_t)(const wsfMsgHdr_t *msg);
 
@@ -541,7 +540,7 @@ void CordioPalGap::gap_handler(const wsfMsgHdr_t *msg)
     }
 
     connection_handle_t handle = (connection_handle_t) msg->param;
-    ble::pal::PalGapEventHandler *handler = get_gap()._pal_event_handler;
+    ble::PalGapEventHandler *handler = get_gap()._pal_event_handler;
 
 
     switch (msg->event) {
@@ -791,7 +790,7 @@ void CordioPalGap::gap_handler(const wsfMsgHdr_t *msg)
  */
 
 template<typename T>
-bool CordioPalGap::event_handler(const wsfMsgHdr_t *msg)
+bool PalGap::event_handler(const wsfMsgHdr_t *msg)
 {
     if (T::can_convert(msg)) {
         get_gap().emit_gap_event(T::convert((const typename T::type *) msg));
@@ -801,7 +800,7 @@ bool CordioPalGap::event_handler(const wsfMsgHdr_t *msg)
 }
 
 
-ble_error_t CordioPalGap::set_advertising_set_random_address(
+ble_error_t PalGap::set_advertising_set_random_address(
     advertising_handle_t advertising_handle,
     const address_t &address
 )
@@ -811,7 +810,7 @@ ble_error_t CordioPalGap::set_advertising_set_random_address(
 }
 
 
-ble_error_t CordioPalGap::set_extended_advertising_parameters(
+ble_error_t PalGap::set_extended_advertising_parameters(
     advertising_handle_t advertising_handle,
     advertising_event_properties_t event_properties,
     advertising_interval_t primary_advertising_interval_min,
@@ -952,7 +951,7 @@ ble_error_t CordioPalGap::set_extended_advertising_parameters(
 }
 
 
-ble_error_t CordioPalGap::set_periodic_advertising_parameters(
+ble_error_t PalGap::set_periodic_advertising_parameters(
     advertising_handle_t advertising_handle,
     periodic_advertising_interval_t periodic_advertising_min,
     periodic_advertising_interval_t periodic_advertising_max,
@@ -971,7 +970,7 @@ ble_error_t CordioPalGap::set_periodic_advertising_parameters(
 }
 
 
-ble_error_t CordioPalGap::set_extended_advertising_data(
+ble_error_t PalGap::set_extended_advertising_data(
     advertising_handle_t advertising_handle,
     advertising_fragment_description_t operation,
     bool minimize_fragmentation,
@@ -996,7 +995,7 @@ ble_error_t CordioPalGap::set_extended_advertising_data(
 }
 
 
-ble_error_t CordioPalGap::set_periodic_advertising_data(
+ble_error_t PalGap::set_periodic_advertising_data(
     advertising_handle_t advertising_handle,
     advertising_fragment_description_t fragment_description,
     uint8_t advertising_data_size,
@@ -1013,7 +1012,7 @@ ble_error_t CordioPalGap::set_periodic_advertising_data(
 }
 
 
-ble_error_t CordioPalGap::set_extended_scan_response_data(
+ble_error_t PalGap::set_extended_scan_response_data(
     advertising_handle_t advertising_handle,
     advertising_fragment_description_t operation,
     bool minimize_fragmentation,
@@ -1038,7 +1037,7 @@ ble_error_t CordioPalGap::set_extended_scan_response_data(
 }
 
 
-ble_error_t CordioPalGap::extended_advertising_enable(
+ble_error_t PalGap::extended_advertising_enable(
     bool enable,
     uint8_t number_of_sets,
     const advertising_handle_t *in_handles,
@@ -1129,7 +1128,7 @@ ble_error_t CordioPalGap::extended_advertising_enable(
 }
 
 
-ble_error_t CordioPalGap::periodic_advertising_enable(
+ble_error_t PalGap::periodic_advertising_enable(
     bool enable,
     advertising_handle_t advertising_handle
 )
@@ -1144,45 +1143,45 @@ ble_error_t CordioPalGap::periodic_advertising_enable(
 }
 
 
-uint16_t CordioPalGap::get_maximum_advertising_data_length()
+uint16_t PalGap::get_maximum_advertising_data_length()
 {
     return HciGetMaxAdvDataLen();
 }
 
 
-uint16_t CordioPalGap::get_maximum_connectable_advertising_data_length()
+uint16_t PalGap::get_maximum_connectable_advertising_data_length()
 {
     return HCI_EXT_ADV_CONN_DATA_LEN;
 }
 
 
-uint8_t CordioPalGap::get_maximum_hci_advertising_data_length()
+uint8_t PalGap::get_maximum_hci_advertising_data_length()
 {
     return HCI_EXT_ADV_DATA_LEN;
 }
 
 
-uint8_t CordioPalGap::get_max_number_of_advertising_sets()
+uint8_t PalGap::get_max_number_of_advertising_sets()
 {
     return std::min(HciGetNumSupAdvSets(), (uint8_t) DM_NUM_ADV_SETS);
 }
 
 
-ble_error_t CordioPalGap::remove_advertising_set(advertising_handle_t advertising_handle)
+ble_error_t PalGap::remove_advertising_set(advertising_handle_t advertising_handle)
 {
     DmAdvRemoveAdvSet(advertising_handle);
     return BLE_ERROR_NONE;
 }
 
 
-ble_error_t CordioPalGap::clear_advertising_sets()
+ble_error_t PalGap::clear_advertising_sets()
 {
     DmAdvClearAdvSets();
     return BLE_ERROR_NONE;
 }
 
 
-ble_error_t CordioPalGap::set_extended_scan_parameters(
+ble_error_t PalGap::set_extended_scan_parameters(
     own_address_type_t own_address_type,
     scanning_filter_policy_t filter_policy,
     phy_set_t scanning_phys,
@@ -1218,7 +1217,7 @@ ble_error_t CordioPalGap::set_extended_scan_parameters(
 }
 
 
-ble_error_t CordioPalGap::extended_scan_enable(
+ble_error_t PalGap::extended_scan_enable(
     bool enable,
     duplicates_filter_t filter_duplicates,
     uint16_t duration,
@@ -1244,7 +1243,7 @@ ble_error_t CordioPalGap::extended_scan_enable(
 }
 
 
-ble_error_t CordioPalGap::periodic_advertising_create_sync(
+ble_error_t PalGap::periodic_advertising_create_sync(
     bool use_periodic_advertiser_list,
     uint8_t advertising_sid,
     peer_address_type_t peer_address_type,
@@ -1275,7 +1274,7 @@ ble_error_t CordioPalGap::periodic_advertising_create_sync(
 }
 
 
-ble_error_t CordioPalGap::cancel_periodic_advertising_create_sync()
+ble_error_t PalGap::cancel_periodic_advertising_create_sync()
 {
     // FIXME: Find a way to use it!
     // Function not directly exposed by the cordio stack.
@@ -1283,14 +1282,14 @@ ble_error_t CordioPalGap::cancel_periodic_advertising_create_sync()
 }
 
 
-ble_error_t CordioPalGap::periodic_advertising_terminate_sync(sync_handle_t sync_handle)
+ble_error_t PalGap::periodic_advertising_terminate_sync(sync_handle_t sync_handle)
 {
     DmSyncStop(sync_handle);
     return BLE_ERROR_NONE;
 }
 
 
-ble_error_t CordioPalGap::add_device_to_periodic_advertiser_list(
+ble_error_t PalGap::add_device_to_periodic_advertiser_list(
     advertising_peer_address_type_t advertiser_address_type,
     const address_t &advertiser_address,
     uint8_t advertising_sid
@@ -1305,7 +1304,7 @@ ble_error_t CordioPalGap::add_device_to_periodic_advertiser_list(
 }
 
 
-ble_error_t CordioPalGap::remove_device_from_periodic_advertiser_list(
+ble_error_t PalGap::remove_device_from_periodic_advertiser_list(
     advertising_peer_address_type_t advertiser_address_type,
     const address_t &advertiser_address,
     uint8_t advertising_sid
@@ -1320,20 +1319,20 @@ ble_error_t CordioPalGap::remove_device_from_periodic_advertiser_list(
 }
 
 
-ble_error_t CordioPalGap::clear_periodic_advertiser_list()
+ble_error_t PalGap::clear_periodic_advertiser_list()
 {
     DmClearPerAdvList();
     return BLE_ERROR_NONE;
 }
 
 
-uint8_t CordioPalGap::read_periodic_advertiser_list_size()
+uint8_t PalGap::read_periodic_advertiser_list_size()
 {
     return HciGetPerAdvListSize();
 }
 
 
-ble_error_t CordioPalGap::extended_create_connection(
+ble_error_t PalGap::extended_create_connection(
     initiator_policy_t initiator_policy,
     own_address_type_t own_address_type,
     peer_address_type_t peer_address_type,
@@ -1387,7 +1386,7 @@ ble_error_t CordioPalGap::extended_create_connection(
 }
 
 
-ble_error_t CordioPalGap::update_direct_advertising_parameters(
+ble_error_t PalGap::update_direct_advertising_parameters(
     advertising_handle_t advertising_handle,
     uint8_t advertising_type,
     address_t peer_address,
@@ -1438,8 +1437,8 @@ ble_error_t CordioPalGap::update_direct_advertising_parameters(
 
 
 template<class Predicate>
-typename CordioPalGap::direct_adv_cb_t*
-CordioPalGap::get_adv_cb(const Predicate& predicate)
+typename PalGap::direct_adv_cb_t*
+PalGap::get_adv_cb(const Predicate& predicate)
 {
     for (size_t i = 0; i < DM_NUM_ADV_SETS; ++i) {
         if (predicate(direct_adv_cb[i])) {
@@ -1450,8 +1449,8 @@ CordioPalGap::get_adv_cb(const Predicate& predicate)
 }
 
 
-typename CordioPalGap::direct_adv_cb_t*
-CordioPalGap::get_running_direct_adv_cb(advertising_handle_t adv_handle)
+typename PalGap::direct_adv_cb_t*
+PalGap::get_running_direct_adv_cb(advertising_handle_t adv_handle)
 {
     return get_adv_cb([adv_handle] (const direct_adv_cb_t& cb) {
         return cb.state == direct_adv_cb_t::running &&
@@ -1460,8 +1459,8 @@ CordioPalGap::get_running_direct_adv_cb(advertising_handle_t adv_handle)
 }
 
 
-typename CordioPalGap::direct_adv_cb_t*
-CordioPalGap::get_running_conn_direct_adv_cb(connection_handle_t conn_handle)
+typename PalGap::direct_adv_cb_t*
+PalGap::get_running_conn_direct_adv_cb(connection_handle_t conn_handle)
 {
     return get_adv_cb([conn_handle] (const direct_adv_cb_t& cb) {
         return cb.state == direct_adv_cb_t::running &&
@@ -1470,8 +1469,8 @@ CordioPalGap::get_running_conn_direct_adv_cb(connection_handle_t conn_handle)
 }
 
 
-typename CordioPalGap::direct_adv_cb_t*
-CordioPalGap::get_pending_direct_adv_cb(advertising_handle_t adv_handle)
+typename PalGap::direct_adv_cb_t*
+PalGap::get_pending_direct_adv_cb(advertising_handle_t adv_handle)
 {
     return get_adv_cb([adv_handle] (const direct_adv_cb_t& cb) {
         return cb.state == direct_adv_cb_t::pending &&
@@ -1480,28 +1479,27 @@ CordioPalGap::get_pending_direct_adv_cb(advertising_handle_t adv_handle)
 }
 
 
-typename CordioPalGap::direct_adv_cb_t*
-CordioPalGap::get_free_direct_adv_cb()
+typename PalGap::direct_adv_cb_t*
+PalGap::get_free_direct_adv_cb()
 {
     return get_adv_cb([](const direct_adv_cb_t& cb) {
         return cb.state == direct_adv_cb_t::free;
     });
 }
 
-void CordioPalGap::when_gap_event_received(mbed::Callback<void(const GapEvent &)> cb)
+void PalGap::when_gap_event_received(mbed::Callback<void(const GapEvent &)> cb)
 {
     _gap_event_cb = cb;
 }
 
-void CordioPalGap::set_event_handler(PalGapEventHandler *event_handler)
+void PalGap::set_event_handler(PalGapEventHandler *event_handler)
 {
     _pal_event_handler = event_handler;
 }
 
-PalGapEventHandler* CordioPalGap::get_event_handler()
+PalGapEventHandler* PalGap::get_event_handler()
 {
     return _pal_event_handler;
 }
 
-} // pal
 } // ble

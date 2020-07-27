@@ -26,7 +26,6 @@
 #include "dm_api.h"
 
 namespace ble {
-namespace pal {
 
 struct PalGapEventHandler {
 public:
@@ -34,7 +33,7 @@ public:
      * @copydoc PalGap::EventHandler::onReadPhy
      */
     void on_read_phy(
-        pal::hci_error_code_t status,
+        hci_error_code_t status,
         connection_handle_t connectionHandle,
         ble::phy_t tx_phy,
         ble::phy_t rx_phy
@@ -53,7 +52,7 @@ public:
      * @copydoc PalGap::EventHandler::onPhyUpdateComplete
      */
     void on_phy_update_complete(
-        pal::hci_error_code_t status,
+        hci_error_code_t status,
         connection_handle_t connection_handle,
         ble::phy_t tx_phy,
         ble::phy_t rx_phy
@@ -159,14 +158,14 @@ public:
      * @param clock_accuracy Peer clock accuracy.
      */
     void on_periodic_advertising_sync_established(
-        pal::hci_error_code_t error,
-        pal::sync_handle_t sync_handle,
+        hci_error_code_t error,
+        sync_handle_t sync_handle,
         advertising_sid_t advertising_sid,
         connection_peer_address_type_t advertiser_address_type,
         const ble::address_t &advertiser_address,
         phy_t advertiser_phy,
         uint16_t periodic_advertising_interval,
-        pal::clock_accuracy_t clock_accuracy
+        clock_accuracy_t clock_accuracy
     );
 
     /** Called after a periodic advertising report event.
@@ -242,6 +241,7 @@ public:
     );
 };
 
+namespace interface {
 /**
  * Adaptation interface for the GAP layer.
  *
@@ -1665,7 +1665,7 @@ private:
     PalGap &operator=(const PalGap &);
 };
 
-} // namespace pal
+} // namespace interface
 } // namespace ble
 
 #endif /* BLE_PAL_GAP_H_ */

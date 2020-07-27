@@ -1375,7 +1375,7 @@ GattServer::GattServer() :
 }
 
 void GattServer::set_signing_event_handler(
-    pal::PalSigningMonitorEventHandler *signing_event_handler
+    PalSigningMonitorEventHandler *signing_event_handler
 ) {
     _signing_event_handler = signing_event_handler;
 }

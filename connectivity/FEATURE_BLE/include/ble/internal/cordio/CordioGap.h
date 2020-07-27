@@ -39,25 +39,26 @@
 #include "ble/internal/pal/GapTypes.h"
 #include "ble/internal/pal/PalEventQueue.h"
 #include "ble/internal/pal/PalConnectionMonitor.h"
+#include "CordioPalEventQueue.h"
 
 #include "ble/Gap.h"
 
 namespace ble {
-namespace pal {
+
 class PalGenericAccessService;
 class PalSecurityManager;
-}
+class PalGap;
 class CordioBLEInstanceBase;
 
 class Gap :
     public ble::interface::Gap,
-    public pal::PalConnectionMonitor,
-    public pal::PalGapEventHandler
+    public PalConnectionMonitor,
+    public PalGapEventHandler
 {
     // Friendship with base classes
-    friend pal::PalConnectionMonitor;
-    friend pal::PalGapEventHandler;
-    friend pal::PalGap;
+    friend PalConnectionMonitor;
+    friend PalGapEventHandler;
+    friend PalGap;
     friend CordioBLEInstanceBase;
     /**
      * Gap shutdown event handler.
@@ -1239,10 +1240,10 @@ public:
 
 protected:
     Gap(
-        pal::PalEventQueue &event_queue,
-        pal::PalGap &pal_gap,
-        pal::PalGenericAccessService &generic_access_service,
-        pal::PalSecurityManager &pal_sm
+        PalEventQueue &event_queue,
+        PalGap &pal_gap,
+        PalGenericAccessService &generic_access_service,
+        PalSecurityManager &pal_sm
     );
     ~Gap();
 private:
@@ -1257,21 +1258,21 @@ private:
 
     void process_advertising_timeout();
 
-    void on_gap_event_received(const pal::GapEvent &e);
+    void on_gap_event_received(const GapEvent &e);
 
-    void on_advertising_report(const pal::GapAdvertisingReportEvent &e);
+    void on_advertising_report(const GapAdvertisingReportEvent &e);
 
-    void on_connection_complete(const pal::GapConnectionCompleteEvent &e);
+    void on_connection_complete(const GapConnectionCompleteEvent &e);
 
-    void on_disconnection_complete(const pal::GapDisconnectionCompleteEvent &e);
+    void on_disconnection_complete(const GapDisconnectionCompleteEvent &e);
 
     void on_connection_parameter_request(
-        const pal::GapRemoteConnectionParameterRequestEvent &e
+        const GapRemoteConnectionParameterRequestEvent &e
     );
 
-    void on_connection_update(const pal::GapConnectionUpdateEvent &e);
+    void on_connection_update(const GapConnectionUpdateEvent &e);
 
-    void on_unexpected_error(const pal::GapUnexpectedErrorEvent &e);
+    void on_unexpected_error(const GapUnexpectedErrorEvent &e);
 
     enum AddressUseType_t {
         CENTRAL_CONNECTION,
@@ -1280,7 +1281,7 @@ private:
         PERIPHERAL_NON_CONNECTABLE
     };
 
-    pal::own_address_type_t get_own_address_type(AddressUseType_t address_use_type);
+    own_address_type_t get_own_address_type(AddressUseType_t address_use_type);
 
     bool initialize_whitelist() const;
 
@@ -1303,10 +1304,10 @@ private:
 
     void prepare_legacy_advertising_set();
 
-    /* implements pal::PalGap::EventHandler */
+    /* implements PalGap::EventHandler */
 private:
     void on_read_phy(
-        pal::hci_error_code_t hci_status,
+        hci_error_code_t hci_status,
         connection_handle_t connection_handle,
         phy_t tx_phy,
         phy_t rx_phy
@@ -1319,66 +1320,66 @@ private:
     );
 
     void on_phy_update_complete(
-        pal::hci_error_code_t hci_status,
+        hci_error_code_t hci_status,
         connection_handle_t connection_handle,
         phy_t tx_phy,
         phy_t rx_phy
     );
 
     void on_enhanced_connection_complete(
-        pal::hci_error_code_t status,
+        hci_error_code_t status,
         connection_handle_t connection_handle,
-        pal::connection_role_t own_role,
-        pal::connection_peer_address_type_t peer_address_type,
+        connection_role_t own_role,
+        connection_peer_address_type_t peer_address_type,
         const ble::address_t &peer_address,
         const ble::address_t &local_resolvable_private_address,
         const ble::address_t &peer_resolvable_private_address,
         uint16_t connection_interval,
         uint16_t connection_latency,
         uint16_t supervision_timeout,
-        pal::clock_accuracy_t master_clock_accuracy
+        clock_accuracy_t master_clock_accuracy
     );
 
     void on_extended_advertising_report(
         advertising_event_t event_type,
-        const pal::connection_peer_address_type_t *address_type,
+        const connection_peer_address_type_t *address_type,
         const ble::address_t &address,
         phy_t primary_phy,
         const phy_t *secondary_phy,
         advertising_sid_t advertising_sid,
-        pal::advertising_power_t tx_power,
-        pal::rssi_t rssi,
+        advertising_power_t tx_power,
+        rssi_t rssi,
         uint16_t periodic_advertising_interval,
-        pal::direct_address_type_t direct_address_type,
+        direct_address_type_t direct_address_type,
         const ble::address_t &direct_address,
         uint8_t data_length,
         const uint8_t *data
     );
 
     void on_periodic_advertising_sync_established(
-        pal::hci_error_code_t error,
-        pal::sync_handle_t sync_handle,
+        hci_error_code_t error,
+        sync_handle_t sync_handle,
         advertising_sid_t advertising_sid,
-        pal::connection_peer_address_type_t advertiser_address_type,
+        connection_peer_address_type_t advertiser_address_type,
         const ble::address_t &advertiser_address,
         phy_t advertiser_phy,
         uint16_t periodic_advertising_interval,
-        pal::clock_accuracy_t clock_accuracy
+        clock_accuracy_t clock_accuracy
     );
 
     void on_periodic_advertising_report(
-        pal::sync_handle_t sync_handle,
-        pal::advertising_power_t tx_power,
-        pal::rssi_t rssi,
-        pal::advertising_data_status_t data_status,
+        sync_handle_t sync_handle,
+        advertising_power_t tx_power,
+        rssi_t rssi,
+        advertising_data_status_t data_status,
         uint8_t data_length,
         const uint8_t *data
     );
 
-    void on_periodic_advertising_sync_loss(pal::sync_handle_t sync_handle);
+    void on_periodic_advertising_sync_loss(sync_handle_t sync_handle);
 
     void on_advertising_set_terminated(
-        pal::hci_error_code_t status,
+        hci_error_code_t status,
         advertising_handle_t advertising_handle,
         connection_handle_t connection_handle,
         uint8_t number_of_completed_extended_advertising_events
@@ -1386,12 +1387,12 @@ private:
 
     void on_scan_request_received(
         advertising_handle_t advertising_handle,
-        pal::connection_peer_address_type_t scanner_address_type,
+        connection_peer_address_type_t scanner_address_type,
         const ble::address_t &address
     );
 
     void on_connection_update_complete(
-        pal::hci_error_code_t status,
+        hci_error_code_t status,
         connection_handle_t connection_handle,
         uint16_t connection_interval,
         uint16_t connection_latency,
@@ -1421,15 +1422,15 @@ private:
      */
     ble::Gap::EventHandler *_eventHandler;
 
-    pal::PalEventQueue &_event_queue;
-    pal::PalGap &_pal_gap;
-    pal::PalGenericAccessService &_gap_service;
-    pal::PalSecurityManager &_pal_sm;
+    PalEventQueue &_event_queue;
+    PalGap &_pal_gap;
+    PalGenericAccessService &_gap_service;
+    PalSecurityManager &_pal_sm;
     ble::own_address_type_t _address_type;
     ble::address_t _address;
-    pal::initiator_policy_t _initiator_policy_mode;
-    pal::scanning_filter_policy_t _scanning_filter_policy;
-    pal::advertising_filter_policy_t _advertising_filter_policy;
+    initiator_policy_t _initiator_policy_mode;
+    scanning_filter_policy_t _scanning_filter_policy;
+    advertising_filter_policy_t _advertising_filter_policy;
     mutable whitelist_t _whitelist;
 
     bool _privacy_enabled;

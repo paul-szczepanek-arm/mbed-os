@@ -23,7 +23,6 @@
 #include "ble/types/SafeEnum.h"
 
 namespace ble {
-namespace pal {
 
 typedef ble::advertising_type_t advertising_type_t;
 
@@ -651,7 +650,6 @@ struct direct_address_type_t : SafeEnum<direct_address_type_t, uint8_t> {
 
 typedef ble::clock_accuracy_t clock_accuracy_t;
 
-} // namespace pal
 } // namespace ble
 
 #endif /* BLE_PAL_GAP_TYPES_H_ */

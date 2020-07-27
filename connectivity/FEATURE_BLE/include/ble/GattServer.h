@@ -42,11 +42,7 @@
 #define MAX_CCCD_CNT 20
 
 namespace ble {
-
-// fwd declaration of CordioPalAttClient and BLE
-namespace pal {
-class CordioPalAttClient;
-}
+class PalAttClient;
 class BLE;
 
 /**

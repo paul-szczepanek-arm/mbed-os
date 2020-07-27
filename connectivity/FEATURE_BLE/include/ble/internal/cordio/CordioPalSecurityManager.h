@@ -26,31 +26,30 @@
 #include "cfg_stack.h"
 
 namespace ble {
-namespace pal {
 
-class CordioPalSecurityManager : public ble::pal::PalSecurityManager {
+class PalSecurityManager : public interface::PalSecurityManager {
 public:
 
-    CordioPalSecurityManager();
+    PalSecurityManager();
 
-    ~CordioPalSecurityManager();
+    ~PalSecurityManager();
 
     ////////////////////////////////////////////////////////////////////////////
     // SM lifecycle management
     //
 
     /**
-     * @see ::ble::pal::PalSecurityManager::initialize
+     * @see ::ble::PalSecurityManager::initialize
      */
     ble_error_t initialize();
 
     /**
-     * @see ::ble::pal::PalSecurityManager::terminate
+     * @see ::ble::PalSecurityManager::terminate
      */
     ble_error_t terminate();
 
     /**
-     * @see ::ble::pal::PalSecurityManager::reset
+     * @see ::ble::PalSecurityManager::reset
      */
     ble_error_t reset();
 
@@ -59,12 +58,12 @@ public:
     //
 
     /**
-     * @see ::ble::pal::PalSecurityManager::read_resolving_list_capacity
+     * @see ::ble::PalSecurityManager::read_resolving_list_capacity
      */
     uint8_t read_resolving_list_capacity();
 
     /**
-     * @see ::ble::pal::PalSecurityManager::add_device_to_resolving_list
+     * @see ::ble::PalSecurityManager::add_device_to_resolving_list
      */
     ble_error_t add_device_to_resolving_list(
         advertising_peer_address_type_t peer_identity_address_type,
@@ -73,7 +72,7 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::remove_device_from_resolving_list
+     * @see ::ble::PalSecurityManager::remove_device_from_resolving_list
      */
     ble_error_t remove_device_from_resolving_list(
         advertising_peer_address_type_t peer_identity_address_type,
@@ -81,7 +80,7 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::clear_resolving_list
+     * @see ::ble::PalSecurityManager::clear_resolving_list
      */
     ble_error_t clear_resolving_list();
 
@@ -90,7 +89,7 @@ public:
     //
 
     /**
-     * @see ::ble::pal::PalSecurityManager::send_pairing_request
+     * @see ::ble::PalSecurityManager::send_pairing_request
      */
     ble_error_t send_pairing_request(
         connection_handle_t connection,
@@ -101,7 +100,7 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::send_pairing_response
+     * @see ::ble::PalSecurityManager::send_pairing_response
      */
     ble_error_t send_pairing_response(
         connection_handle_t connection,
@@ -112,7 +111,7 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::cancel_pairing
+     * @see ::ble::PalSecurityManager::cancel_pairing
      */
     ble_error_t cancel_pairing(
         connection_handle_t connection, pairing_failure_t reason
@@ -123,14 +122,14 @@ public:
     //
 
     /**
-     * @see ::ble::pal::PalSecurityManager::get_secure_connections_support
+     * @see ::ble::PalSecurityManager::get_secure_connections_support
      */
     ble_error_t get_secure_connections_support(
         bool &enabled
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::set_io_capability
+     * @see ::ble::PalSecurityManager::set_io_capability
      */
     ble_error_t set_io_capability(io_capability_t io_capability);
 
@@ -139,21 +138,21 @@ public:
     //
 
     /**
-     * @see ::ble::pal::PalSecurityManager::set_authentication_timeout
+     * @see ::ble::PalSecurityManager::set_authentication_timeout
      */
     ble_error_t set_authentication_timeout(
         connection_handle_t, uint16_t timeout_in_10ms
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::get_authentication_timeout
+     * @see ::ble::PalSecurityManager::get_authentication_timeout
      */
     ble_error_t get_authentication_timeout(
         connection_handle_t, uint16_t &timeout_in_10ms
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::set_encryption_key_requirements
+     * @see ::ble::PalSecurityManager::set_encryption_key_requirements
      */
     ble_error_t set_encryption_key_requirements(
         uint8_t min_encryption_key_size,
@@ -161,7 +160,7 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::slave_security_request
+     * @see ::ble::PalSecurityManager::slave_security_request
      */
     ble_error_t slave_security_request(
         connection_handle_t connection,
@@ -173,7 +172,7 @@ public:
     //
 
     /**
-     * @see ::ble::pal::PalSecurityManager::enable_encryption
+     * @see ::ble::PalSecurityManager::enable_encryption
      */
     ble_error_t enable_encryption(
         connection_handle_t connection,
@@ -184,7 +183,7 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::enable_encryption
+     * @see ::ble::PalSecurityManager::enable_encryption
      */
     ble_error_t enable_encryption(
         connection_handle_t connection,
@@ -193,7 +192,7 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::encrypt_data
+     * @see ::ble::PalSecurityManager::encrypt_data
      */
     ble_error_t encrypt_data(
         const byte_array_t<16> &key,
@@ -205,12 +204,12 @@ public:
     //
 
     /**
-     * @see ::ble::pal::PalSecurityManager::set_private_address_timeout
+     * @see ::ble::PalSecurityManager::set_private_address_timeout
      */
     ble_error_t set_private_address_timeout(uint16_t timeout_in_seconds);
 
     /**
-     * @see ::ble::pal::PalSecurityManager::get_identity_address
+     * @see ::ble::PalSecurityManager::get_identity_address
      */
     ble_error_t get_identity_address(address_t& address, bool& public_address);
 
@@ -219,7 +218,7 @@ public:
     //
 
     /**
-     * @see ::ble::pal::PalSecurityManager::set_ltk
+     * @see ::ble::PalSecurityManager::set_ltk
      */
     ble_error_t set_ltk(
         connection_handle_t connection,
@@ -229,19 +228,19 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::set_ltk_not_found
+     * @see ::ble::PalSecurityManager::set_ltk_not_found
      */
     ble_error_t set_ltk_not_found(
         connection_handle_t connection
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::set_irk
+     * @see ::ble::PalSecurityManager::set_irk
      */
     ble_error_t set_irk(const irk_t &irk);
 
     /**
-     * @see ::ble::pal::PalSecurityManager::set_csrk
+     * @see ::ble::PalSecurityManager::set_csrk
      */
     ble_error_t set_csrk(
         const csrk_t &csrk,
@@ -249,7 +248,7 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::set_peer_csrk
+     * @see ::ble::PalSecurityManager::set_peer_csrk
      */
     ble_error_t set_peer_csrk(
         connection_handle_t connection,
@@ -265,7 +264,7 @@ public:
     //
 
     /**
-     * @see ::ble::pal::PalSecurityManager::get_random_data
+     * @see ::ble::PalSecurityManager::get_random_data
      */
     ble_error_t get_random_data(byte_array_t<8> &random_data);
 
@@ -274,12 +273,12 @@ public:
     //
 
     /**
-     * @see ::ble::pal::PalSecurityManager::set_display_passkey
+     * @see ::ble::PalSecurityManager::set_display_passkey
      */
     ble_error_t set_display_passkey(passkey_num_t passkey);
 
     /**
-     * @see ::ble::pal::PalSecurityManager::passkey_request_reply
+     * @see ::ble::PalSecurityManager::passkey_request_reply
      */
     ble_error_t passkey_request_reply(
         connection_handle_t connection,
@@ -287,7 +286,7 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::secure_connections_oob_request_reply
+     * @see ::ble::PalSecurityManager::secure_connections_oob_request_reply
      */
     ble_error_t secure_connections_oob_request_reply(
         connection_handle_t connection,
@@ -297,7 +296,7 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::legacy_pairing_oob_request_reply
+     * @see ::ble::PalSecurityManager::legacy_pairing_oob_request_reply
      */
     ble_error_t legacy_pairing_oob_request_reply(
         connection_handle_t connection,
@@ -305,36 +304,36 @@ public:
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::confirmation_entered
+     * @see ::ble::PalSecurityManager::confirmation_entered
      */
     ble_error_t confirmation_entered(
         connection_handle_t connection, bool confirmation
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::send_keypress_notification
+     * @see ::ble::PalSecurityManager::send_keypress_notification
      */
     ble_error_t send_keypress_notification(
         connection_handle_t connection, Keypress_t keypress
     );
 
     /**
-     * @see ::ble::pal::PalSecurityManager::generate_secure_connections_oob
+     * @see ::ble::PalSecurityManager::generate_secure_connections_oob
      */
     ble_error_t generate_secure_connections_oob();
 
     /**
-     * @see ::ble::pal::PalSecurityManager::set_event_handler
+     * @see ::ble::PalSecurityManager::set_event_handler
      */
     void set_event_handler(PalSecurityManagerEventHandler *event_handler);
 
     /**
-     * @see ::ble::pal::PalSecurityManager::get_event_handler
+     * @see ::ble::PalSecurityManager::get_event_handler
      */
     PalSecurityManagerEventHandler* get_event_handler();
 
     // singleton of the ARM Cordio Security Manager
-    static CordioPalSecurityManager &get_security_manager();
+    static PalSecurityManager &get_security_manager();
 
     // Event handler
     static bool sm_handler(const wsfMsgHdr_t* msg);
@@ -388,7 +387,6 @@ private:
     csrk_t* _peer_csrks[DM_CONN_MAX];
 };
 
-} // pal
 } // ble
 
 #endif /* CORDIO_PAL_SECURITY_MANAGER_ */

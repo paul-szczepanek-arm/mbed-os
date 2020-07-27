@@ -24,7 +24,6 @@
 
 #include "ble/types/BLERoles.h"
 #include "ble/types/blecommon.h"
-#include "ble/types/GattCharacteristic.h"
 
 
 /* Forward declaration for the implementation class */

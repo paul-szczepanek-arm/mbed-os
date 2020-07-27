@@ -25,7 +25,7 @@
 #include "ble/internal/pal/AttServerMessage.h"
 
 namespace ble {
-namespace pal {
+namespace interface {
 
 /**
  * Send attribute protocol requests to an ATT server. It also handle reception
@@ -83,9 +83,9 @@ public:
      * @return BLE_ERROR_NONE if the request has been succesfully sent or the
      * appropriate error otherwise.
      *
-     * @see ble::pal::AttExchangeMTUResponse The type of response received from
+     * @see ble::AttExchangeMTUResponse The type of response received from
      * the  server
-     * @see ble::pal::AttErrorResponse::REQUEST_NOT_SUPPORTED The error code
+     * @see ble::AttErrorResponse::REQUEST_NOT_SUPPORTED The error code
      * returned by the server in case of error.
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.2.1
@@ -112,7 +112,7 @@ public:
      * Send a find information request to a server in order to obtain the
      * mapping of attribute handles with their associated types.
      *
-     * The server will reply with a ble::pal::AttFindInformationResponse
+     * The server will reply with a ble::AttFindInformationResponse
      * containing at least one [attribute handle, attribute type] pair. If the
      * last handle in the response is not equal to the end handle of the finding
      * range then this request can be issued again with an updated range (begin
@@ -121,13 +121,13 @@ public:
      * To discover the whole ATT server, the first find information request
      * should have a discovery range of [0x0001 - 0xFFFF].
      *
-     * The server can send a ble::pal::AttErrorResponse with the code
-     * ble::pal::AttErrorResponse::ATTRIBUTE_NOT_FOUND if no attributes have
+     * The server can send a ble::AttErrorResponse with the code
+     * ble::AttErrorResponse::ATTRIBUTE_NOT_FOUND if no attributes have
      * been found in the range specified. The attribute handle in the response
      * is then equal to the first handle of the discovery range.
      *
      * If the range is malformed the server will reply a
-     * ble::pal::AttErrorResponse with the error code ble::pal::INVALID_HANDLE.
+     * ble::AttErrorResponse with the error code ble::INVALID_HANDLE.
      *
      * @param connection_handle The handle of the connection to send this
      * request to.
@@ -148,20 +148,20 @@ public:
      * Send a Find By Type Value Request which retrieve the handles of attributes
      * that have known 16-bit UUID attribute type and known attribute value.
      *
-     * The server should reply with a ble::pal::AttFindByTypeValueResponse
+     * The server should reply with a ble::AttFindByTypeValueResponse
      * containing the handle (or handle range in case of grouping attributes) of
      * the attribute found.
      *
      * If not all attributes can be contained in the response it is necessary to
      * send again this request with an updated range to continue the discovery.
      *
-     * The server can send a ble::pal::AttErrorResponse with the code
-     * ble::pal::AttErrorResponse::ATTRIBUTE_NOT_FOUND if no attributes have
+     * The server can send a ble::AttErrorResponse with the code
+     * ble::AttErrorResponse::ATTRIBUTE_NOT_FOUND if no attributes have
      * been found in the range specified. The attribute handle in the response
      * is then equal to the first handle of the discovery range.
      *
      * If the range is malformed the server will reply a
-     * ble::pal::AttErrorResponse with the error code ble::pal::INVALID_HANDLE.
+     * ble::AttErrorResponse with the error code ble::INVALID_HANDLE.
      *
      * @param connection_handle The handle of the connection to send this
      * request to.
@@ -187,25 +187,25 @@ public:
      * the attribute type is known but the handle is not known.
      *
      * If attributes with the type requested are present in the range, the server
-     * should reply with a ble::pal::AttReadByTypeResponse. If the response does
+     * should reply with a ble::AttReadByTypeResponse. If the response does
      * not cover the full range, the request should be sent again with an updated
      * range.
      *
-     * In case of error, the server will send a ble::pal::AttErrorResponse. The
+     * In case of error, the server will send a ble::AttErrorResponse. The
      * error code depends on the situation:
-     *   - ble::pal::AttErrorResponse::ATTRIBUTE_NOT_FOUND: If there is no
+     *   - ble::AttErrorResponse::ATTRIBUTE_NOT_FOUND: If there is no
      *     attributes matching type in the range.
-     *   - ble::pal::AttErrorResponse::INVALID_HANDLE: If the range is
+     *   - ble::AttErrorResponse::INVALID_HANDLE: If the range is
      *     invalid.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
      *     security is not sufficient.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
      *     authorization is not sufficient.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
      *     client has an insufficient encryption key size.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
      *     has not enabled encryption.
-     *   - ble::pal::AttErrorResponse::READ_NOT_PERMITTED: If the attribute
+     *   - ble::AttErrorResponse::READ_NOT_PERMITTED: If the attribute
      *     value cannot be read.
      *
      * @param connection_handle The handle of the connection to send this
@@ -228,24 +228,24 @@ public:
     /**
      * Send a Read Request to read the value of an attribute in the server.
      *
-     * In case of success, the server will reply with a ble::pal::AttReadResponse.
+     * In case of success, the server will reply with a ble::AttReadResponse.
      * containing the value of the attribute. If the length of the value in the
      * response is equal to (mtu - 1) then the remaining part of the value can
      * be obtained by a read_blob_request.
      *
-     * In case of error, the server will send a ble::pal::AttErrorResponse. The
+     * In case of error, the server will send a ble::AttErrorResponse. The
      * error code depends on the situation:
-     *   - ble::pal::AttErrorResponse::INVALID_HANDLE: If the attribute handle
+     *   - ble::AttErrorResponse::INVALID_HANDLE: If the attribute handle
      *     is invalid.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
      *     security is not sufficient.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
      *     authorization is not sufficient.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
      *     client has an insufficient encryption key size.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
      *     has not enabled encryption.
-     *   - ble::pal::AttErrorResponse::READ_NOT_PERMITTED: If the attribute
+     *   - ble::AttErrorResponse::READ_NOT_PERMITTED: If the attribute
      *     value cannot be read.
      * Higher layer can also set an application error code (0x80 - 0x9F).
      *
@@ -267,30 +267,30 @@ public:
      * Send a read blob request to a server to read a part of the value of an
      * attribute at a given offset.
      *
-     * In case of success, the server will reply with a ble::pal::AttReadBlobResponse
+     * In case of success, the server will reply with a ble::AttReadBlobResponse
      * containing the value read. If the value of the attribute starting at the
      * offset requested is longer than (mtu - 1) octets then only the first
      * (mtu - 1) octets will be present in the response.
      * The remaining octets can be acquired by another Read Blob Request with an
      * updated index.
      *
-     * In case of error, the server will send a ble::pal::AttErrorResponse. The
+     * In case of error, the server will send a ble::AttErrorResponse. The
      * error code depends on the situation:
-     *   - ble::pal::AttErrorResponse::INVALID_HANDLE: If the attribute handle
+     *   - ble::AttErrorResponse::INVALID_HANDLE: If the attribute handle
      *     is invalid.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
      *     security is not sufficient.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
      *     authorization is not sufficient.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
      *     client has an insufficient encryption key size.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
      *     has not enabled encryption.
-     *   - ble::pal::AttErrorResponse::READ_NOT_PERMITTED: If the attribute
+     *   - ble::AttErrorResponse::READ_NOT_PERMITTED: If the attribute
      *     value cannot be read.
-     *   - ble::pal::AttErrorResponse::INVALID_OFFSET: If the offset is greater
+     *   - ble::AttErrorResponse::INVALID_OFFSET: If the offset is greater
      *     than the attribute length.
-     *   - ble::pal::AttErrorResponse::ATTRIBUTE_NOT_LONG: If the attribute
+     *   - ble::AttErrorResponse::ATTRIBUTE_NOT_LONG: If the attribute
      *     value has a length that is less than or equal to (mtu - 1).
      * Higher layer can also set an application error code (0x80 - 0x9F).
      *
@@ -315,25 +315,25 @@ public:
      * attributes values at once.
      *
      * In case of success, the server will reply with a
-     * ble::pal::AttReadMultipleResponse containing the concatenation of the
+     * ble::AttReadMultipleResponse containing the concatenation of the
      * values read. Given that values are concatained, all attributes values
      * should be of fixed size except for the last one. The concatained value
      * is also truncated to (mtu - 1) if it doesn't fit in the response.
      *
-     * In case of error, the server will send a ble::pal::AttErrorResponse. The
+     * In case of error, the server will send a ble::AttErrorResponse. The
      * error code depends on the situation:
-     *   - ble::pal::AttErrorResponse::INVALID_HANDLE: If any of the attribute
+     *   - ble::AttErrorResponse::INVALID_HANDLE: If any of the attribute
      *     handle is invalid.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
      *     security is not sufficient to read any of the attribute.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
      *     authorization is not sufficient to read any of the attribute.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
      *     client has an insufficient encryption key size to read any of the
      *     attributes.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
      *     has not enabled encryption required to read any of the attributes.
-     *   - ble::pal::AttErrorResponse::READ_NOT_PERMITTED: If any of the
+     *   - ble::AttErrorResponse::READ_NOT_PERMITTED: If any of the
      *     attributes value cannot be read.
      * The first attribute causing the error is reporter in the handle_in_error
      * field in the error response.
@@ -357,7 +357,7 @@ public:
      * Send a read by group type request to the server. It is used to get
      * informations about grouping attribute of a given type on a server.
      *
-     * The server will reply with a ble::pal::ReadByGroupTypeResponse containing
+     * The server will reply with a ble::ReadByGroupTypeResponse containing
      * informations about the grouping attribute found. Informations are:
      *    - handle of the grouping attribute.
      *    - last handle of the group .
@@ -367,24 +367,24 @@ public:
      * then it is necessary to send another request with a discovery range
      * updated to: [last handle + 1 : end].
      *
-     * In case of error, the server will send a ble::pal::AttErrorResponse. The
+     * In case of error, the server will send a ble::AttErrorResponse. The
      * error code depends on the situation:
-     *   - ble::pal::AttErrorResponse::INVALID_HANDLE: If the range of handle
+     *   - ble::AttErrorResponse::INVALID_HANDLE: If the range of handle
      *     provided is invalid.
-     *   - ble::pal::AttErrorResponse::UNSUPPORTED_GROUP_TYPE: if the group type
+     *   - ble::AttErrorResponse::UNSUPPORTED_GROUP_TYPE: if the group type
      *     is not a supported grouping attribute.
-     *   - ble::pal::AttErrorResponse::ATTRIBUTE_NOT_FOUND: If no attribute with
+     *   - ble::AttErrorResponse::ATTRIBUTE_NOT_FOUND: If no attribute with
      *     the given type exists within the range provided.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
      *     security is not sufficient to read the requested attribute.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
      *     authorization is not sufficient to read the requested attribute.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
      *     client has an insufficient encryption key size to read the requested
      *     attributes.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
      *     has not enabled encryption required to read the requested attributes.
-     *   - ble::pal::AttErrorResponse::READ_NOT_PERMITTED: If any of the
+     *   - ble::AttErrorResponse::READ_NOT_PERMITTED: If any of the
      *     attributes value cannot be read.
      * Higher layer can also set an application error code (0x80 - 0x9F).
      *
@@ -408,7 +408,7 @@ public:
      * Send a write request to the server to write the value of an attribute.
      *
      * In case of success, the server will reply with a
-     * ble::pal::AttWriteResponse to acknowledge that the write operation went
+     * ble::AttWriteResponse to acknowledge that the write operation went
      * well.
      *
      * If the attribute value has a variable length, then the attribute value
@@ -420,22 +420,22 @@ public:
      * attribute value parameter length shall be written; all other octets in this attribute
      * value shall be unchanged.
      *
-     * In case of error, the server will send a ble::pal::AttErrorResponse. The
+     * In case of error, the server will send a ble::AttErrorResponse. The
      * error code depends on the situation:
-     *   - ble::pal::AttErrorResponse::INVALID_HANDLE: If the handle to write is
+     *   - ble::AttErrorResponse::INVALID_HANDLE: If the handle to write is
      *     invalid.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
      *     security is not sufficient to write the requested attribute.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
      *     authorization is not sufficient to write the requested attribute.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
      *     client has an insufficient encryption key size to write the requested
      *     attributes.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
      *     has not enabled encryption required to write the requested attributes.
-     *   - ble::pal::AttErrorResponse::WRITE_NOT_PERMITTED: If the attribute
+     *   - ble::AttErrorResponse::WRITE_NOT_PERMITTED: If the attribute
      *     value cannot be written due to permission.
-     *   - ble::pal::AttErrorResponse::INVALID_ATTRIBUTE_VALUE_LENGTH: If the
+     *   - ble::AttErrorResponse::INVALID_ATTRIBUTE_VALUE_LENGTH: If the
      *     value to write exceeds the maximum valid length or of the attribute
      *     value; whether the attribute has a variable length value or a fixed
      *     length value.
@@ -510,28 +510,28 @@ public:
      * in the queue.
      *
      * In case of success the server will respond with a
-     * ble::pal::AttPrepareWriteResponse containing the values (attribute handle,
+     * ble::AttPrepareWriteResponse containing the values (attribute handle,
      * offset and value) present in the write request.
      *
      * If a prepare write request is rejected by the server, the state queue of
      * the prepare write request queue remains unaltered.
      *
-     * In case of error, the server will send a ble::pal::AttErrorResponse. The
+     * In case of error, the server will send a ble::AttErrorResponse. The
      * error code depends on the situation:
-     *   - ble::pal::AttErrorResponse::INVALID_HANDLE: If the handle to write is
+     *   - ble::AttErrorResponse::INVALID_HANDLE: If the handle to write is
      *     invalid.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHENTICATION: If the client
      *     security is not sufficient to write the requested attribute.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_AUTHORIZATION: If the client
      *     authorization is not sufficient to write the requested attribute.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION_KEY_SIZE: If the
      *     client has an insufficient encryption key size to write the requested
      *     attributes.
-     *   - ble::pal::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
+     *   - ble::AttErrorResponse::INSUFFICIENT_ENCRYPTION: If the client
      *     has not enabled encryption required to write the requested attributes.
-     *   - ble::pal::AttErrorResponse::WRITE_NOT_PERMITTED: If the attribute
+     *   - ble::AttErrorResponse::WRITE_NOT_PERMITTED: If the attribute
      *     value cannot be written due to permission.
-     *   - ble::pal::PREPARE_QUEUE_FULL: If the queue of prepare write request
+     *   - ble::PREPARE_QUEUE_FULL: If the queue of prepare write request
      *     is full.
      * Higher layer can also set an application error code (0x80 - 0x9F).
      *
@@ -565,14 +565,14 @@ public:
      * server should cancel the requests in the queue.
      *
      * In case of success, the server will respond with a
-     * ble::pal::AttExecuteWriteResponse indicating that the request was correctly
+     * ble::AttExecuteWriteResponse indicating that the request was correctly
      * handled.
      *
-     * In case of error, the server will send a ble::pal::AttErrorResponse. The
+     * In case of error, the server will send a ble::AttErrorResponse. The
      * error code depends on the situation:
-     *   - ble::pal::AttErrorResponse::INVALID_OFFSET: If the value offset is
+     *   - ble::AttErrorResponse::INVALID_OFFSET: If the value offset is
      *     greater than the current length of the attribute to write.
-     *   - ble::pal::AttErrorResponse::INVALID_ATTRIBUTE_VALUE_LENGTH: If the
+     *   - ble::AttErrorResponse::INVALID_ATTRIBUTE_VALUE_LENGTH: If the
      *     length of the value write exceeds the length of the attribute value
      *     about to be written.
      * Higher layer can also set an application error code (0x80 - 0x9F).
@@ -682,7 +682,7 @@ private:
 };
 
 
-} // namespace pal
+} // namespace interface
 } // namespace ble
 
 #endif /* BLE_PAL_ATTCLIENT_H_ */

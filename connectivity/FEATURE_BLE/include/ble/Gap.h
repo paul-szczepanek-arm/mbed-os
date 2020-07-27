@@ -35,9 +35,7 @@
 #include "ble/types/gap/Events.h"
 
 namespace ble {
-namespace pal {
 class PalGenericAccessService;
-}
 
 /**
  * @addtogroup ble

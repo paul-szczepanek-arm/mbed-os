@@ -21,7 +21,6 @@
 #include "ble/types/BLETypes.h"
 
 namespace ble {
-namespace pal {
 
 /**
  * Implemented by classes that are reacting to connection changes.
@@ -88,7 +87,6 @@ public:
     }
 };
 
-} // namespace pal
 } // namespace ble
 
 #endif /* MBED_BLE_CONNECTION_EVENT_MONITOR */

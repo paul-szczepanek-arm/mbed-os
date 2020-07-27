@@ -26,14 +26,13 @@
 
 #include <stddef.h>
 #include "ble/types/blecommon.h"
-#include "pal/PalSigningMonitor.h"
 #include "ble/Gap.h"
 #include "wsf_types.h"
 #include "att_api.h"
 #include "SecurityManager.h"
 
 #include "ble/BLE.h"
-#include "ble/internal/pal/PalSigningMonitor.h"
+#include "ble/internal/cordio/CordioPalSigningMonitor.h"
 
 /*! Maximum count of characteristics that can be stored for authorisation purposes */
 #define MAX_CHARACTERISTIC_AUTHORIZATION_CNT 20
@@ -43,12 +42,9 @@
 
 namespace ble {
 
-// fwd declaration of CordioPalAttClient and BLE
-namespace pal {
-class CordioPalAttClient;
-}
+// fwd declaration of PalAttClient and BLE
+class PalAttClient;
 class BLE;
-class CordioSigningMonitor;
 
 /**
  * @addtogroup ble
@@ -113,10 +109,10 @@ class CordioSigningMonitor;
  */
 class GattServer :
         public ble::interface::GattServer,
-        public pal::PalSigningMonitor {
+        public PalSigningMonitor {
     friend ble::BLE;
-    friend ble::pal::CordioPalAttClient;
-    friend CordioSigningMonitor;
+    friend ble::PalAttClient;
+    friend PalSigningMonitor;
     friend CordioBLEInstanceBase;
 
 // inherited typedefs have the wrong types so we have to redefine them
@@ -622,7 +618,7 @@ public:
 
 private:
     void set_signing_event_handler(
-        pal::PalSigningMonitorEventHandler *signing_event_handler
+        PalSigningMonitorEventHandler *signing_event_handler
     );
 
     void add_default_services();
@@ -741,7 +737,7 @@ private:
      */
     EventCallback_t confirmationReceivedCallback;
 
-    pal::PalSigningMonitorEventHandler *_signing_event_handler;
+    PalSigningMonitorEventHandler *_signing_event_handler;
 
     attsCccSet_t cccds[MAX_CCCD_CNT];
     uint16_t cccd_values[MAX_CCCD_CNT];

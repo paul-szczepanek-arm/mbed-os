@@ -19,8 +19,8 @@
 
 #include "ble/GattServer.h"
 #include "pal/PalAttClient.h"
-#include "pal/AttClientToGattClientAdapter.h"
-#include "pal/SimpleAttServerMessage.h"
+#include "pal/PalAttClientToPalGattClientAdapter.h"
+#include "pal/PalSimpleAttServerMessage.h"
 #include "att_api.h"
 #include "att_defs.h"
 #include "pal/PalGap.h"
@@ -29,17 +29,16 @@
 #include "ble/internal/cordio/CordioBLEInstanceBase.h"
 
 namespace ble {
-namespace pal {
 
-class CordioPalAttClient : public ble::pal::PalAttClient {
+class PalAttClient : public interface::PalAttClient {
 
 public:
-    CordioPalAttClient() : ble::pal::PalAttClient(), _local_sign_counter(0) { }
+    PalAttClient() : ble::PalAttClient(), _local_sign_counter(0) { }
 
-    ~CordioPalAttClient() { }
+    ~PalAttClient() { }
 
     /**
-     * @see ble::pal::PalAttClient::exchange_mtu_request
+     * @see ble::PalAttClient::exchange_mtu_request
      */
     ble_error_t exchange_mtu_request(connection_handle_t connection)
     {
@@ -48,7 +47,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::get_mtu_size
+     * @see ble::PalGattClient::get_mtu_size
      */
     ble_error_t get_mtu_size(
         connection_handle_t connection_handle,
@@ -59,7 +58,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::find_information_request
+     * @see ble::PalAttClient::find_information_request
      */
     ble_error_t find_information_request(
         connection_handle_t connection_handle,
@@ -75,7 +74,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::find_by_type_value_request
+     * @see ble::PalAttClient::find_by_type_value_request
      */
     ble_error_t find_by_type_value_request(
         connection_handle_t connection_handle,
@@ -96,7 +95,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::read_by_type_request
+     * @see ble::PalAttClient::read_by_type_request
      */
     ble_error_t read_by_type_request(
         connection_handle_t connection_handle,
@@ -115,7 +114,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::read_request
+     * @see ble::PalAttClient::read_request
      */
     ble_error_t read_request(
         connection_handle_t connection_handle,
@@ -126,7 +125,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::read_blob_request
+     * @see ble::PalAttClient::read_blob_request
      */
     ble_error_t read_blob_request(
         connection_handle_t connection_handle,
@@ -143,7 +142,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::read_multiple_request
+     * @see ble::PalAttClient::read_multiple_request
      */
     ble_error_t read_multiple_request(
         connection_handle_t connection_handle,
@@ -158,7 +157,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::read_by_group_type_request
+     * @see ble::PalAttClient::read_by_group_type_request
      */
     ble_error_t read_by_group_type_request(
         connection_handle_t connection_handle,
@@ -177,7 +176,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::write_request
+     * @see ble::PalAttClient::write_request
      */
     ble_error_t write_request(
         connection_handle_t connection_handle,
@@ -194,7 +193,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::write_command
+     * @see ble::PalAttClient::write_command
      */
     ble_error_t write_command(
         connection_handle_t connection_handle,
@@ -211,7 +210,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::signed_write_command
+     * @see ble::PalAttClient::signed_write_command
      */
     ble_error_t signed_write_command(
         connection_handle_t connection_handle,
@@ -242,7 +241,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::prepare_write_request
+     * @see ble::PalAttClient::prepare_write_request
      */
     ble_error_t prepare_write_request(
         connection_handle_t connection_handle,
@@ -263,7 +262,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::execute_write_request
+     * @see ble::PalAttClient::execute_write_request
      */
     ble_error_t execute_write_request(
         connection_handle_t connection_handle,
@@ -277,7 +276,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::initialize
+     * @see ble::PalAttClient::initialize
      */
     ble_error_t initialize()
     {
@@ -285,7 +284,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalAttClient::terminate
+     * @see ble::PalAttClient::terminate
      */
     ble_error_t terminate()
     {
@@ -293,9 +292,9 @@ public:
     }
 
     // singleton of the ARM Cordio client
-    static CordioPalAttClient& get_client()
+    static PalAttClient& get_client()
     {
-        static CordioPalAttClient _client;
+        static PalAttClient _client;
         return _client;
     }
 
@@ -400,13 +399,13 @@ private:
     };
 
     /**
-     * Converter for a SimpleAttFindInformationResponse.
+     * Converter for a PalSimpleAttFindInformationResponse.
      */
     struct FindInformationResponseConverter : ResponseConverter<ATTC_FIND_INFO_RSP> {
-        static SimpleAttFindInformationResponse convert(const attEvt_t* event)
+        static PalSimpleAttFindInformationResponse convert(const attEvt_t* event)
         {
-            return SimpleAttFindInformationResponse(
-                static_cast<SimpleAttFindInformationResponse::Format>(event->pValue[0]),
+            return PalSimpleAttFindInformationResponse(
+                static_cast<PalSimpleAttFindInformationResponse::Format>(event->pValue[0]),
                 make_const_Span(
                     event->pValue + 1,
                     event->valueLen - 1
@@ -416,12 +415,12 @@ private:
     };
 
     /**
-     * Converter for a SimpleAttFindByTypeValueResponse.
+     * Converter for a PalSimpleAttFindByTypeValueResponse.
      */
     struct FindByTypeValueResponseConverter : ResponseConverter<ATTC_FIND_BY_TYPE_VALUE_RSP> {
-        static SimpleAttFindByTypeValueResponse convert(const attEvt_t* event)
+        static PalSimpleAttFindByTypeValueResponse convert(const attEvt_t* event)
         {
-            return SimpleAttFindByTypeValueResponse(
+            return PalSimpleAttFindByTypeValueResponse(
                 make_const_Span(
                     event->pValue,
                     event->valueLen
@@ -431,12 +430,12 @@ private:
     };
 
     /**
-     * Converter for a SimpleAttReadByTypeResponse.
+     * Converter for a PalSimpleAttReadByTypeResponse.
      */
     struct ReadByTypeResponseConverter : ResponseConverter<ATTC_READ_BY_TYPE_RSP> {
-        static SimpleAttReadByTypeResponse convert(const attEvt_t* event)
+        static PalSimpleAttReadByTypeResponse convert(const attEvt_t* event)
         {
-            return SimpleAttReadByTypeResponse(
+            return PalSimpleAttReadByTypeResponse(
                 event->pValue[0],
                 make_const_Span(
                     event->pValue + 1,
@@ -492,12 +491,12 @@ private:
     };
 
     /**
-     * Converter for a SimpleAttReadByGroupTypeResponse.
+     * Converter for a PalSimpleAttReadByGroupTypeResponse.
      */
     struct ReadBygroupTypeResponseConverter : ResponseConverter<ATTC_READ_BY_GROUP_TYPE_RSP> {
-        static SimpleAttReadByGroupTypeResponse convert(const attEvt_t* event)
+        static PalSimpleAttReadByGroupTypeResponse convert(const attEvt_t* event)
         {
-            return SimpleAttReadByGroupTypeResponse(
+            return PalSimpleAttReadByGroupTypeResponse(
                 event->pValue[0],
                 make_const_Span(
                     event->pValue + 1,
@@ -582,13 +581,12 @@ private:
 };
 
 
-struct CordioPalGattClient : pal::AttClientToGattClientAdapter {
-    CordioPalGattClient(CordioPalAttClient& att_client) :
-        pal::AttClientToGattClientAdapter(att_client)
+struct CordioPalGattClient : PalAttClientToPalGattClientAdapter {
+    CordioPalGattClient(PalAttClient& att_client) :
+        PalAttClientToPalGattClientAdapter(att_client)
     { }
 };
 
-} // pal
 } // ble
 
 #endif /* CORDIO_PAL_ATT_CLIENT_ */

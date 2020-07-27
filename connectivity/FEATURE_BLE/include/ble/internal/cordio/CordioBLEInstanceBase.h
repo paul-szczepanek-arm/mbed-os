@@ -24,26 +24,25 @@
 #include "CordioHCIDriver.h"
 #include "ble/GattServer.h"
 #include "CordioPalAttClient.h"
-#include "pal/AttClientToGattClientAdapter.h"
+#include "pal/PalAttClientToPalGattClientAdapter.h"
 #include "ble/GattClient.h"
 #include "ble/internal/pal/PalGap.h"
 #include "ble/Gap.h"
 #include "CordioPalGenericAccessService.h"
 #include "ble/SecurityManager.h"
-#include "SimplePalEventQueue.h"
+#include "CordioPalEventQueue.h"
 #include "drivers/LowPowerTimer.h"
-#include "PalSigningMonitor.h"
 #include "ble/internal/pal/PalSecurityManager.h"
 
 namespace ble {
 
-class CordioSigningMonitor;
+class PalSigningMonitor;
 
 /**
  * @see BLEInstanceBase
  */
-class CordioBLEInstanceBase : public ::BLEInstanceBase {
-    friend CordioSigningMonitor;
+class CordioBLEInstanceBase : public BLEInstanceBase {
+    friend PalSigningMonitor;
     /**
      * Construction with an HCI driver.
      */
@@ -118,7 +117,7 @@ public:
      *
      * @return PAL Gatt Client.
      */
-    pal::PalGattClient &getPalGattClient();
+    PalGattClient &getPalGattClient();
 #endif // BLE_FEATURE_GATT_CLIENT
 
 #if BLE_FEATURE_SECURITY
@@ -164,7 +163,7 @@ private:
     } initialization_status;
 
     ::BLE::InstanceID_t instanceID;
-    mutable ble::SimplePalEventQueue _event_queue;
+    mutable ble::PalEventQueue _event_queue;
     mbed::LowPowerTimer _timer;
     uint64_t _last_update_us;
 };

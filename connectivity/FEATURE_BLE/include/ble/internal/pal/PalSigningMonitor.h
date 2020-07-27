@@ -20,7 +20,6 @@
 #include "ble/types/BLETypes.h"
 
 namespace ble {
-namespace pal {
 
 /**
  * Implemented by classes that are reacting to signing events.
@@ -57,8 +56,7 @@ public:
     };
 };
 
-
-
+namespace interface {
 /**
  * Implemented by classes that need to be notified of signing events.
  * Notification is done by calling functions in the passed in event handler
@@ -73,7 +71,7 @@ public:
     void set_signing_event_handler(PalSigningMonitorEventHandler *signing_event_handler);
 };
 
-} // namespace pal
+} // namespace interface
 } // namespace ble
 
 #endif /* MBED_BLE_SIGNING_EVENT_MONITOR */

@@ -81,7 +81,7 @@ private:
     PalGenericAccessService& operator=(const PalGenericAccessService&);
 };
 
-} // namespace pal
+} // namespace interface
 } // namespace ble
 
 #endif /* BLE_PAL_GENERIC_ACCESS_SERVICE_H_ */

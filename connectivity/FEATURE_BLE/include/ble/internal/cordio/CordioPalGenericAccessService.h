@@ -6,16 +6,15 @@
 #include "ble/Gap.h"
 
 namespace ble {
-namespace pal {
 
 /**
- * Implementation of ble::pal::PalGenericAccessService for the Cordio stack.
+ * Implementation of ble::PalGenericAccessService for the Cordio stack.
  */
-class CordioPalGenericAccessService : public ble::pal::PalGenericAccessService {
+class PalGenericAccessService : public interface::PalGenericAccessService {
 public:
-    CordioPalGenericAccessService() { }
+    PalGenericAccessService() { }
 
-    virtual ~CordioPalGenericAccessService() { }
+    virtual ~PalGenericAccessService() { }
 
 #if 0 // Disabled until reworked and reintroduced to GattServer API
 
@@ -114,7 +113,6 @@ private:
 #endif // BLE_FEATURE_GATT_SERVER
 };
 
-} // pal
 } // ble
 
 #endif /* CORDIO_PAL_GENERIC_ACCESS_SERVICE_ */

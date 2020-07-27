@@ -22,12 +22,14 @@
 #include "ble/internal/BLEInstanceBase.h"
 #include "ble/BLE.h"
 
+#include "wsf_buf.h"
+
 namespace ble {
 
 /**
- * Simple implementation of the pal::EventQueue.
+ * Simple implementation of the EventQueue.
  */
-struct SimplePalEventQueue : pal::PalEventQueue {
+struct PalEventQueue : interface::PalEventQueue {
 
     typedef mbed::Callback<void()> event_t;
 
@@ -39,7 +41,7 @@ struct SimplePalEventQueue : pal::PalEventQueue {
      * @param ble_instance_id The id of the ble instance associated with that
      * event queue.
      */
-    SimplePalEventQueue() :
+    PalEventQueue() :
         _ble_base(NULL), _ble_instance_id(0), _events(NULL) { }
 
     /**
@@ -57,15 +59,15 @@ struct SimplePalEventQueue : pal::PalEventQueue {
     }
 
     /**
-     * @see ble::pal::EventQueue
+     * @see ble::EventQueue
      */
-    ~SimplePalEventQueue()
+    ~PalEventQueue()
     {
         clear();
     }
 
     /**
-     * @see ble::pal::post
+     * @see ble::post
      */
     virtual bool post(const mbed::Callback<void()>& event)
     {

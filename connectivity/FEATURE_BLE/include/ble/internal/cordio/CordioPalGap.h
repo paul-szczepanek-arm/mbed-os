@@ -5,15 +5,14 @@
 #include "dm_api.h"
 
 namespace ble {
-namespace pal {
 
 /**
- * Implementation of ble::pal::PalGap for the Cordio stack.
+ * Implementation of ble::PalGap for the Cordio stack.
  */
-class CordioPalGap : public ble::pal::PalGap {
+class PalGap : public interface::PalGap {
 public:
-    CordioPalGap() : use_active_scanning(false), _pal_event_handler(NULL) { };
-    ~CordioPalGap() { };
+    PalGap() : use_active_scanning(false), _pal_event_handler(NULL) { };
+    ~PalGap() { };
 
     bool is_feature_supported(
         ble::controller_supported_features_t feature
@@ -147,7 +146,7 @@ public:
     );
 
     // singleton of the ARM Cordio client
-    static CordioPalGap& get_gap();
+    static PalGap& get_gap();
 
     /**
      * Callback which handle wsfMsgHdr_t and forward them to emit_gap_event.
@@ -493,7 +492,6 @@ private:
     mbed::Callback<void(const GapEvent &)> _gap_event_cb;
 };
 
-} // pal
 } // ble
 
 #endif /* CORDIO_PAL_GAP_ */

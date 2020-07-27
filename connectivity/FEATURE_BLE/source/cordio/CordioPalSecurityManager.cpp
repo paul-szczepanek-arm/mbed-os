@@ -28,9 +28,8 @@
 #include "hci_core.h"
 
 namespace ble {
-namespace pal {
 
-CordioPalSecurityManager::CordioPalSecurityManager() :
+PalSecurityManager::PalSecurityManager() :
     _pal_event_handler(NULL),
     _use_default_passkey(false),
     _default_passkey(0),
@@ -42,7 +41,7 @@ CordioPalSecurityManager::CordioPalSecurityManager() :
 {
 }
 
-CordioPalSecurityManager::~CordioPalSecurityManager()
+PalSecurityManager::~PalSecurityManager()
 {
 #if BLE_FEATURE_PRIVACY
     clear_privacy_control_blocks();
@@ -54,7 +53,7 @@ CordioPalSecurityManager::~CordioPalSecurityManager()
 //
 
 
-ble_error_t CordioPalSecurityManager::initialize()
+ble_error_t PalSecurityManager::initialize()
 {
     // reset local state
     _use_default_passkey = false;
@@ -74,7 +73,7 @@ ble_error_t CordioPalSecurityManager::initialize()
 }
 
 
-ble_error_t CordioPalSecurityManager::terminate()
+ble_error_t PalSecurityManager::terminate()
 {
 #if BLE_FEATURE_SIGNING
     cleanup_peer_csrks();
@@ -83,7 +82,7 @@ ble_error_t CordioPalSecurityManager::terminate()
 }
 
 
-ble_error_t CordioPalSecurityManager::reset()
+ble_error_t PalSecurityManager::reset()
 {
 #if BLE_FEATURE_SIGNING
     cleanup_peer_csrks();
@@ -97,7 +96,7 @@ ble_error_t CordioPalSecurityManager::reset()
 //
 
 
-uint8_t CordioPalSecurityManager::read_resolving_list_capacity()
+uint8_t PalSecurityManager::read_resolving_list_capacity()
 {
     // The Cordio stack requests this from the controller during initialization
     return hciCoreCb.resListSize;
@@ -106,7 +105,7 @@ uint8_t CordioPalSecurityManager::read_resolving_list_capacity()
 // As the Cordio stack can only handle one of these methods at a time, we need to create a list of control blocks
 // that are dequeued one after the other on completion of the previous one
 
-ble_error_t CordioPalSecurityManager::add_device_to_resolving_list(
+ble_error_t PalSecurityManager::add_device_to_resolving_list(
     advertising_peer_address_type_t peer_identity_address_type,
     const address_t &peer_identity_address,
     const irk_t &peer_irk
@@ -124,7 +123,7 @@ ble_error_t CordioPalSecurityManager::add_device_to_resolving_list(
 }
 
 
-ble_error_t CordioPalSecurityManager::remove_device_from_resolving_list(
+ble_error_t PalSecurityManager::remove_device_from_resolving_list(
     advertising_peer_address_type_t peer_identity_address_type,
     const address_t& peer_identity_address
 ) {
@@ -141,7 +140,7 @@ ble_error_t CordioPalSecurityManager::remove_device_from_resolving_list(
 }
 
 
-ble_error_t CordioPalSecurityManager::clear_resolving_list()
+ble_error_t PalSecurityManager::clear_resolving_list()
 {
     if( read_resolving_list_capacity() == 0 )
     {
@@ -162,7 +161,7 @@ ble_error_t CordioPalSecurityManager::clear_resolving_list()
 // FIXME: Enable when new function available in the pal.
 #if 0
 
-ble_error_t CordioPalSecurityManager::set_secure_connections_support(
+ble_error_t PalSecurityManager::set_secure_connections_support(
     bool enabled, bool secure_connections_only
 ) {
     // secure connection support is enabled automatically at the stack level.
@@ -176,7 +175,7 @@ ble_error_t CordioPalSecurityManager::set_secure_connections_support(
 #endif
 
 
-ble_error_t CordioPalSecurityManager::get_secure_connections_support(
+ble_error_t PalSecurityManager::get_secure_connections_support(
     bool &enabled
 ) {
     // FIXME: should depend of the controller
@@ -189,7 +188,7 @@ ble_error_t CordioPalSecurityManager::get_secure_connections_support(
 //
 
 
-ble_error_t CordioPalSecurityManager::set_authentication_timeout(
+ble_error_t PalSecurityManager::set_authentication_timeout(
     connection_handle_t connection, uint16_t timeout_in_10ms
 ) {
     DmWriteAuthPayloadTimeout(connection, timeout_in_10ms);
@@ -197,7 +196,7 @@ ble_error_t CordioPalSecurityManager::set_authentication_timeout(
 }
 
 
-ble_error_t CordioPalSecurityManager::get_authentication_timeout(
+ble_error_t PalSecurityManager::get_authentication_timeout(
     connection_handle_t connection, uint16_t &timeout_in_10ms
 ) {
     // FIXME: Is it usefull to add dynamic timeout management for all connections ?
@@ -205,7 +204,7 @@ ble_error_t CordioPalSecurityManager::get_authentication_timeout(
 }
 
 
-ble_error_t CordioPalSecurityManager::slave_security_request(
+ble_error_t PalSecurityManager::slave_security_request(
     connection_handle_t connection,
     AuthenticationMask authentication
 ) {
@@ -218,7 +217,7 @@ ble_error_t CordioPalSecurityManager::slave_security_request(
 //
 
 
-ble_error_t CordioPalSecurityManager::enable_encryption(
+ble_error_t PalSecurityManager::enable_encryption(
     connection_handle_t connection,
     const ltk_t &ltk,
     const rand_t &rand,
@@ -240,7 +239,7 @@ ble_error_t CordioPalSecurityManager::enable_encryption(
 }
 
 
-ble_error_t CordioPalSecurityManager::enable_encryption(
+ble_error_t PalSecurityManager::enable_encryption(
     connection_handle_t connection,
     const ltk_t &ltk,
     bool mitm
@@ -259,7 +258,7 @@ ble_error_t CordioPalSecurityManager::enable_encryption(
 }
 
 
-ble_error_t CordioPalSecurityManager::encrypt_data(
+ble_error_t PalSecurityManager::encrypt_data(
     const byte_array_t<16> &key,
     encryption_block_t &data
 ) {
@@ -271,7 +270,7 @@ ble_error_t CordioPalSecurityManager::encrypt_data(
 //
 
 
-ble_error_t CordioPalSecurityManager::set_private_address_timeout(
+ble_error_t PalSecurityManager::set_private_address_timeout(
     uint16_t timeout_in_seconds
 ) {
     DmPrivSetResolvablePrivateAddrTimeout(timeout_in_seconds);
@@ -279,10 +278,10 @@ ble_error_t CordioPalSecurityManager::set_private_address_timeout(
 }
 
 /**
- * @see ::ble::pal::CordioPalSecurityManager::get_identity_address
+ * @see ::ble::PalSecurityManager::get_identity_address
  */
 
-ble_error_t CordioPalSecurityManager::get_identity_address(
+ble_error_t PalSecurityManager::get_identity_address(
     address_t& address,
     bool& public_address
 ) {
@@ -297,7 +296,7 @@ ble_error_t CordioPalSecurityManager::get_identity_address(
 //
 
 
-ble_error_t CordioPalSecurityManager::set_ltk(
+ble_error_t PalSecurityManager::set_ltk(
     connection_handle_t connection,
     const ltk_t& ltk,
     bool mitm,
@@ -322,7 +321,7 @@ ble_error_t CordioPalSecurityManager::set_ltk(
 }
 
 
-ble_error_t CordioPalSecurityManager::set_ltk_not_found(
+ble_error_t PalSecurityManager::set_ltk_not_found(
     connection_handle_t connection
 ) {
     DmSecLtkRsp(
@@ -336,7 +335,7 @@ ble_error_t CordioPalSecurityManager::set_ltk_not_found(
 }
 
 
-ble_error_t CordioPalSecurityManager::set_irk(const irk_t& irk)
+ble_error_t PalSecurityManager::set_irk(const irk_t& irk)
 {
     _irk = irk;
     DmSecSetLocalIrk(_irk.data());
@@ -344,20 +343,20 @@ ble_error_t CordioPalSecurityManager::set_irk(const irk_t& irk)
 }
 
 
-ble_error_t CordioPalSecurityManager::set_csrk(
+ble_error_t PalSecurityManager::set_csrk(
     const csrk_t& csrk,
     sign_count_t sign_counter
 ) {
     _csrk = csrk;
     DmSecSetLocalCsrk(_csrk.data());
     // extra set the sign counter used by the client
-    CordioPalAttClient::get_client().set_sign_counter(sign_counter);
+    PalAttClient::get_client().set_sign_counter(sign_counter);
 
     return BLE_ERROR_NONE;
 }
 
 
-ble_error_t CordioPalSecurityManager::set_peer_csrk(
+ble_error_t PalSecurityManager::set_peer_csrk(
     connection_handle_t connection,
     const csrk_t &csrk,
     bool authenticated,
@@ -384,7 +383,7 @@ ble_error_t CordioPalSecurityManager::set_peer_csrk(
 }
 
 
-ble_error_t CordioPalSecurityManager::remove_peer_csrk(connection_handle_t connection)
+ble_error_t PalSecurityManager::remove_peer_csrk(connection_handle_t connection)
 {
     if (connection == 0 || connection > DM_CONN_MAX) {
         return BLE_ERROR_INVALID_PARAM;
@@ -406,7 +405,7 @@ ble_error_t CordioPalSecurityManager::remove_peer_csrk(connection_handle_t conne
 //
 
 
-ble_error_t CordioPalSecurityManager::set_display_passkey(passkey_num_t passkey)
+ble_error_t PalSecurityManager::set_display_passkey(passkey_num_t passkey)
 {
     if (passkey) {
         _use_default_passkey = true;
@@ -418,14 +417,14 @@ ble_error_t CordioPalSecurityManager::set_display_passkey(passkey_num_t passkey)
 }
 
 
-ble_error_t CordioPalSecurityManager::set_io_capability(io_capability_t io_capability)
+ble_error_t PalSecurityManager::set_io_capability(io_capability_t io_capability)
 {
     pSmpCfg->ioCap = io_capability.value();
     return BLE_ERROR_NONE;
 }
 
 
-ble_error_t CordioPalSecurityManager::set_encryption_key_requirements(
+ble_error_t PalSecurityManager::set_encryption_key_requirements(
     uint8_t min_encryption_key_size,
     uint8_t max_encryption_key_size
 ) {
@@ -445,7 +444,7 @@ ble_error_t CordioPalSecurityManager::set_encryption_key_requirements(
 //
 
 
-ble_error_t CordioPalSecurityManager::send_pairing_request(
+ble_error_t PalSecurityManager::send_pairing_request(
     connection_handle_t connection,
     bool oob_data_flag,
     AuthenticationMask authentication_requirements,
@@ -464,7 +463,7 @@ ble_error_t CordioPalSecurityManager::send_pairing_request(
 }
 
 
-ble_error_t CordioPalSecurityManager::send_pairing_response(
+ble_error_t PalSecurityManager::send_pairing_response(
     connection_handle_t connection,
     bool oob_data_flag,
     AuthenticationMask authentication_requirements,
@@ -483,7 +482,7 @@ ble_error_t CordioPalSecurityManager::send_pairing_response(
 }
 
 
-ble_error_t CordioPalSecurityManager::cancel_pairing(
+ble_error_t PalSecurityManager::cancel_pairing(
     connection_handle_t connection, pairing_failure_t reason
 ) {
     DmSecCancelReq(connection, reason.value());
@@ -491,7 +490,7 @@ ble_error_t CordioPalSecurityManager::cancel_pairing(
 }
 
 
-ble_error_t CordioPalSecurityManager::get_random_data(byte_array_t<8> &random_data)
+ble_error_t PalSecurityManager::get_random_data(byte_array_t<8> &random_data)
 {
     SecRand(random_data.data(), random_data.size());
     return BLE_ERROR_NONE;
@@ -502,7 +501,7 @@ ble_error_t CordioPalSecurityManager::get_random_data(byte_array_t<8> &random_da
 //
 
 
-ble_error_t CordioPalSecurityManager::passkey_request_reply(
+ble_error_t PalSecurityManager::passkey_request_reply(
     connection_handle_t connection, passkey_num_t passkey
 ) {
     DmSecAuthRsp(
@@ -515,7 +514,7 @@ ble_error_t CordioPalSecurityManager::passkey_request_reply(
 }
 
 
-ble_error_t CordioPalSecurityManager::legacy_pairing_oob_request_reply(
+ble_error_t PalSecurityManager::legacy_pairing_oob_request_reply(
     connection_handle_t connection,
     const oob_tk_t &oob_data
 ) {
@@ -529,7 +528,7 @@ ble_error_t CordioPalSecurityManager::legacy_pairing_oob_request_reply(
 }
 
 
-ble_error_t CordioPalSecurityManager::confirmation_entered(
+ble_error_t PalSecurityManager::confirmation_entered(
     connection_handle_t connection, bool confirmation
 ) {
     DmSecCompareRsp(connection, confirmation);
@@ -540,7 +539,7 @@ ble_error_t CordioPalSecurityManager::confirmation_entered(
 extern "C" void DmSecKeypressReq(dmConnId_t connId, uint8_t keypressType);
 
 
-ble_error_t CordioPalSecurityManager::send_keypress_notification(
+ble_error_t PalSecurityManager::send_keypress_notification(
     connection_handle_t connection, Keypress_t keypress
 ) {
     DmSecKeypressReq(connection, keypress);
@@ -549,7 +548,7 @@ ble_error_t CordioPalSecurityManager::send_keypress_notification(
 
 
 
-ble_error_t CordioPalSecurityManager::generate_secure_connections_oob() {
+ble_error_t PalSecurityManager::generate_secure_connections_oob() {
     uint8_t oobLocalRandom[SMP_RAND_LEN];
     SecRand(oobLocalRandom, SMP_RAND_LEN);
     DmSecCalcOobReq(oobLocalRandom, _public_key_x);
@@ -557,7 +556,7 @@ ble_error_t CordioPalSecurityManager::generate_secure_connections_oob() {
 }
 
 
-ble_error_t CordioPalSecurityManager::secure_connections_oob_request_reply(
+ble_error_t PalSecurityManager::secure_connections_oob_request_reply(
     connection_handle_t connection,
     const oob_lesc_value_t &local_random,
     const oob_lesc_value_t &peer_random,
@@ -578,15 +577,15 @@ ble_error_t CordioPalSecurityManager::secure_connections_oob_request_reply(
 }
 
 
-CordioPalSecurityManager& CordioPalSecurityManager::get_security_manager()
+PalSecurityManager& PalSecurityManager::get_security_manager()
 {
-    static CordioPalSecurityManager _security_manager;
+    static PalSecurityManager _security_manager;
     return _security_manager;
 }
 
 
-bool CordioPalSecurityManager::sm_handler(const wsfMsgHdr_t* msg) {
-    CordioPalSecurityManager& self = get_security_manager();
+bool PalSecurityManager::sm_handler(const wsfMsgHdr_t* msg) {
+    PalSecurityManager& self = get_security_manager();
     PalSecurityManagerEventHandler* handler = self.get_event_handler();
 
     if ((msg == NULL) || (handler == NULL)) {
@@ -834,7 +833,7 @@ bool CordioPalSecurityManager::sm_handler(const wsfMsgHdr_t* msg) {
 }
 
 
-struct CordioPalSecurityManager::PrivacyControlBlock
+struct PalSecurityManager::PrivacyControlBlock
 {
     PrivacyControlBlock() : _next(NULL) {}
 
@@ -855,7 +854,7 @@ private:
 };
 
 
-struct CordioPalSecurityManager::PrivacyClearResListControlBlock : CordioPalSecurityManager::PrivacyControlBlock
+struct PalSecurityManager::PrivacyClearResListControlBlock : PalSecurityManager::PrivacyControlBlock
 {
     PrivacyClearResListControlBlock() : PrivacyControlBlock()
     {}
@@ -869,7 +868,7 @@ struct CordioPalSecurityManager::PrivacyClearResListControlBlock : CordioPalSecu
 };
 
 
-struct CordioPalSecurityManager::PrivacyAddDevToResListControlBlock : CordioPalSecurityManager::PrivacyControlBlock
+struct PalSecurityManager::PrivacyAddDevToResListControlBlock : PalSecurityManager::PrivacyControlBlock
 {
     PrivacyAddDevToResListControlBlock(
         advertising_peer_address_type_t peer_identity_address_type,
@@ -895,7 +894,7 @@ private:
 };
 
 
-struct CordioPalSecurityManager::PrivacyRemoveDevFromResListControlBlock : CordioPalSecurityManager::PrivacyControlBlock
+struct PalSecurityManager::PrivacyRemoveDevFromResListControlBlock : PalSecurityManager::PrivacyControlBlock
 {
     PrivacyRemoveDevFromResListControlBlock(
         advertising_peer_address_type_t peer_identity_address_type,
@@ -921,7 +920,7 @@ private:
 
 // Helper functions for privacy
 
-void CordioPalSecurityManager::queue_add_device_to_resolving_list(
+void PalSecurityManager::queue_add_device_to_resolving_list(
     advertising_peer_address_type_t peer_identity_address_type,
     const address_t &peer_identity_address,
     const irk_t &peer_irk
@@ -939,7 +938,7 @@ void CordioPalSecurityManager::queue_add_device_to_resolving_list(
 }
 
 
-void CordioPalSecurityManager::queue_remove_device_from_resolving_list(
+void PalSecurityManager::queue_remove_device_from_resolving_list(
     advertising_peer_address_type_t peer_identity_address_type,
     const address_t &peer_identity_address
 )
@@ -956,7 +955,7 @@ void CordioPalSecurityManager::queue_remove_device_from_resolving_list(
 }
 
 
-void CordioPalSecurityManager::queue_clear_resolving_list() {
+void PalSecurityManager::queue_clear_resolving_list() {
     // Remove any pending control blocks, there's no point executing them as we're about to queue the list
     clear_privacy_control_blocks();
 
@@ -972,7 +971,7 @@ void CordioPalSecurityManager::queue_clear_resolving_list() {
 }
 
 
-void CordioPalSecurityManager::clear_privacy_control_blocks() {
+void PalSecurityManager::clear_privacy_control_blocks() {
     while(_pending_privacy_control_blocks != NULL)
     {
         PrivacyControlBlock* next = _pending_privacy_control_blocks->next();
@@ -982,7 +981,7 @@ void CordioPalSecurityManager::clear_privacy_control_blocks() {
 }
 
 
-void CordioPalSecurityManager::queue_privacy_control_block(PrivacyControlBlock* block)
+void PalSecurityManager::queue_privacy_control_block(PrivacyControlBlock* block)
 {
     if( _pending_privacy_control_blocks == NULL ) {
         _pending_privacy_control_blocks = block;
@@ -1000,7 +999,7 @@ void CordioPalSecurityManager::queue_privacy_control_block(PrivacyControlBlock* 
 
 // If cb_completed is set to true, it means the previous control block has completed
 
-void CordioPalSecurityManager::process_privacy_control_blocks(bool cb_completed)
+void PalSecurityManager::process_privacy_control_blocks(bool cb_completed)
 {
     if( (_processing_privacy_control_block == true) && !cb_completed )
     {
@@ -1025,7 +1024,7 @@ void CordioPalSecurityManager::process_privacy_control_blocks(bool cb_completed)
 }
 
 
-void CordioPalSecurityManager::cleanup_peer_csrks() {
+void PalSecurityManager::cleanup_peer_csrks() {
     for (size_t i = 0; i < DM_CONN_MAX; ++i) {
         if (_peer_csrks[i]) {
             delete _peer_csrks[i];
@@ -1034,14 +1033,13 @@ void CordioPalSecurityManager::cleanup_peer_csrks() {
     }
 }
 
-void CordioPalSecurityManager::set_event_handler(PalSecurityManagerEventHandler *event_handler
+void PalSecurityManager::set_event_handler(PalSecurityManagerEventHandler *event_handler
 ) {
     _pal_event_handler = event_handler;
 }
 
-PalSecurityManagerEventHandler* CordioPalSecurityManager::get_event_handler() {
+PalSecurityManagerEventHandler* PalSecurityManager::get_event_handler() {
     return _pal_event_handler;
 }
 
-} // pal
 } // ble

@@ -21,15 +21,14 @@
 #include "ble/internal/pal/PalGattClient.h"
 
 namespace ble {
-namespace pal {
 
 /**
- * Adapt a pal::PalAttClient into a pal::PalGattClient.
+ * Adapt a PalAttClient into a PalGattClient.
  *
  * This class let vendors define their abstraction layer in term of an PalAttClient
  * and adapt any PalAttClient into a PalGattClient.
  */
-class AttClientToGattClientAdapter : public PalGattClient {
+class PalAttClientToPalGattClientAdapter : public interface::PalGattClient {
 
 public:
     static const uint16_t END_ATTRIBUTE_HANDLE = 0xFFFF;
@@ -41,27 +40,27 @@ public:
      * Construct an instance of PalGattClient from an instance of PalAttClient.
      * @param client The client to adapt.
      */
-    AttClientToGattClientAdapter(PalAttClient& client) :
+    PalAttClientToPalGattClientAdapter(PalAttClient& client) :
         _client(client) {
         _client.when_server_message_received(
-            mbed::callback(this, &AttClientToGattClientAdapter::on_server_event)
+            mbed::callback(this, &PalAttClientToPalGattClientAdapter::on_server_event)
         );
         _client.when_transaction_timeout(
             mbed::callback(
-                this, &AttClientToGattClientAdapter::on_transaction_timeout
+                this, &PalAttClientToPalGattClientAdapter::on_transaction_timeout
             )
         );
     }
 
     /**
-     * @see ble::pal::PalGattClient::exchange_mtu
+     * @see ble::PalGattClient::exchange_mtu
      */
     ble_error_t exchange_mtu(connection_handle_t connection) {
         return _client.exchange_mtu_request(connection);
     }
 
     /**
-     * @see ble::pal::PalGattClient::get_mtu_size
+     * @see ble::PalGattClient::get_mtu_size
      */
     ble_error_t get_mtu_size(
         connection_handle_t connection_handle,
@@ -71,7 +70,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::discover_primary_service
+     * @see ble::PalGattClient::discover_primary_service
      */
     ble_error_t discover_primary_service(
         connection_handle_t connection,
@@ -85,7 +84,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::discover_primary_service_by_service_uuid
+     * @see ble::PalGattClient::discover_primary_service_by_service_uuid
      */
     ble_error_t discover_primary_service_by_service_uuid(
         connection_handle_t connection_handle,
@@ -104,7 +103,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::find_included_service
+     * @see ble::PalGattClient::find_included_service
      */
     ble_error_t find_included_service(
         connection_handle_t connection_handle,
@@ -118,7 +117,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::discover_characteristics_of_a_service
+     * @see ble::PalGattClient::discover_characteristics_of_a_service
      */
     ble_error_t discover_characteristics_of_a_service(
         connection_handle_t connection_handle,
@@ -132,7 +131,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::discover_characteristics_descriptors
+     * @see ble::PalGattClient::discover_characteristics_descriptors
      */
     ble_error_t discover_characteristics_descriptors(
         connection_handle_t connection_handle,
@@ -145,7 +144,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::read_attribute_value
+     * @see ble::PalGattClient::read_attribute_value
      */
     ble_error_t read_attribute_value(
         connection_handle_t connection_handle,
@@ -158,7 +157,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::read_using_characteristic_uuid
+     * @see ble::PalGattClient::read_using_characteristic_uuid
      */
     ble_error_t read_using_characteristic_uuid(
         connection_handle_t connection_handle,
@@ -173,7 +172,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::read_attribute_blob
+     * @see ble::PalGattClient::read_attribute_blob
      */
     ble_error_t read_attribute_blob(
         connection_handle_t connection_handle,
@@ -188,7 +187,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::read_multiple_characteristic_values
+     * @see ble::PalGattClient::read_multiple_characteristic_values
      */
     ble_error_t read_multiple_characteristic_values(
         connection_handle_t connection_handle,
@@ -201,7 +200,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::write_without_response
+     * @see ble::PalGattClient::write_without_response
      */
     ble_error_t write_without_response(
         connection_handle_t connection_handle,
@@ -216,7 +215,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::signed_write_without_response
+     * @see ble::PalGattClient::signed_write_without_response
      */
     ble_error_t signed_write_without_response(
         connection_handle_t connection_handle,
@@ -231,7 +230,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::write_attribute
+     * @see ble::PalGattClient::write_attribute
      */
     ble_error_t write_attribute(
         connection_handle_t connection_handle,
@@ -246,7 +245,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::queue_prepare_write
+     * @see ble::PalGattClient::queue_prepare_write
      */
     ble_error_t queue_prepare_write(
         connection_handle_t connection_handle,
@@ -263,7 +262,7 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::execute_write_queue
+     * @see ble::PalGattClient::execute_write_queue
      */
     ble_error_t execute_write_queue(
         connection_handle_t connection_handle,
@@ -273,14 +272,14 @@ public:
     }
 
     /**
-     * @see ble::pal::PalGattClient::initialize
+     * @see ble::PalGattClient::initialize
      */
     ble_error_t initialize() {
         return _client.initialize();
     }
 
     /**
-     * @see ble::pal::PalGattClient::terminate
+     * @see ble::PalGattClient::terminate
      */
     ble_error_t terminate() {
         return _client.initialize();
@@ -290,8 +289,6 @@ private:
     PalAttClient& _client;
 };
 
-} // namespace pal
 } // namespace ble
-
 
 #endif /* BLE_PAL_ATTCLIENTTOGATTCLIENTADAPTER_H_ */

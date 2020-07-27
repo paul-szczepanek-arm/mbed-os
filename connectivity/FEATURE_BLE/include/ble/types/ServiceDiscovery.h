@@ -17,6 +17,7 @@
 #ifndef MBED_BLE_SERVICE_DISOVERY_H__
 #define MBED_BLE_SERVICE_DISOVERY_H__
 
+#include "ble/types/blecommon.h"
 #include "ble/types/UUID.h"
 #include "ble/Gap.h"
 #include "ble/types/GattAttribute.h"

@@ -24,10 +24,10 @@
 #include "ble/internal/FileSecurityDb.h"
 #include "ble/internal/KVStoreSecurityDb.h"
 
-using ble::pal::advertising_peer_address_type_t;
-using ble::pal::AuthenticationMask;
-using ble::pal::KeyDistribution;
-using ble::pal::connection_peer_address_type_t;
+using ble::advertising_peer_address_type_t;
+using ble::AuthenticationMask;
+using ble::KeyDistribution;
+using ble::connection_peer_address_type_t;
 
 namespace ble {
 
@@ -1294,7 +1294,7 @@ void SecurityManager::on_identity_list_retrieved(
     delete [] identity_list.data();
 }
 
-/* Implements ble::pal::PalSecurityManagerEventHandler */
+/* Implements ble::PalSecurityManagerEventHandler */
 
 ////////////////////////////////////////////////////////////////////////////
 // Pairing

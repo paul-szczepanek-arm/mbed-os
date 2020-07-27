@@ -25,7 +25,6 @@
 #include "ble/internal/pal/AttServerMessage.h"
 
 namespace ble {
-namespace pal {
 
 /**
  * Definition of the general handler of PalGattClient related events.
@@ -60,6 +59,7 @@ struct PalGattClientEventHandler {
 };
 
 
+namespace interface {
 /**
  * Adaptation layer for a GATT client.
  *
@@ -83,7 +83,7 @@ struct PalGattClientEventHandler {
  *
  * If a stack expose the complete ATT layer then it is possible to provide an
  * implementation for PalGattClient by subclassing the PalAttClient class and use
- * the class AttClientToGattClientAdapter
+ * the class PalAttClientToPalGattClientAdapter
  */
 class PalGattClient {
 public:
@@ -688,7 +688,7 @@ private:
     PalGattClient& operator=(const PalGattClient&);
 };
 
-} // namespace pal
+} // namespace interface
 } // namespace ble
 
 #endif /* BLE_PAL_GATT_CLIENT_H_ */

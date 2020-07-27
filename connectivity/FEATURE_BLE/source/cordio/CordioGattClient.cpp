@@ -32,20 +32,20 @@
 #include "ble/SecurityManager.h"
 #include <algorithm>
 
-using ble::pal::AttServerMessage;
-using ble::pal::AttReadResponse;
-using ble::pal::AttReadBlobResponse;
-using ble::pal::AttReadByTypeResponse;
-using ble::pal::AttReadByGroupTypeResponse;
-using ble::pal::AttFindByTypeValueResponse;
-using ble::pal::AttErrorResponse;
-using ble::pal::AttributeOpcode;
-using ble::pal::AttWriteResponse;
-using ble::pal::AttPrepareWriteResponse;
-using ble::pal::AttExecuteWriteResponse;
-using ble::pal::AttHandleValueIndication;
-using ble::pal::AttHandleValueNotification;
-using ble::pal::AttFindInformationResponse;
+using ble::AttServerMessage;
+using ble::AttReadResponse;
+using ble::AttReadBlobResponse;
+using ble::AttReadByTypeResponse;
+using ble::AttReadByGroupTypeResponse;
+using ble::AttFindByTypeValueResponse;
+using ble::AttErrorResponse;
+using ble::AttributeOpcode;
+using ble::AttWriteResponse;
+using ble::AttPrepareWriteResponse;
+using ble::AttExecuteWriteResponse;
+using ble::AttHandleValueIndication;
+using ble::AttHandleValueNotification;
+using ble::AttFindInformationResponse;
 
 #define PREPARE_WRITE_HEADER_LENGTH 5
 #define WRITE_HEADER_LENGTH 3
@@ -951,7 +951,7 @@ struct GattClient::DescriptorDiscoveryControlBlock : public ProcedureControlBloc
 };
 
 
-GattClient::GattClient(pal::PalGattClient& pal_client) :
+GattClient::GattClient(PalGattClient& pal_client) :
     eventHandler(NULL),
 	_pal_client(pal_client),
 	_termination_callback(),
@@ -1341,7 +1341,7 @@ ble_error_t GattClient::reset(void) {
 #if BLE_FEATURE_SIGNING
 
 void GattClient::set_signing_event_handler(
-	pal::PalSigningMonitorEventHandler *signing_event_handler
+	PalSigningMonitorEventHandler *signing_event_handler
 ) {
     _signing_event_handler = signing_event_handler;
 }

@@ -26,12 +26,10 @@
 #include "ble/types/CharacteristicDescriptorDiscovery.h"
 #include "ble/types/GattCallbackParamTypes.h"
 #include "ble/internal/pal/PalGattClient.h"
-#include "ble/internal/pal/PalSigningMonitor.h"
+#include "ble/internal/cordio/CordioPalSigningMonitor.h"
 #include "ble/GattClient.h"
 
 namespace ble {
-
-class CordioSigningMonitor;
 
 /**
  * @addtogroup ble
@@ -90,10 +88,10 @@ class CordioSigningMonitor;
  */
 class GattClient :
         public ble::interface::GattClient,
-        public pal::PalSigningMonitor,
-        public pal::PalGattClientEventHandler {
+        public PalSigningMonitor,
+        public PalGattClientEventHandler {
 public:
-    friend CordioSigningMonitor;
+    friend PalSigningMonitor;
     friend CordioBLEInstanceBase;
     /**
      * Assign the event handler implementation that will be used by the
@@ -589,12 +587,12 @@ private:
 public:
 
     /**
-     * @see ble::pal::PalSigningMonitor::set_signing_event_handler
+     * @see ble::PalSigningMonitor::set_signing_event_handler
      */
-    void set_signing_event_handler(pal::PalSigningMonitorEventHandler *signing_event_handler);
+    void set_signing_event_handler(PalSigningMonitorEventHandler *signing_event_handler);
 
     /**
-     * @see pal::PalGattClient::EventHandler::on_att_mtu_change
+     * @see PalGattClient::EventHandler::on_att_mtu_change
      */
     void on_att_mtu_change(
         ble::connection_handle_t connection_handle,
@@ -602,7 +600,7 @@ public:
     );
 
     /**
-     * @see pal::PalGattClient::EventHandler::on_write_command_sent
+     * @see PalGattClient::EventHandler::on_write_command_sent
      */
     void on_write_command_sent(
         ble::connection_handle_t connection_handle,
@@ -623,9 +621,9 @@ private:
     void remove_control_block(ProcedureControlBlock* cb) const;
 
     void on_termination(connection_handle_t connection_handle);
-    void on_server_message_received(connection_handle_t, const pal::AttServerMessage&);
-    void on_server_response(connection_handle_t, const pal::AttServerMessage&);
-    void on_server_event(connection_handle_t, const pal::AttServerMessage&);
+    void on_server_message_received(connection_handle_t, const AttServerMessage&);
+    void on_server_response(connection_handle_t, const AttServerMessage&);
+    void on_server_event(connection_handle_t, const AttServerMessage&);
     void on_transaction_timeout(connection_handle_t);
 
     uint16_t get_mtu(connection_handle_t connection) const;
@@ -661,17 +659,17 @@ private:
      */
     GattClientShutdownCallbackChain_t shutdownCallChain;
 
-    pal::PalGattClient& _pal_client;
+    PalGattClient& _pal_client;
     ServiceDiscovery::TerminationCallback_t _termination_callback;
-    pal::PalSigningMonitorEventHandler* _signing_event_handler;
+    PalSigningMonitorEventHandler* _signing_event_handler;
     mutable ProcedureControlBlock* control_blocks;
     bool _is_reseting;
 
 protected:
     /**
-     * Create a PalGattClient from a pal::PalGattClient
+     * Create a PalGattClient from a PalGattClient
      */
-    GattClient(pal::PalGattClient& pal_client);
+    GattClient(PalGattClient& pal_client);
 
 #endif // !defined(DOXYGEN_ONLY)
 };
