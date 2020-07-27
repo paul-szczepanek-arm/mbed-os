@@ -34,31 +34,31 @@ public:
     /**
      * @copydoc PalGap::EventHandler::onReadPhy
      */
-    void on_read_phy(
+    virtual void on_read_phy(
         hci_error_code_t status,
         connection_handle_t connectionHandle,
         ble::phy_t tx_phy,
         ble::phy_t rx_phy
-    );
+    ) = 0;
 
     /**
      * @copydoc PalGap::EventHandler::onDataLengthChange
      */
-    void on_data_length_change(
+    virtual void on_data_length_change(
         connection_handle_t connection_handle,
         uint16_t tx_size,
         uint16_t rx_size
-    );
+    ) = 0;
 
     /**
      * @copydoc PalGap::EventHandler::onPhyUpdateComplete
      */
-    void on_phy_update_complete(
+    virtual void on_phy_update_complete(
         hci_error_code_t status,
         connection_handle_t connection_handle,
         ble::phy_t tx_phy,
         ble::phy_t rx_phy
-    );
+     )= 0;
 
     /**
      * Should be invoked by the PalGap implementation when an enhanced
@@ -99,7 +99,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.7.65.10 LE enhanced connection
      * complete event.
      */
-    void on_enhanced_connection_complete(
+    virtual void on_enhanced_connection_complete(
         hci_error_code_t status,
         connection_handle_t connection_handle,
         connection_role_t own_role,
@@ -111,7 +111,7 @@ public:
         uint16_t connection_latency,
         uint16_t supervision_timeout,
         clock_accuracy_t master_clock_accuracy
-    );
+     )= 0;
 
     /** Called on advertising report event.
      *
@@ -132,7 +132,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.7.65.13 LE extended advertising
      * report event.
      */
-    void on_extended_advertising_report(
+    virtual void on_extended_advertising_report(
         advertising_event_t event_type,
         const connection_peer_address_type_t *address_type,
         const address_t &address,
@@ -146,7 +146,7 @@ public:
         const address_t &direct_address,
         uint8_t data_length,
         const uint8_t *data_size
-    );
+     )= 0;
 
     /** Called on advertising sync event.
      *
@@ -159,7 +159,7 @@ public:
      * @param periodic_advertising_interval Periodic advertising interval.
      * @param clock_accuracy Peer clock accuracy.
      */
-    void on_periodic_advertising_sync_established(
+    virtual void on_periodic_advertising_sync_established(
         hci_error_code_t error,
         sync_handle_t sync_handle,
         advertising_sid_t advertising_sid,
@@ -168,7 +168,7 @@ public:
         phy_t advertiser_phy,
         uint16_t periodic_advertising_interval,
         clock_accuracy_t clock_accuracy
-    );
+     )= 0;
 
     /** Called after a periodic advertising report event.
      *
@@ -179,26 +179,26 @@ public:
      * @param data_length Periodic advertisement payload length.
      * @param data Periodic advertisement payload.
      */
-    void on_periodic_advertising_report(
+    virtual void on_periodic_advertising_report(
         sync_handle_t sync_handle,
         advertising_power_t tx_power,
         rssi_t rssi,
         advertising_data_status_t data_status,
         uint8_t data_length,
         const uint8_t *data
-    );
+     )= 0;
 
     /** Called on periodic advertising sync loss event.
      *
      * @param sync_handle Advertising sync handle'
      */
-    void on_periodic_advertising_sync_loss(
+    virtual void on_periodic_advertising_sync_loss(
         sync_handle_t sync_handle
-    );
+     )= 0;
 
     /** Called when scanning times out.
      */
-    void on_scan_timeout();
+    virtual void on_scan_timeout( )= 0;
 
     /** Called when advertising set stops advertising.
      *
@@ -207,12 +207,12 @@ public:
      * @param advertising_handle Connection handle.
      * @param number_of_completed_extended_advertising_events Number of events created during before advertising end.
      */
-    void on_advertising_set_terminated(
+    virtual void on_advertising_set_terminated(
         hci_error_code_t status,
         advertising_handle_t advertising_handle,
         connection_handle_t connection_handle,
         uint8_t number_of_completed_extended_advertising_events
-    );
+     )= 0;
 
     /** Called when a device receives a scan request from an active scanning device.
      *
@@ -220,27 +220,27 @@ public:
      * @param scanner_address_type Peer address type.
      * @param address Peer address.
      */
-    void on_scan_request_received(
+    virtual void on_scan_request_received(
         advertising_handle_t advertising_handle,
         connection_peer_address_type_t scanner_address_type,
         const address_t &address
-    );
+     )= 0;
 
-    void on_connection_update_complete(
+    virtual void on_connection_update_complete(
         hci_error_code_t status,
         connection_handle_t connection_handle,
         uint16_t connection_interval,
         uint16_t connection_latency,
         uint16_t supervision_timeout
-    );
+     )= 0;
 
-    void on_remote_connection_parameter(
+    virtual void on_remote_connection_parameter(
         connection_handle_t connection_handle,
         uint16_t connection_interval_min,
         uint16_t connection_interval_max,
         uint16_t connection_latency,
         uint16_t supervision_timeout
-    );
+     )= 0;
 };
 
 namespace interface {
