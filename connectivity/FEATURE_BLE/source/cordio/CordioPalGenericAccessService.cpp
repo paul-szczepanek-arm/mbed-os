@@ -18,6 +18,8 @@
 
 #include "ble/internal/cordio/CordioPalGenericAccessService.h"
 
+namespace ble {
+
 #if 0 // Disabled until reworked and reintroduced to GattServer API
 
 virtual ble_error_t PalGenericAccessService::get_device_name_length(uint8_t& length) {
@@ -113,4 +115,7 @@ ble_error_t PalGenericAccessService::set_peripheral_preferred_connection_paramet
 ble::GattServer& PalGenericAccessService::gatt_server() {
     return ble::GattServer::getInstance();
 }
+
+}
+
 #endif // BLE_FEATURE_GATT_SERVER

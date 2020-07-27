@@ -20,9 +20,6 @@
 #include "CordioHCIDriver.h"
 
 namespace ble {
-namespace vendor {
-namespace nordic {
-
 
 /**
  * Nordic port of CordioHCIDriver
@@ -84,8 +81,6 @@ private:
     uint8_t* _stack_buffer;
 };
 
-} // namespace nordic
-} // namespace vendor
 } // namespace ble
 
 #endif /* NRF_CORDIO_HCI_DRIVER_H_ */

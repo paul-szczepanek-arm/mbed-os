@@ -20,6 +20,8 @@
 #include "ble/internal/cordio/CordioBLEInstanceBase.h"
 #include "ble/internal/cordio/CordioGattClient.h"
 
+namespace ble {
+
 void PalSigningMonitor::set_signing_event_handler(SecurityManager *handler) {
 #if BLE_FEATURE_GATT_CLIENT
     CordioBLEInstanceBase::deviceInstance().getGattClient().set_signing_event_handler(handler);
@@ -27,4 +29,6 @@ void PalSigningMonitor::set_signing_event_handler(SecurityManager *handler) {
 #if BLE_FEATURE_GATT_SERVER
     CordioBLEInstanceBase::deviceInstance().getGattServer().set_signing_event_handler(handler);
 #endif // BLE_FEATURE_GATT_SERVER
+}
+
 }

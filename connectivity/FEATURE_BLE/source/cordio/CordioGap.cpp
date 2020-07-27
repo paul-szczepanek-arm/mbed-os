@@ -27,6 +27,7 @@
 #include "ble/internal/pal/GapTypes.h"
 #include "ble/internal/pal/PalGenericAccessService.h"
 #include "ble/internal/cordio/CordioPalEventQueue.h"
+#include "ble/internal/cordio/CordioPalGap.h"
 
 #include "drivers/Timeout.h"
 

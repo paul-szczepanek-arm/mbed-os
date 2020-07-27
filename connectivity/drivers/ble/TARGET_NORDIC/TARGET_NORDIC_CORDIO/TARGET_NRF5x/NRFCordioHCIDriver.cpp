@@ -52,7 +52,7 @@
 #define DBG_WARN(...)
 #endif
 
-using namespace ble::vendor::nordic;
+using namespace ble;
 
 /*! \brief      Memory that should be reserved for the stack. */
 #if defined(NRF52840_XXAA)

@@ -16,8 +16,10 @@
  * limitations under the License.
  */
 
-#include "ble/internal/cordio/CordioPalAttClient.h"
 #include "ble/internal/cordio/CordioPalGattClient.h"
+#include "ble/internal/cordio/CordioPalAttClient.h"
+
+namespace ble {
 
 PalGattClient::PalGattClient(PalAttClient& client) : _client(client)
 {
@@ -227,3 +229,5 @@ ble_error_t PalGattClient::initialize() {
 ble_error_t PalGattClient::terminate() {
     return _client.initialize();
 }
+
+} // ble

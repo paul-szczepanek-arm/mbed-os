@@ -20,8 +20,6 @@
 #include "CordioHCITransportDriver.h"
 
 namespace ble {
-namespace vendor {
-namespace nordic {
 
 
 /**
@@ -59,9 +57,6 @@ public:
     virtual uint16_t write(uint8_t type, uint16_t len, uint8_t *pData);
 };
 
-
-} // namespace nordic
-} // namespace vendor
 } // namespace ble
 
 #endif /* NRF_CORDIO_HCI_TRANSPORT_DRIVER_H_ */

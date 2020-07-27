@@ -41,6 +41,8 @@
 #include "ble/internal/cordio/CordioPalSecurityManager.h"
 #include "ble/internal/cordio/CordioPalGap.h"
 #include "ble/internal/cordio/CordioPalSigningMonitor.h"
+#include "ble/internal/cordio/CordioBLEInstanceBase.h"
+#include "CordioHCIDriver.h"
 
 using namespace std::chrono;
 

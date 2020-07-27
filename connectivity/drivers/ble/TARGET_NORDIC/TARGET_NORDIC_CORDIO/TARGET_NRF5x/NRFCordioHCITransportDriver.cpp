@@ -30,7 +30,7 @@
 #include "NRFCordioHCITransportDriver.h"
 #include "CordioHCITransportDriver.h"
 
-using namespace ble::vendor::nordic;
+using namespace ble;
 
 NRFCordioHCITransportDriver::~NRFCordioHCITransportDriver() { }
 

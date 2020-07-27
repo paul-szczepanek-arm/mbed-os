@@ -19,34 +19,23 @@
 #ifndef CORDIO_PAL_ATT_CLIENT_
 #define CORDIO_PAL_ATT_CLIENT_
 
-#include "ble/GattServer.h"
-#include "pal/PalAttClient.h"
-#include "CordioPalGattClient.h"
-#include "pal/PalSimpleAttServerMessage.h"
+#include "PalSimpleAttServerMessage.h"
 #include "att_api.h"
-#include "att_defs.h"
-#include "pal/PalGap.h"
-#include "CordioPalGap.h"
-#include "PalGattClient.h"
-#include "ble/internal/cordio/CordioBLEInstanceBase.h"
+#include "ble/internal/pal/PalAttClient.h"
 
 namespace ble {
 
 class PalAttClient : public interface::PalAttClient {
 
 public:
-    PalAttClient() : _local_sign_counter(0) { }
+    PalAttClient();
 
-    ~PalAttClient() { }
+    ~PalAttClient();
 
     /**
      * @see ble::PalAttClient::exchange_mtu_request
      */
-    ble_error_t exchange_mtu_request(connection_handle_t connection)
-    {
-        AttcMtuReq(connection, pAttCfg->mtu);
-        return BLE_ERROR_NONE;
-    }
+    ble_error_t exchange_mtu_request(connection_handle_t connection);
 
     /**
      * @see ble::PalGattClient::get_mtu_size
@@ -54,10 +43,7 @@ public:
     ble_error_t get_mtu_size(
         connection_handle_t connection_handle,
         uint16_t& mtu_size
-    ) {
-        mtu_size = AttGetMtu(connection_handle);
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::find_information_request
@@ -65,15 +51,7 @@ public:
     ble_error_t find_information_request(
         connection_handle_t connection_handle,
         attribute_handle_range_t discovery_range
-    ) {
-        AttcFindInfoReq(
-            connection_handle,
-            discovery_range.begin,
-            discovery_range.end,
-            false
-        );
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::find_by_type_value_request
@@ -83,18 +61,7 @@ public:
         attribute_handle_range_t discovery_range,
         uint16_t type,
         const Span<const uint8_t>& value
-    ) {
-        AttcFindByTypeValueReq(
-            connection_handle,
-            discovery_range.begin,
-            discovery_range.end,
-            type,
-            value.size(),
-            const_cast<uint8_t*>(value.data()),
-            false
-        );
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::read_by_type_request
@@ -103,17 +70,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_range_t read_range,
         const UUID& type
-    ) {
-        AttcReadByTypeReq(
-            connection_handle,
-            read_range.begin,
-            read_range.end,
-            type.getLen(),
-            const_cast<uint8_t*>(type.getBaseUUID()),
-            false
-        );
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::read_request
@@ -121,10 +78,7 @@ public:
     ble_error_t read_request(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle
-    ) {
-        AttcReadReq(connection_handle, attribute_handle);
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::read_blob_request
@@ -133,15 +87,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         uint16_t offset
-    ) {
-        AttcReadLongReq(
-            connection_handle,
-            attribute_handle,
-            offset,
-            false
-        );
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::read_multiple_request
@@ -149,14 +95,7 @@ public:
     ble_error_t read_multiple_request(
         connection_handle_t connection_handle,
         const Span<const attribute_handle_t>& attribute_handles
-    ) {
-        AttcReadMultipleReq(
-            connection_handle,
-            attribute_handles.size(),
-            const_cast<uint16_t*>(attribute_handles.data())
-        );
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::read_by_group_type_request
@@ -165,17 +104,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_range_t read_range,
         const UUID& group_type
-    ) {
-        AttcReadByGroupTypeReq(
-            connection_handle,
-            read_range.begin,
-            read_range.end,
-            group_type.getLen(),
-            const_cast<uint8_t*>(group_type.getBaseUUID()),
-            false
-        );
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::write_request
@@ -184,15 +113,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         const Span<const uint8_t>& value
-    ) {
-        AttcWriteReq(
-            connection_handle,
-            attribute_handle,
-            value.size(),
-            const_cast<uint8_t*>(value.data())
-        );
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::write_command
@@ -201,15 +122,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         const Span<const uint8_t>& value
-    ) {
-        AttcWriteCmd(
-            connection_handle,
-            attribute_handle,
-            value.size(),
-            const_cast<uint8_t*>(value.data())
-        );
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::signed_write_command
@@ -218,17 +131,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         const Span<const uint8_t>& value
-    ) {
-        AttcSignedWriteCmd(
-            connection_handle,
-            attribute_handle,
-            _local_sign_counter,
-            value.size(),
-            const_cast<uint8_t*>(value.data())
-        );
-        _local_sign_counter++;
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * Initialises the counter used to sign messages. Counter will be incremented every
@@ -238,9 +141,7 @@ public:
      */
     void set_sign_counter(
         sign_count_t sign_counter
-    ) {
-        _local_sign_counter = sign_counter;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::prepare_write_request
@@ -250,18 +151,7 @@ public:
         attribute_handle_t attribute_handle,
         uint16_t offset,
         const Span<const uint8_t>& value
-    ) {
-        AttcPrepareWriteReq(
-            connection_handle,
-            attribute_handle,
-            offset,
-            value.size(),
-            const_cast<uint8_t*>(value.data()),
-            false,
-            false
-        );
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::execute_write_request
@@ -269,57 +159,32 @@ public:
     ble_error_t execute_write_request(
         connection_handle_t connection_handle,
         bool execute
-    ) {
-        AttcExecuteWriteReq(
-            connection_handle,
-            execute
-        );
-        return BLE_ERROR_NONE;
-    }
+    );
 
     /**
      * @see ble::PalAttClient::initialize
      */
-    ble_error_t initialize()
-    {
-        return BLE_ERROR_NONE;
-    }
+    ble_error_t initialize();
 
     /**
      * @see ble::PalAttClient::terminate
      */
-    ble_error_t terminate()
-    {
-        return BLE_ERROR_NONE;
-    }
+    ble_error_t terminate();
 
     // singleton of the ARM Cordio client
-    static PalAttClient& get_client()
-    {
-        static PalAttClient _client;
-        return _client;
-    }
+    static PalAttClient& get_client();
 
     void when_server_message_received(
             mbed::Callback<void(connection_handle_t, const AttServerMessage&)> cb
-    ) {
-        _server_message_cb = cb;
-    }
+    );
 
     void when_transaction_timeout(
             mbed::Callback<void(connection_handle_t)> cb
-    ) {
-        _transaction_timeout_cb = cb;
-    }
+    );
 
 private:
     // convert an array of byte to an uint16_t
-    static uint16_t to_uint16_t(const uint8_t* array)
-    {
-        uint16_t result;
-        memcpy(&result, array, sizeof(result));
-        return result;
-    }
+    static uint16_t to_uint16_t(const uint8_t* array);
 
     /**
      * Type of an event handler.
@@ -347,34 +212,14 @@ private:
      * @return
      */
     template<typename T>
-    static bool event_handler(const attEvt_t* event)
-    {
-        if (T::can_convert(event)) {
-            generated_handler(event, T::convert);
-            return true;
-        }
-        return false;
-    }
+    static bool event_handler(const attEvt_t* event);
 
-    static bool timeout_event_handler(const attEvt_t* event)
-    {
-        if(event->hdr.status != ATT_ERR_TIMEOUT) {
-            return false;
-        }
-
-        get_client().on_transaction_timeout(event->hdr.param);
-        return true;
-    }
+    static bool timeout_event_handler(const attEvt_t* event);
 
     template<typename ResultType>
     static void generated_handler(
         const attEvt_t* event, ResultType (*convert)(const attEvt_t*)
-    ) {
-        get_client().on_server_event(
-            event->hdr.param,
-            convert(event)
-        );
-    }
+    );
 
     /**
      * Traits defining can_convert for non ErrorResponse events.
@@ -601,11 +446,7 @@ private:
     void on_server_event(
             connection_handle_t connection_handle,
             const AttServerMessage& server_message
-    ) {
-        if (_server_message_cb) {
-            _server_message_cb(connection_handle, server_message);
-        }
-    }
+    );
 
     /**
      * Upon transaction timeout an implementation shall call this function.
@@ -617,11 +458,7 @@ private:
      */
     void on_transaction_timeout(
             connection_handle_t connection_handle
-    ) {
-        if (_transaction_timeout_cb) {
-            _transaction_timeout_cb(connection_handle);
-        }
-    }
+    );
 private:
     sign_count_t _local_sign_counter;
 
