@@ -1,5 +1,7 @@
 /* mbed Microcontroller Library
- * Copyright (c) 2017-2017 ARM Limited
+ * Copyright (c) 2006-2020 ARM Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +21,7 @@
 
 #include "ble/GattServer.h"
 #include "pal/PalAttClient.h"
-#include "pal/PalAttClientToPalGattClientAdapter.h"
+#include "CordioPalGattClient.h"
 #include "pal/PalSimpleAttServerMessage.h"
 #include "att_api.h"
 #include "att_defs.h"
@@ -296,6 +298,18 @@ public:
     {
         static PalAttClient _client;
         return _client;
+    }
+
+    void when_server_message_received(
+            mbed::Callback<void(connection_handle_t, const AttServerMessage&)> cb
+    ) {
+        _server_message_cb = cb;
+    }
+
+    void when_transaction_timeout(
+            mbed::Callback<void(connection_handle_t)> cb
+    ) {
+        _transaction_timeout_cb = cb;
     }
 
 private:
@@ -577,14 +591,49 @@ private:
         }
     };
 private:
+    /**
+     * Upon server message reception an implementation shall call this function.
+     *
+     * @param connection_handle The handle of the connection which has received
+     * the server message.
+     * @param server_message The message received from the server.
+     */
+    void on_server_event(
+            connection_handle_t connection_handle,
+            const AttServerMessage& server_message
+    ) {
+        if (_server_message_cb) {
+            _server_message_cb(connection_handle, server_message);
+        }
+    }
+
+    /**
+     * Upon transaction timeout an implementation shall call this function.
+     *
+     * @param connection_handle The handle of the connection of the transaction
+     * which has times out.
+     *
+     * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.3.3
+     */
+    void on_transaction_timeout(
+            connection_handle_t connection_handle
+    ) {
+        if (_transaction_timeout_cb) {
+            _transaction_timeout_cb(connection_handle);
+        }
+    }
+private:
     sign_count_t _local_sign_counter;
-};
 
+    /**
+     * Callback called when the client receive a message from the server.
+     */
+    mbed::Callback<void(connection_handle_t, const AttServerMessage&)> _server_message_cb;
 
-struct CordioPalGattClient : PalAttClientToPalGattClientAdapter {
-    CordioPalGattClient(PalAttClient& att_client) :
-        PalAttClientToPalGattClientAdapter(att_client)
-    { }
+    /**
+     * Callback called when a transaction times out.
+     */
+    mbed::Callback<void(connection_handle_t)> _transaction_timeout_cb;
 };
 
 } // ble

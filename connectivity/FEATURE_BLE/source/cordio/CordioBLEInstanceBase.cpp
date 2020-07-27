@@ -1,6 +1,7 @@
 /* mbed Microcontroller Library
-#include <connectivity/FEATURE_BLE/source/cordio/CordioBLEInstanceBase.h>
- * Copyright (c) 2017-2017 ARM Limited
+ * Copyright (c) 2017-2020 ARM Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -223,7 +224,7 @@ ble::GattClient& CordioBLEInstanceBase::getGattClient()
 
 PalGattClient& CordioBLEInstanceBase::getPalGattClient()
 {
-    static PalAttClientToPalGattClientAdapter pal_gatt_client(PalAttClient::get_client());
+    static PalGattClient pal_gatt_client(PalAttClient::get_client());
     return pal_gatt_client;
 }
 #endif // BLE_FEATURE_GATT_CLIENT

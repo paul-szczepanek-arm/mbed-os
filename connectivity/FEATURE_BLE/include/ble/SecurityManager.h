@@ -1,6 +1,8 @@
 /* mbed Microcontroller Library
  * Copyright (c) 2006-2020 ARM Limited
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +31,6 @@
 #include "ble/types/BLETypes.h"
 #include "ble/internal/SecurityDb.h"
 #include "ble/internal/pal/PalConnectionMonitor.h"
-#include "ble/internal/pal/PalSigningMonitor.h"
 #include "ble/internal/pal/PalSecurityManager.h"
 
 namespace ble {

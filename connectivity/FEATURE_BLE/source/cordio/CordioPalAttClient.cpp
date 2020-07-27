@@ -1,6 +1,6 @@
 /* mbed Microcontroller Library
-#include <connectivity/FEATURE_BLE/source/cordio/CordioBLEInstanceBase.h>
- * Copyright (c) 2019 ARM Limited
+ * Copyright (c) 2017-2020 ARM Limited
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

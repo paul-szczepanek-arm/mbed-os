@@ -1,5 +1,7 @@
 /* mbed Microcontroller Library
- * Copyright (c) 2006-2013 ARM Limited
+ * Copyright (c) 2006-2020 ARM Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef MBED_CALLCHAIN_OF_FUNCTION_POINTERS_WITH_CONTEXT_H
 #define MBED_CALLCHAIN_OF_FUNCTION_POINTERS_WITH_CONTEXT_H
 

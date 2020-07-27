@@ -1,5 +1,7 @@
 /* mbed Microcontroller Library
- * Copyright (c) 2018 ARM Limited
+ * Copyright (c) 2006-2020 ARM Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +14,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
 #ifndef MBED_EXTENDED_CONNECT_PARAMETERS_H__
 #define MBED_EXTENDED_CONNECT_PARAMETERS_H__

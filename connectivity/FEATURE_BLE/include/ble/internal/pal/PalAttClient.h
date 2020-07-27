@@ -1,5 +1,7 @@
 /* mbed Microcontroller Library
- * Copyright (c) 2017-2017 ARM Limited
+ * Copyright (c) 2006-2020 ARM Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +53,7 @@ public:
      * @return BLE_ERROR_NONE if the request has been successfully sent or the
      * appropriate error otherwise.
      */
-    ble_error_t initialize();
+    ble_error_t initialize() = 0;
 
     /**
      * Termination of the instance. An implementation can use this function
@@ -64,7 +66,7 @@ public:
      * @return BLE_ERROR_NONE if the request has been successfully sent or the
      * appropriate error otherwise.
      */
-    ble_error_t terminate();
+    ble_error_t terminate() = 0;
 
     /**
      * Send an exchange MTU request which negotiate the size of the MTU used by
@@ -90,7 +92,7 @@ public:
      *
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.4.2.1
      */
-    ble_error_t exchange_mtu_request(connection_handle_t connection);
+    ble_error_t exchange_mtu_request(connection_handle_t connection) = 0;
 
     /**
      * Acquire the size of the mtu for a given connection.
@@ -106,7 +108,7 @@ public:
     ble_error_t get_mtu_size(
         connection_handle_t connection_handle,
         uint16_t& mtu_size
-    );
+    ) = 0;
 
     /**
      * Send a find information request to a server in order to obtain the
@@ -142,7 +144,7 @@ public:
     ble_error_t find_information_request(
         connection_handle_t connection_handle,
         attribute_handle_range_t discovery_range
-    );
+    ) = 0;
 
     /**
      * Send a Find By Type Value Request which retrieve the handles of attributes
@@ -180,7 +182,7 @@ public:
         attribute_handle_range_t discovery_range,
         uint16_t type,
         const Span<const uint8_t>& value
-    );
+    ) = 0;
 
     /**
      * Send a Read By Type Request used to obtain the values of attributes where
@@ -223,7 +225,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_range_t read_range,
         const UUID& type
-    );
+    ) = 0;
 
     /**
      * Send a Read Request to read the value of an attribute in the server.
@@ -261,7 +263,7 @@ public:
     ble_error_t read_request(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle
-    );
+    ) = 0;
 
     /**
      * Send a read blob request to a server to read a part of the value of an
@@ -308,7 +310,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         uint16_t offset
-    );
+    ) = 0;
 
     /**
      * Send a read multiple request to the server. It is used to read two or more
@@ -351,7 +353,7 @@ public:
     ble_error_t read_multiple_request(
         connection_handle_t connection_handle,
         const Span<const attribute_handle_t>& attribute_handles
-    );
+    ) = 0;
 
     /**
      * Send a read by group type request to the server. It is used to get
@@ -402,7 +404,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_range_t read_range,
         const UUID& group_type
-    );
+    ) = 0;
 
     /**
      * Send a write request to the server to write the value of an attribute.
@@ -455,7 +457,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         const Span<const uint8_t>& value
-    );
+    ) = 0;
 
     /**
      * Send a write command to the server. A write command is similar to a write
@@ -475,7 +477,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         const Span<const uint8_t>& value
-    );
+    ) = 0;
 
     /**
      * Send a signed write command to the server. Behaviour is similar to a write
@@ -500,7 +502,7 @@ public:
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         const Span<const uint8_t>& value
-    );
+    ) = 0;
 
     /**
      * The Prepare Write Request is used to request the server to prepare to
@@ -553,7 +555,7 @@ public:
         attribute_handle_t attribute_handle,
         uint16_t offset,
         const Span<const uint8_t>& value
-    );
+    ) = 0;
 
     /**
      * Send an Execute Write Request to the server. This request will instruct
@@ -595,7 +597,7 @@ public:
     ble_error_t execute_write_request(
         connection_handle_t connection_handle,
         bool execute
-    );
+    ) = 0;
 
     /**
      * Register a callback which will handle messages from the server.
@@ -607,9 +609,7 @@ public:
      */
     void when_server_message_received(
         mbed::Callback<void(connection_handle_t, const AttServerMessage&)> cb
-    ) {
-        _server_message_cb = cb;
-    }
+    ) = 0;
 
     /**
      * Register a callback handling transaction timeout.
@@ -624,15 +624,9 @@ public:
      */
      void when_transaction_timeout(
          mbed::Callback<void(connection_handle_t)> cb
-     ) {
-         _transaction_timeout_cb = cb;
-     }
+     ) = 0;
 
 protected:
-    PalAttClient() { }
-
-    ~PalAttClient() { }
-
     /**
      * Upon server message reception an implementation shall call this function.
      *
@@ -643,11 +637,7 @@ protected:
     void on_server_event(
         connection_handle_t connection_handle,
         const AttServerMessage& server_message
-    ) {
-        if (_server_message_cb) {
-            _server_message_cb(connection_handle, server_message);
-        }
-    }
+    ) = 0;
 
     /**
      * Upon transaction timeout an implementation shall call this function.
@@ -659,26 +649,7 @@ protected:
      */
     void on_transaction_timeout(
         connection_handle_t connection_handle
-    ) {
-        if (_transaction_timeout_cb) {
-            _transaction_timeout_cb(connection_handle);
-        }
-    }
-
-private:
-    /**
-     * Callback called when the client receive a message from the server.
-     */
-    mbed::Callback<void(connection_handle_t, const AttServerMessage&)> _server_message_cb;
-
-    /**
-     * Callback called when a transaction times out.
-     */
-    mbed::Callback<void(connection_handle_t)> _transaction_timeout_cb;
-
-    // Disallow copy construction and copy assignment.
-    PalAttClient(const PalAttClient&);
-    PalAttClient& operator=(const PalAttClient&);
+    ) = 0;
 };
 
 

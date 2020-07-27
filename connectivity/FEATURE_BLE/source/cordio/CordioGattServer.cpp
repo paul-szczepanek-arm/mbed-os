@@ -1,7 +1,7 @@
 /* mbed Microcontroller Library
-#include <connectivity/FEATURE_BLE/source/cordio/CordioBLEInstanceBase.h>
-#include <GattServer.cpp>
- * Copyright (c) 2017-2017 ARM Limited
+ * Copyright (c) 2017-2020 ARM Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "BLERoles.h"
 
+#include "BLERoles.h"
 #include <algorithm>
 #include "ble/GattServer.h"
 #include "ble/internal/cordio/CordioBLEInstanceBase.h"

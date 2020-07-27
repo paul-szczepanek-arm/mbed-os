@@ -1,5 +1,7 @@
 /* mbed Microcontroller Library
- * Copyright (c) 2017-2017 ARM Limited
+ * Copyright (c) 2006-2020 ARM Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +19,7 @@
 #ifndef BLE_PAL_ATTCLIENTTOGATTCLIENTADAPTER_H_
 #define BLE_PAL_ATTCLIENTTOGATTCLIENTADAPTER_H_
 
-#include "ble/internal/pal/PalAttClient.h"
+#include "ble/internal/cordio/CordioPalAttClient.h"
 #include "ble/internal/pal/PalGattClient.h"
 
 namespace ble {
@@ -28,8 +30,7 @@ namespace ble {
  * This class let vendors define their abstraction layer in term of an PalAttClient
  * and adapt any PalAttClient into a PalGattClient.
  */
-class PalAttClientToPalGattClientAdapter : public interface::PalGattClient {
-
+class PalGattClient : public interface::PalGattClient {
 public:
     static const uint16_t END_ATTRIBUTE_HANDLE = 0xFFFF;
     static const uint16_t SERVICE_TYPE_UUID = 0x2800;
@@ -40,14 +41,14 @@ public:
      * Construct an instance of PalGattClient from an instance of PalAttClient.
      * @param client The client to adapt.
      */
-    PalAttClientToPalGattClientAdapter(PalAttClient& client) :
-        _client(client) {
+    PalGattClient(PalAttClient& client) : _client(client)
+    {
         _client.when_server_message_received(
-            mbed::callback(this, &PalAttClientToPalGattClientAdapter::on_server_event)
+            mbed::callback(this, &PalGattClient::on_server_event)
         );
         _client.when_transaction_timeout(
             mbed::callback(
-                this, &PalAttClientToPalGattClientAdapter::on_transaction_timeout
+                this, &PalGattClient::on_transaction_timeout
             )
         );
     }

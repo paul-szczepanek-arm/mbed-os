@@ -1,6 +1,8 @@
 /* mbed Microcontroller Library
  * Copyright (c) 2006-2020 ARM Limited
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +16,7 @@
  * limitations under the License.
  */
 
+
 #ifndef MBED_GATT_SERVER_H__
 #define MBED_GATT_SERVER_H__
 
@@ -26,14 +29,12 @@
 
 #include <stddef.h>
 #include "ble/types/blecommon.h"
-#include "pal/PalSigningMonitor.h"
 #include "ble/Gap.h"
 #include "wsf_types.h"
 #include "att_api.h"
 #include "SecurityManager.h"
 
 #include "ble/BLE.h"
-#include "ble/internal/pal/PalSigningMonitor.h"
 
 /*! Maximum count of characteristics that can be stored for authorisation purposes */
 #define MAX_CHARACTERISTIC_AUTHORIZATION_CNT 20
