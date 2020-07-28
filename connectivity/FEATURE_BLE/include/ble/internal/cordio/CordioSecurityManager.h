@@ -44,13 +44,9 @@ class SecurityManager :
     public ble::PalConnectionMonitorEventHandler,
     public ble::PalSigningMonitorEventHandler
 {
-     // friends
-     friend class ble::PalConnectionMonitorEventHandler;
-     friend CordioBLEInstanceBase;
+    friend class ble::PalConnectionMonitorEventHandler;
+    friend CordioBLEInstanceBase;
 
-    /*
-     * The following functions are meant to be overridden in the platform-specific sub-class.
-     */
 public:
     ////////////////////////////////////////////////////////////////////////////
     // SM lifecycle management

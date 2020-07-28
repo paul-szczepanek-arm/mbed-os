@@ -281,6 +281,7 @@ class PalGenericAccessService;
 namespace interface {
 #endif // !defined(DOXYGEN_ONLY)
 class Gap {
+public:
     /**
      * Gap shutdown event handler.
      *
@@ -308,9 +309,6 @@ public:
      */
     static const central_privacy_configuration_t
         default_central_privacy_configuration;
-
-    /* TODO: move to config */
-    static const uint8_t MAX_ADVERTISING_SETS = 15;
 
 public:
     /**

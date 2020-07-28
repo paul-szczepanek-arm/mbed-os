@@ -91,6 +91,11 @@
             "help": "How many entries can be stored in the db, depends on security manager.",
             "value": 5,
             "macro_name": "BLE_SECURITY_DATABASE_MAX_ENTRIES"
+        },
+        "ble-gap-max-advertising-sets": {
+            "help": "How many advertising sets the API can handle (this limits how much the stack can handle). Must be non-zero",
+            "value": 15,
+            "macro_name": "BLE_GAP_MAX_ADVERTISING_SETS"
         }
     }
 }

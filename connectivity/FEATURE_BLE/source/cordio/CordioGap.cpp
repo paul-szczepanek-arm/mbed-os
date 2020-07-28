@@ -916,7 +916,7 @@ ble_error_t Gap::reset(void)
 #if BLE_FEATURE_EXTENDED_ADVERTISING
     if (is_extended_advertising_available()) {
         /* stop all advertising sets */
-        for (size_t i = 1; i < MAX_ADVERTISING_SETS; ++i) {
+        for (size_t i = 1; i < BLE_GAP_MAX_ADVERTISING_SETS; ++i) {
             if (_active_sets.get(i)) {
                 _pal_gap.extended_advertising_enable(
                     /* enable */ false,
@@ -1459,7 +1459,7 @@ void Gap::update_random_address()
     }
 #if BLE_FEATURE_EXTENDED_ADVERTISING
     if (is_extended_advertising_available()) {
-        for (uint8_t i = 0; i < MAX_ADVERTISING_SETS; ++i) {
+        for (uint8_t i = 0; i < BLE_GAP_MAX_ADVERTISING_SETS; ++i) {
             if (_existing_sets.get(i)) {
                 ble::address_t address;
 
@@ -1538,7 +1538,7 @@ void Gap::on_address_rotation_timeout()
 }
 
 
-const uint8_t Gap::MAX_ADVERTISING_SETS;
+const uint8_t Gap::BLE_GAP_MAX_ADVERTISING_SETS;
 
 
 uint8_t Gap::getMaxAdvertisingSetNumber()
@@ -1546,7 +1546,7 @@ uint8_t Gap::getMaxAdvertisingSetNumber()
 #if BLE_FEATURE_EXTENDED_ADVERTISING
     if (is_extended_advertising_available()) {
         uint8_t set_number = _pal_gap.get_max_number_of_advertising_sets();
-        return std::min(MAX_ADVERTISING_SETS, set_number);
+        return std::min(BLE_GAP_MAX_ADVERTISING_SETS, set_number);
     } else
 #endif // BLE_FEATURE_EXTENDED_ADVERTISING
     {
