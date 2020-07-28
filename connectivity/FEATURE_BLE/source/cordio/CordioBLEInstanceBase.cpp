@@ -62,7 +62,7 @@ MBED_WEAK ble::CordioHCIDriver& ble_cordio_get_hci_driver()
 {
     MBED_ASSERT("No HCI driver");
     printf("Please provide an implementation for the HCI driver");
-    ble::CordioHCIDriver* bad_instance = NULL;
+    ble::CordioHCIDriver* bad_instance = nullptr;
     return *bad_instance;
 }
 
@@ -275,7 +275,7 @@ void CordioBLEInstanceBase::processEvents()
 
  void CordioBLEInstanceBase::stack_handler(wsfEventMask_t event, wsfMsgHdr_t* msg)
  {
-    if (msg == NULL) {
+    if (msg == nullptr) {
         return;
     }
 
@@ -368,7 +368,7 @@ void CordioBLEInstanceBase::device_manager_cb(dmEvt_t* dm_event)
     switch (dm_event->hdr.event) {
         case DM_CONN_OPEN_IND:
             /* set up CCC table with uninitialized (all zero) values */
-            AttsCccInitTable(connId, NULL);
+            AttsCccInitTable(connId, nullptr);
             break;
         case DM_CONN_CLOSE_IND:
             /* clear CCC table on connection close */
@@ -386,7 +386,7 @@ void CordioBLEInstanceBase::timeoutCallback()
 
 void CordioBLEInstanceBase::stack_setup()
 {
-    MBED_ASSERT(_hci_driver != NULL);
+    MBED_ASSERT(_hci_driver != nullptr);
 
     wsfHandlerId_t handlerId;
 
@@ -590,7 +590,7 @@ void CordioBLEInstanceBase::callDispatcher()
     }
 }
 
-CordioHCIDriver* CordioBLEInstanceBase::_hci_driver = NULL;
+CordioHCIDriver* CordioBLEInstanceBase::_hci_driver = nullptr;
 
 FunctionPointerWithContext< ::BLE::InitializationCompleteCallbackContext*> CordioBLEInstanceBase::_init_callback;
 

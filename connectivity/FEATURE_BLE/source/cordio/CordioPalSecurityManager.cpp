@@ -32,12 +32,12 @@
 namespace ble {
 
 PalSecurityManager::PalSecurityManager() :
-    _pal_event_handler(NULL),
+    _pal_event_handler(nullptr),
     _use_default_passkey(false),
     _default_passkey(0),
     _lesc_keys_generated(false),
     _public_key_x(),
-    _pending_privacy_control_blocks(NULL),
+    _pending_privacy_control_blocks(nullptr),
     _processing_privacy_control_block(false),
     _peer_csrks()
 {
@@ -330,7 +330,7 @@ ble_error_t PalSecurityManager::set_ltk_not_found(
         connection,
         /* key found */ false,
         /* sec level */ DM_SEC_LEVEL_NONE,
-        NULL
+        nullptr
     );
 
     return BLE_ERROR_NONE;
@@ -374,7 +374,7 @@ ble_error_t PalSecurityManager::set_peer_csrk(
         *_peer_csrks[connection_index] = csrk;
     } else {
         _peer_csrks[connection_index] = new (std::nothrow) csrk_t(csrk);
-        if (_peer_csrks[connection_index] == NULL) {
+        if (_peer_csrks[connection_index] == nullptr) {
             return BLE_ERROR_NO_MEM;
         }
     }
@@ -395,10 +395,10 @@ ble_error_t PalSecurityManager::remove_peer_csrk(connection_handle_t connection)
 
     if (_peer_csrks[connection_index]) {
         delete _peer_csrks[connection_index];
-        _peer_csrks[connection_index] = NULL;
+        _peer_csrks[connection_index] = nullptr;
     }
 
-    AttsSetCsrk(connection, NULL, false);
+    AttsSetCsrk(connection, nullptr, false);
     return BLE_ERROR_NONE;
 }
 
@@ -573,7 +573,7 @@ ble_error_t PalSecurityManager::secure_connections_oob_request_reply(
     memcpy(oob_config.peerConfirm, peer_confirm.data(), peer_confirm.size());
 
     DmSecSetOob(connection, &oob_config);
-    DmSecAuthRsp(connection, 0, NULL);
+    DmSecAuthRsp(connection, 0, nullptr);
 
     return BLE_ERROR_NONE;
 }
@@ -590,7 +590,7 @@ bool PalSecurityManager::sm_handler(const wsfMsgHdr_t* msg) {
     PalSecurityManager& self = get_security_manager();
     PalSecurityManagerEventHandler* handler = self.get_event_handler();
 
-    if ((msg == NULL) || (handler == NULL)) {
+    if ((msg == nullptr) || (handler == nullptr)) {
         return false;
     }
 
@@ -654,7 +654,7 @@ bool PalSecurityManager::sm_handler(const wsfMsgHdr_t* msg) {
                 // requested.
                 // To set secure connection OOB:
                 //   - DmSecSetOob(connection, oob_data)
-                //   - DmSecAuthRsp(connection, 0, NULL)
+                //   - DmSecAuthRsp(connection, 0, nullptr)
                 handler->on_legacy_pairing_oob_request(connection);
             } else if (evt->display) {
                 if (get_security_manager()._use_default_passkey) {
@@ -837,7 +837,7 @@ bool PalSecurityManager::sm_handler(const wsfMsgHdr_t* msg) {
 
 struct PalSecurityManager::PrivacyControlBlock
 {
-    PrivacyControlBlock() : _next(NULL) {}
+    PrivacyControlBlock() : _next(nullptr) {}
 
     virtual ~PrivacyControlBlock() {}
 
@@ -930,7 +930,7 @@ void PalSecurityManager::queue_add_device_to_resolving_list(
 {
     PrivacyAddDevToResListControlBlock* cb =
         new (std::nothrow) PrivacyAddDevToResListControlBlock(peer_identity_address_type, peer_identity_address, peer_irk);
-    if( cb == NULL )
+    if( cb == nullptr )
     {
         // Cannot go further
         return;
@@ -947,7 +947,7 @@ void PalSecurityManager::queue_remove_device_from_resolving_list(
 {
     PrivacyRemoveDevFromResListControlBlock* cb =
         new (std::nothrow) PrivacyRemoveDevFromResListControlBlock(peer_identity_address_type, peer_identity_address);
-    if( cb == NULL )
+    if( cb == nullptr )
     {
         // Cannot go further
         return;
@@ -963,7 +963,7 @@ void PalSecurityManager::queue_clear_resolving_list() {
 
     PrivacyClearResListControlBlock* cb =
         new (std::nothrow) PrivacyClearResListControlBlock();
-    if( cb == NULL )
+    if( cb == nullptr )
     {
         // Cannot go further
         return;
@@ -974,7 +974,7 @@ void PalSecurityManager::queue_clear_resolving_list() {
 
 
 void PalSecurityManager::clear_privacy_control_blocks() {
-    while(_pending_privacy_control_blocks != NULL)
+    while(_pending_privacy_control_blocks != nullptr)
     {
         PrivacyControlBlock* next = _pending_privacy_control_blocks->next();
         delete _pending_privacy_control_blocks;
@@ -985,12 +985,12 @@ void PalSecurityManager::clear_privacy_control_blocks() {
 
 void PalSecurityManager::queue_privacy_control_block(PrivacyControlBlock* block)
 {
-    if( _pending_privacy_control_blocks == NULL ) {
+    if( _pending_privacy_control_blocks == nullptr ) {
         _pending_privacy_control_blocks = block;
     }
     else {
         PrivacyControlBlock* node = _pending_privacy_control_blocks;
-        while(node->next() != NULL) {
+        while(node->next() != nullptr) {
             node = node->next();
         }
         node->set_next(block);
@@ -1010,7 +1010,7 @@ void PalSecurityManager::process_privacy_control_blocks(bool cb_completed)
     }
 
     PrivacyControlBlock* cb = _pending_privacy_control_blocks;
-    if(cb == NULL) {
+    if(cb == nullptr) {
         // All control blocks processed
         _processing_privacy_control_block = false;
         return;
@@ -1030,7 +1030,7 @@ void PalSecurityManager::cleanup_peer_csrks() {
     for (size_t i = 0; i < DM_CONN_MAX; ++i) {
         if (_peer_csrks[i]) {
             delete _peer_csrks[i];
-            _peer_csrks[i] = NULL;
+            _peer_csrks[i] = nullptr;
         }
     }
 }

@@ -79,7 +79,7 @@ ble_error_t AdvertisingDataBuilder::addData(
     mbed::Span<const uint8_t> fieldData
 )
 {
-    if (findField(advDataType) != NULL) {
+    if (findField(advDataType) != nullptr) {
         return BLE_ERROR_OPERATION_NOT_PERMITTED;
     } else {
         return addField(advDataType, fieldData);
@@ -93,7 +93,7 @@ ble_error_t AdvertisingDataBuilder::replaceData(
 {
     uint8_t *field = findField(advDataType);
 
-    if (field == NULL) {
+    if (field == nullptr) {
         return BLE_ERROR_NOT_FOUND;
     }
 
@@ -107,7 +107,7 @@ ble_error_t AdvertisingDataBuilder::appendData(
 {
     uint8_t *field = findField(advDataType);
 
-    if (field == NULL) {
+    if (field == nullptr) {
         return BLE_ERROR_NOT_FOUND;
     }
 
@@ -120,7 +120,7 @@ ble_error_t AdvertisingDataBuilder::removeData(
 {
     uint8_t *field = findField(advDataType);
 
-    if (field == NULL) {
+    if (field == nullptr) {
         return BLE_ERROR_NOT_FOUND;
     }
 
@@ -134,7 +134,7 @@ ble_error_t AdvertisingDataBuilder::addOrReplaceData(
 {
     uint8_t *field = findField(advDataType);
 
-    if (field != NULL) {
+    if (field != nullptr) {
         return replaceField(advDataType, fieldData, field);
     } else {
         return addField(advDataType, fieldData);
@@ -148,7 +148,7 @@ ble_error_t AdvertisingDataBuilder::addOrAppendData(
 {
     uint8_t *field = findField(advDataType);
 
-    if (field != NULL) {
+    if (field != nullptr) {
         return appendToField(fieldData, field);
     } else {
         return addField(advDataType, fieldData);
@@ -339,7 +339,7 @@ uint8_t *AdvertisingDataBuilder::findField(adv_data_type_t type)
         idx += _buffer[idx] + 1;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 uint8_t AdvertisingDataBuilder::getFieldSize(adv_data_type_t type)

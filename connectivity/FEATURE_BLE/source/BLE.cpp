@@ -82,7 +82,7 @@ BLE::initImplementation(FunctionPointerWithContext<InitializationCompleteCallbac
 MBED_WEAK BLEInstanceBase* createBLEInstance() {
     MBED_ASSERT("No BLE instance implementation.");
     printf("Please provide an implementation for mbed BLE");
-    return NULL;
+    return nullptr;
 }
 
 #endif
@@ -97,7 +97,7 @@ BLE::Instance(InstanceID_t id)
 {
     static BLE *singletons[NUM_INSTANCES];
     if (id < NUM_INSTANCES) {
-        if (singletons[id] == NULL) {
+        if (singletons[id] == nullptr) {
             singletons[id] = new BLE(id); /* This object will never be freed. */
         }
 
@@ -105,11 +105,11 @@ BLE::Instance(InstanceID_t id)
     }
 
     /* we come here only in the case of a bad interfaceID. */
-    static BLE badSingleton(NUM_INSTANCES /* this is a bad index; and will result in a NULL transport. */);
+    static BLE badSingleton(NUM_INSTANCES /* this is a bad index; and will result in a nullptr transport. */);
     return badSingleton;
 }
 
-#define defaultSchedulingCallback NULL
+#define defaultSchedulingCallback nullptr
 
 bool BLE::hasInitialized(void) const
 {
@@ -286,7 +286,7 @@ BLE::BLE(InstanceID_t instanceIDIn) : instanceID(instanceIDIn), transport(),
         }
         transport = transportInstances[instanceID];
     } else {
-        transport = NULL;
+        transport = nullptr;
     }
 }
 

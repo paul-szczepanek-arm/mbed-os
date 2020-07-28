@@ -537,7 +537,7 @@ void PalGap::gap_handler(const wsfMsgHdr_t *msg)
 {
     typedef bool (*event_handler_t)(const wsfMsgHdr_t *msg);
 
-    if (msg == NULL) {
+    if (msg == nullptr) {
         return;
     }
 
@@ -691,10 +691,10 @@ void PalGap::gap_handler(const wsfMsgHdr_t *msg)
 
             handler->on_extended_advertising_report(
                 advertising_event_t(evt->eventType),
-                (evt->addrType == HCI_ADDR_TYPE_ANONYMOUS) ? NULL : &addr_type,
+                (evt->addrType == HCI_ADDR_TYPE_ANONYMOUS) ? nullptr : &addr_type,
                 evt->addr,
                 phy_t(evt->priPhy),
-                evt->secPhy == HCI_ADV_RPT_PHY_SEC_NONE ? NULL : &sec_phy,
+                evt->secPhy == HCI_ADV_RPT_PHY_SEC_NONE ? nullptr : &sec_phy,
                 evt->advSid,
                 evt->txPower,
                 evt->rssi,
@@ -1447,7 +1447,7 @@ PalGap::get_adv_cb(const Predicate& predicate)
             return direct_adv_cb + i;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 

@@ -80,7 +80,7 @@ static bool is_in_range(T value, T lower_bound, T higher_bound)
  */
 static bool is_preferred_connection_params_valid(const Gap::PreferredConnectionParams_t *params)
 {
-    if (params == NULL) {
+    if (params == nullptr) {
         return false;
     }
 
@@ -904,7 +904,7 @@ ble_error_t Gap::reset(void)
     shutdownCallChain.call(this);
     shutdownCallChain.clear();
 
-    _event_handler = NULL;
+    _event_handler = nullptr;
 
 #if BLE_ROLE_BROADCASTER
     _advertising_timeout.detach();
@@ -922,8 +922,8 @@ ble_error_t Gap::reset(void)
                     /* enable */ false,
                     /* number of advertising sets */ 1,
                     (advertising_handle_t*)&i,
-                    NULL,
-                    NULL
+                    nullptr,
+                    nullptr
                 );
             }
 #if BLE_FEATURE_PERIODIC_ADVERTISING
@@ -947,8 +947,8 @@ ble_error_t Gap::reset(void)
                 /* enable */ false,
                 /* number of advertising sets */ 1,
                 (advertising_handle_t*)&LEGACY_ADVERTISING_HANDLE,
-                NULL,
-                NULL
+                nullptr,
+                nullptr
             );
         }
         _active_sets.clear();
@@ -1378,7 +1378,7 @@ own_address_type_t Gap::get_own_address_type(AddressUseType_t address_use_type)
 
 bool Gap::initialize_whitelist() const
 {
-    if (_whitelist.addresses != NULL) {
+    if (_whitelist.addresses != nullptr) {
         return true;
     }
 
@@ -1389,7 +1389,7 @@ bool Gap::initialize_whitelist() const
     }
 
     _whitelist.addresses = new(std::nothrow) whitelist_t::entry_t[whitelist_capacity];
-    if (_whitelist.addresses == NULL) {
+    if (_whitelist.addresses == nullptr) {
         return false;
     }
 
@@ -1999,8 +1999,8 @@ ble_error_t Gap::stopAdvertising(advertising_handle_t handle)
             /*enable ? */ false,
             /* number of advertising sets */ 1,
             &handle,
-            NULL,
-            NULL
+            nullptr,
+            nullptr
         );
 
         if (status) {
@@ -2259,7 +2259,7 @@ void Gap::on_extended_advertising_report(
     // Check if the address hasn't been resolved
     if (_privacy_enabled &&
         _central_privacy_configuration.resolution_strategy == central_privacy_configuration_t::RESOLVE_AND_FILTER &&
-        address_type != NULL &&
+        address_type != nullptr &&
         *address_type == connection_peer_address_type_t::RANDOM_ADDRESS &&
         is_random_private_resolvable_address(address.data())
     ) {

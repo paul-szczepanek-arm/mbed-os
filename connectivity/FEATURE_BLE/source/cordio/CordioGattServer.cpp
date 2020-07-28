@@ -85,7 +85,7 @@ ble_error_t GattServer::addService(GattService &service)
     add_default_services();
     // create and fill the service structure
     internal_service_t *att_service = new internal_service_t;
-    att_service->attGroup.pNext = NULL;
+    att_service->attGroup.pNext = nullptr;
     att_service->attGroup.readCback = atts_read_cb;
     att_service->attGroup.writeCback = atts_write_cb;
 
@@ -95,7 +95,7 @@ ble_error_t GattServer::addService(GattService &service)
     // Create cordio attribute list
     att_service->attGroup.pAttr =
         (attsAttr_t*) alloc_block(attributes_count * sizeof(attsAttr_t));
-    if (att_service->attGroup.pAttr == NULL) {
+    if (att_service->attGroup.pAttr == nullptr) {
         delete att_service;
         return BLE_ERROR_BUFFER_OVERFLOW;
     }
@@ -129,7 +129,7 @@ ble_error_t GattServer::addService(GattService &service)
     if (registered_service) {
         att_service->next = registered_service;
     } else {
-        att_service->next = NULL;
+        att_service->next = nullptr;
     }
 
     registered_service = att_service;
@@ -237,7 +237,7 @@ bool GattServer::is_characteristic_valid(GattCharacteristic *characteristic) {
     uint8_t properties = characteristic->getProperties();
 
     // nothing to read while the characteristic is flagged as readable
-    if ((characteristic->getValueAttribute().getValuePtr() == NULL) &&
+    if ((characteristic->getValueAttribute().getValuePtr() == nullptr) &&
         (characteristic->getValueAttribute().getMaxLength() == 0) &&
         (properties == READ_PROPERTY) &&
         (characteristic->isReadAuthorizationEnabled() == false)
@@ -246,7 +246,7 @@ bool GattServer::is_characteristic_valid(GattCharacteristic *characteristic) {
     }
 
     // nothing to write while the characteristic is flagged as writable
-    if ((characteristic->getValueAttribute().getValuePtr() == NULL) &&
+    if ((characteristic->getValueAttribute().getValuePtr() == nullptr) &&
         (characteristic->getValueAttribute().getMaxLength() == 0) &&
         (properties & WRITABLE_PROPERTIES) &&
         (characteristic->isWriteAuthorizationEnabled() == false)
@@ -591,7 +591,7 @@ ble_error_t GattServer::read(
     uint16_t * buffer_length
 ) {
     uint16_t att_length = 0;
-    uint8_t* att_value = NULL;
+    uint8_t* att_value = nullptr;
 
     if (AttsGetAttr(att_handle, &att_length, &att_value) != ATT_SUCCESS) {
         return BLE_ERROR_PARAM_OUT_OF_RANGE;
@@ -821,7 +821,7 @@ ble_error_t GattServer::setDeviceName(const uint8_t *deviceName)
 {
     size_t length = 0;
 
-    if (deviceName != NULL) {
+    if (deviceName != nullptr) {
         length = strlen((const char*)deviceName);
     }
 
@@ -829,7 +829,7 @@ ble_error_t GattServer::setDeviceName(const uint8_t *deviceName)
         free(generic_access_service.device_name_value());
     } else {
         uint8_t* res = (uint8_t*) realloc(generic_access_service.device_name_value(), length);
-        if (res == NULL) {
+        if (res == nullptr) {
             return BLE_ERROR_NO_MEM;
         }
 
@@ -872,9 +872,9 @@ ble_error_t GattServer::reset(void)
     dataSentCallChain.clear();
     dataWrittenCallChain.clear();
     dataReadCallChain.clear();
-    updatesEnabledCallback       = NULL;
-    updatesDisabledCallback      = NULL;
-    confirmationReceivedCallback = NULL;
+    updatesEnabledCallback       = nullptr;
+    updatesDisabledCallback      = nullptr;
+    confirmationReceivedCallback = nullptr;
 
     while (registered_service) {
         internal_service_t* s = registered_service;
@@ -939,7 +939,7 @@ uint8_t GattServer::atts_read_cb(
             handle,
             offset,
             /* len */ 0,
-            /* data */ NULL,
+            /* data */ nullptr,
             AUTH_CALLBACK_REPLY_SUCCESS
         };
 
@@ -1069,7 +1069,7 @@ uint8_t GattServer::atts_auth_cb(dmConnId_t connId, uint8_t permit, uint16_t han
 void GattServer::add_generic_access_service()
 {
     ++currentHandle;
-    generic_access_service.service.pNext = NULL;
+    generic_access_service.service.pNext = nullptr;
     generic_access_service.service.startHandle = currentHandle;
     generic_access_service.service.readCback = atts_read_cb;
     generic_access_service.service.writeCback = atts_write_cb;
@@ -1111,7 +1111,7 @@ void GattServer::add_generic_access_service()
     current_attribute->pUuid = attDnChUuid;
     current_attribute->maxLen = 248;
     current_attribute->pLen = &generic_access_service.device_name_length;
-    current_attribute->pValue = NULL;
+    current_attribute->pValue = nullptr;
     current_attribute->settings = ATTS_SET_VARIABLE_LEN;
     current_attribute->permissions = ATTS_PERMIT_READ;
 
@@ -1185,7 +1185,7 @@ void GattServer::add_generic_access_service()
 void GattServer::add_generic_attribute_service()
 {
     ++currentHandle;
-    generic_attribute_service.service.pNext = NULL;
+    generic_attribute_service.service.pNext = nullptr;
     generic_attribute_service.service.startHandle = currentHandle;
     generic_attribute_service.service.readCback = atts_read_cb;
     generic_attribute_service.service.writeCback = atts_write_cb;
@@ -1226,7 +1226,7 @@ void GattServer::add_generic_attribute_service()
     current_attribute->pUuid = attScChUuid;
     current_attribute->maxLen = 0;
     current_attribute->pLen = &current_attribute->maxLen;
-    current_attribute->pValue = NULL;
+    current_attribute->pValue = nullptr;
     current_attribute->settings = 0;
     current_attribute->permissions = 0;
 
@@ -1252,14 +1252,14 @@ void GattServer::add_generic_attribute_service()
 
 void* GattServer::alloc_block(size_t block_size) {
     alloc_block_t* block = (alloc_block_t*) malloc(sizeof(alloc_block_t) + block_size);
-    if (block == NULL) {
-        return NULL;
+    if (block == nullptr) {
+        return nullptr;
     }
 
     if (allocated_blocks) {
         block->next = allocated_blocks;
     } else {
-        block->next = NULL;
+        block->next = nullptr;
     }
 
     allocated_blocks = block;
@@ -1274,7 +1274,7 @@ GattCharacteristic* GattServer::get_auth_char(uint16_t value_handle)
             return _auth_char[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 bool GattServer::get_cccd_index_by_cccd_handle(GattAttribute::Handle_t cccd_handle, uint8_t& idx) const
@@ -1351,14 +1351,14 @@ bool GattServer::is_update_authorized(
 GattServer::GattServer() :
     serviceCount(0),
     characteristicCount(0),
-    eventHandler(NULL),
+    eventHandler(nullptr),
     dataSentCallChain(),
     dataWrittenCallChain(),
     dataReadCallChain(),
-    updatesEnabledCallback(NULL),
-    updatesDisabledCallback(NULL),
-    confirmationReceivedCallback(NULL),
-    _signing_event_handler(NULL),
+    updatesEnabledCallback(nullptr),
+    updatesDisabledCallback(nullptr),
+    confirmationReceivedCallback(nullptr),
+    _signing_event_handler(nullptr),
     cccds(),
     cccd_values(),
     cccd_handles(),
@@ -1367,8 +1367,8 @@ GattServer::GattServer() :
     _auth_char_count(0),
     generic_access_service(),
     generic_attribute_service(),
-    registered_service(NULL),
-    allocated_blocks(NULL),
+    registered_service(nullptr),
+    allocated_blocks(nullptr),
     currentHandle(0),
     default_services_added(false)
 {

@@ -74,7 +74,7 @@ struct GattClient::ProcedureControlBlock {
 	 * Base constructor for procedure control block.
 	 */
 	ProcedureControlBlock(procedure_type_t type, connection_handle_t handle) :
-		type(type), connection_handle(handle), next(NULL) { }
+		type(type), connection_handle(handle), next(nullptr) { }
 
 	virtual ~ProcedureControlBlock() { }
 
@@ -117,7 +117,7 @@ struct GattClient::DiscoveryControlBlock : public ProcedureControlBlock {
 		characteristic_callback(characteristic_callback),
 		matching_service_uuid(matching_service_uuid),
 		matching_characteristic_uuid(matching_characteristic_uuid),
-		services_discovered(NULL),
+		services_discovered(nullptr),
 		done(false) {
 	}
 
@@ -208,7 +208,7 @@ struct GattClient::DiscoveryControlBlock : public ProcedureControlBlock {
 					start_handle, end_handle, uuid
 				);
 
-				if (discovered_service == NULL) {
+				if (discovered_service == nullptr) {
 					terminate(client);
 					return;
 				}
@@ -352,7 +352,7 @@ struct GattClient::DiscoveryControlBlock : public ProcedureControlBlock {
 
 	struct service_t {
 		service_t(uint16_t begin, uint16_t end, const UUID& uuid) :
-			begin(begin), end(end), uuid(uuid), next(NULL) { }
+			begin(begin), end(end), uuid(uuid), next(nullptr) { }
 		uint16_t begin;
 		uint16_t end;
 		UUID uuid;
@@ -414,7 +414,7 @@ struct GattClient::DiscoveryControlBlock : public ProcedureControlBlock {
 	};
 
 	void insert_service(service_t* service) {
-		if (services_discovered == NULL) {
+		if (services_discovered == nullptr) {
 			services_discovered = service;
 			return;
 		}
@@ -444,11 +444,11 @@ struct GattClient::ReadControlBlock : public ProcedureControlBlock {
 		connection_handle_t connection_handle, uint16_t attribute_handle, uint16_t offset
 	) : ProcedureControlBlock(READ_PROCEDURE, connection_handle),
 		attribute_handle(attribute_handle),
-		offset(offset), current_offset(offset), data(NULL) {
+		offset(offset), current_offset(offset), data(nullptr) {
 	}
 
 	virtual ~ReadControlBlock() {
-		if (data != NULL) {
+		if (data != nullptr) {
 			free(data);
 		}
 	}
@@ -459,7 +459,7 @@ struct GattClient::ReadControlBlock : public ProcedureControlBlock {
 			attribute_handle,
 			offset,
 			0, // size of 0
-			NULL, // no data
+			nullptr, // no data
 			BLE_ERROR_UNSPECIFIED
 		};
 		terminate(client, response);
@@ -471,7 +471,7 @@ struct GattClient::ReadControlBlock : public ProcedureControlBlock {
 			attribute_handle,
 			offset,
 			0, // size of 0
-			NULL, // no data
+			nullptr, // no data
 			BLE_ERROR_INVALID_STATE
 		};
 		terminate(client, response);
@@ -505,7 +505,7 @@ struct GattClient::ReadControlBlock : public ProcedureControlBlock {
 					attribute_handle,
 					AttErrorResponse::UNLIKELY_ERROR,
 					0, // size of 0
-					NULL, // no data
+					nullptr, // no data
 					BLE_ERROR_UNSPECIFIED
 				};
 				terminate(client, response);
@@ -524,13 +524,13 @@ struct GattClient::ReadControlBlock : public ProcedureControlBlock {
 				attribute_handle,
 				offset,
 				0, // size of 0
-				NULL, // no data
+				nullptr, // no data
 				BLE_ERROR_NONE
 			};
 
 			// is it the first response, or is there any other response already
 			// in the object ?
-			if (data == NULL) {
+			if (data == nullptr) {
 				response.len = (uint16_t) read_response.size();
 				response.data = read_response.data();
 			} else {
@@ -543,13 +543,13 @@ struct GattClient::ReadControlBlock : public ProcedureControlBlock {
 		} else {
 			// allocation which will contain the response data plus the next one.
 			data = (uint8_t*) realloc(data, (current_offset - offset) + ((mtu_size - 1) * 2));
-			if (data == NULL) {
+			if (data == nullptr) {
 				GattReadCallbackParams response = {
 					connection_handle,
 					attribute_handle,
 					offset,
 					AttErrorResponse::INSUFFICIENT_RESOURCES,
-					NULL,
+					nullptr,
 					BLE_ERROR_NO_MEM
 				};
 				terminate(client, response);
@@ -570,7 +570,7 @@ struct GattClient::ReadControlBlock : public ProcedureControlBlock {
 					attribute_handle,
 					AttErrorResponse::UNLIKELY_ERROR,
 					0, // size of 0
-					NULL, // no data
+					nullptr, // no data
 					BLE_ERROR_UNSPECIFIED
 				};
 				terminate(client, response);
@@ -616,7 +616,7 @@ struct GattClient::ReadControlBlock : public ProcedureControlBlock {
 			attribute_handle,
 			offset,
 			error.error_code,
-			/* data */ NULL,
+			/* data */ nullptr,
 			status
 		};
 
@@ -952,13 +952,13 @@ struct GattClient::DescriptorDiscoveryControlBlock : public ProcedureControlBloc
 
 
 GattClient::GattClient(PalGattClient& pal_client) :
-    eventHandler(NULL),
+    eventHandler(nullptr),
 	_pal_client(pal_client),
 	_termination_callback(),
 #if BLE_FEATURE_SIGNING
-	_signing_event_handler(NULL),
+	_signing_event_handler(nullptr),
 #endif
-	control_blocks(NULL),
+	control_blocks(nullptr),
 	_is_reseting(false) {
 	_pal_client.when_server_message_received(
 		mbed::callback(this, &GattClient::on_server_message_received)
@@ -996,7 +996,7 @@ ble_error_t GattClient::launchServiceDiscovery(
 		matching_characteristic_uuid
 	);
 
-	if (discovery_pcb == NULL) {
+	if (discovery_pcb == nullptr) {
 		return BLE_ERROR_NO_MEM;
 	}
 
@@ -1033,12 +1033,12 @@ ble_error_t GattClient::discoverServices(
     const UUID &matchingServiceUUID
 ) {
     /* We take advantage of the property
-     * that providing NULL for the characteristic callback results in
+     * that providing nullptr for the characteristic callback results in
      * characteristic discovery being skipped for each matching
      * service. This allows for an inexpensive method to discover only
      * services. Porters are free to override this. */
     return launchServiceDiscovery(
-        connectionHandle, callback, NULL, matchingServiceUUID
+        connectionHandle, callback, nullptr, matchingServiceUUID
     );
 }
 
@@ -1084,7 +1084,7 @@ ble_error_t GattClient::read(
 		offset
 	);
 
-	if (read_pcb == NULL) {
+	if (read_pcb == nullptr) {
 		return BLE_ERROR_NO_MEM;
 	}
 
@@ -1168,11 +1168,11 @@ ble_error_t GattClient::write(
         return status;
 #endif // BLE_FEATURE_SIGNING
     } else if (cmd == GattClient::GATT_OP_WRITE_REQ) {
-        uint8_t* data = NULL;
+        uint8_t* data = nullptr;
 
         if (length > (uint16_t) (mtu - WRITE_HEADER_LENGTH)) {
             data = (uint8_t*) malloc(length);
-            if (data == NULL) {
+            if (data == nullptr) {
                 return BLE_ERROR_NO_MEM;
             }
             memcpy(data, value, length);
@@ -1185,7 +1185,7 @@ ble_error_t GattClient::write(
             length
         );
 
-        if (write_pcb == NULL) {
+        if (write_pcb == nullptr) {
             free(data);
             return BLE_ERROR_NO_MEM;
         }
@@ -1255,7 +1255,7 @@ ble_error_t GattClient::discoverCharacteristicDescriptors(
 			terminationCallback
 		);
 
-	if (discovery_pcb == NULL) {
+	if (discovery_pcb == nullptr) {
 		return BLE_ERROR_NO_MEM;
 	}
 
@@ -1421,7 +1421,7 @@ void GattClient::on_server_response(
 	const AttServerMessage& message
 ) {
 	ProcedureControlBlock* pcb = get_control_block(connection);
-	if (pcb == NULL) {
+	if (pcb == nullptr) {
 		return;
 	}
 
@@ -1463,7 +1463,7 @@ void GattClient::on_server_event(connection_handle_t connection, const AttServer
 
 void GattClient::on_transaction_timeout(connection_handle_t connection) {
 	ProcedureControlBlock* pcb = get_control_block(connection);
-	if (pcb == NULL) {
+	if (pcb == nullptr) {
 		return;
 	}
 
@@ -1492,7 +1492,7 @@ GattClient::get_control_block(connection_handle_t connection) const {
 
 
 void GattClient::insert_control_block(ProcedureControlBlock* cb) const {
-	if (control_blocks == NULL) {
+	if (control_blocks == nullptr) {
 		control_blocks = cb;
 		return;
 	}
@@ -1506,7 +1506,7 @@ void GattClient::insert_control_block(ProcedureControlBlock* cb) const {
 
 
 void GattClient::remove_control_block(ProcedureControlBlock* cb) const {
-	if (control_blocks == NULL) {
+	if (control_blocks == nullptr) {
 		return;
 	}
 
@@ -1520,12 +1520,12 @@ void GattClient::remove_control_block(ProcedureControlBlock* cb) const {
 		current = current->next;
 	}
 
-	if (current->next == NULL) {
+	if (current->next == nullptr) {
 		return;
 	}
 
 	current->next = cb->next;
-	cb->next = NULL;
+	cb->next = nullptr;
 }
 
 

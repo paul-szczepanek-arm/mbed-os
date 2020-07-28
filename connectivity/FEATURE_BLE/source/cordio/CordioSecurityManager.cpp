@@ -111,7 +111,7 @@ ble_error_t SecurityManager::init(
 
     if (result != BLE_ERROR_NONE) {
         delete _db;
-        _db = NULL;
+        _db = nullptr;
     }
 
     return result;
@@ -145,7 +145,7 @@ ble_error_t SecurityManager::setDatabaseFilepath(
 
 ble_error_t SecurityManager::reset(void) {
     delete _db;
-    _db = NULL;
+    _db = nullptr;
     _pal.reset();
 
     /* Notify that the instance is about to shutdown */
@@ -1863,7 +1863,7 @@ SecurityManager::acquire_control_block(connection_handle_t connection)
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -1878,7 +1878,7 @@ SecurityManager::get_control_block(
             return &_control_blocks[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 
@@ -1896,7 +1896,7 @@ SecurityManager::get_control_block(
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 
@@ -1911,7 +1911,7 @@ SecurityManager::get_control_block(
             return &_control_blocks[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 

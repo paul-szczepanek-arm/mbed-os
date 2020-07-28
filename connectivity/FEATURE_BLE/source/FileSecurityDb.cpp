@@ -85,7 +85,7 @@ FileSecurityDb::~FileSecurityDb() {
 
 FILE* FileSecurityDb::open_db_file(const char *db_path) {
     if (!db_path) {
-        return NULL;
+        return nullptr;
     }
 
     /* try to open an existing file */
@@ -98,7 +98,7 @@ FILE* FileSecurityDb::open_db_file(const char *db_path) {
 
     if (!db_file) {
         /* failed to create a file, abort */
-        return NULL;
+        return nullptr;
     }
 
     /* we will check the db file and if the version or size doesn't match
@@ -135,13 +135,13 @@ FILE* FileSecurityDb::erase_db_file(FILE* db_file) {
     while (count--) {
         if (fwrite(&zero, sizeof(zero), 1, db_file) != 1) {
             fclose(db_file);
-            return NULL;
+            return nullptr;
         }
     }
 
     if (fflush(db_file)) {
         fclose(db_file);
-        return NULL;
+        return nullptr;
     }
 
     return db_file;
@@ -335,7 +335,7 @@ SecurityDistributionFlags_t* FileSecurityDb::get_entry_handle_by_index(uint8_t i
     if (index < BLE_SECURITY_DATABASE_MAX_ENTRIES) {
         return &_entries[index].flags;
     } else {
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -359,7 +359,7 @@ void FileSecurityDb::reset_entry(entry_handle_t db_entry) {
 SecurityEntryIdentity_t* FileSecurityDb::read_in_entry_peer_identity(entry_handle_t db_entry) {
     entry_t *entry = as_entry(db_entry);
     if (!entry) {
-        return NULL;
+        return nullptr;
     }
 
     SecurityEntryIdentity_t* identity = reinterpret_cast<SecurityEntryIdentity_t*>(_buffer);
@@ -371,7 +371,7 @@ SecurityEntryIdentity_t* FileSecurityDb::read_in_entry_peer_identity(entry_handl
 SecurityEntryKeys_t* FileSecurityDb::read_in_entry_peer_keys(entry_handle_t db_entry) {
     entry_t *entry = as_entry(db_entry);
     if (!entry) {
-        return NULL;
+        return nullptr;
     }
 
     SecurityEntryKeys_t* keys = reinterpret_cast<SecurityEntryKeys_t*>(_buffer);
@@ -383,7 +383,7 @@ SecurityEntryKeys_t* FileSecurityDb::read_in_entry_peer_keys(entry_handle_t db_e
 SecurityEntryKeys_t* FileSecurityDb::read_in_entry_local_keys(entry_handle_t db_entry) {
     entry_t *entry = as_entry(db_entry);
     if (!entry) {
-        return NULL;
+        return nullptr;
     }
 
     SecurityEntryKeys_t* keys = reinterpret_cast<SecurityEntryKeys_t*>(_buffer);
@@ -395,7 +395,7 @@ SecurityEntryKeys_t* FileSecurityDb::read_in_entry_local_keys(entry_handle_t db_
 SecurityEntrySigning_t* FileSecurityDb::read_in_entry_peer_signing(entry_handle_t db_entry) {
     entry_t *entry = as_entry(db_entry);
     if (!entry) {
-        return NULL;
+        return nullptr;
     }
 
     /* only read in the csrk */

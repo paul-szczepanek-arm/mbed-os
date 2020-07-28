@@ -24,7 +24,7 @@ namespace ble {
 
 virtual ble_error_t PalGenericAccessService::get_device_name_length(uint8_t& length) {
 #if BLE_FEATURE_GATT_SERVER
-        const uint8_t* name = NULL;
+        const uint8_t* name = nullptr;
         uint16_t actual_length = 0;
 
         gatt_server().getDeviceName(name, actual_length);
@@ -38,7 +38,7 @@ virtual ble_error_t PalGenericAccessService::get_device_name_length(uint8_t& len
 
     virtual ble_error_t PalGenericAccessService::get_device_name(Span<uint8_t>& array) {
 #if BLE_FEATURE_GATT_SERVER
-        const uint8_t* name = NULL;
+        const uint8_t* name = nullptr;
         uint16_t length = 0;
 
         gatt_server().getDeviceName(name, length);
