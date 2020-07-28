@@ -30,8 +30,6 @@
 #include <stddef.h>
 #include "ble/types/blecommon.h"
 #include "ble/Gap.h"
-#include "wsf_types.h"
-#include "att_api.h"
 #include "SecurityManager.h"
 
 #include "ble/BLE.h"
