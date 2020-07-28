@@ -408,7 +408,11 @@ public:
 
     /* end implements PalSecurityManager::EventHandler */
 
-public:
+private:
+    /* Disallow copy and assignment. */
+    SecurityManager(const SecurityManager &);
+    SecurityManager& operator=(const SecurityManager &);
+
     SecurityManager(
         PalSecurityManager &palImpl,
         PalConnectionMonitor &connMonitorImpl,

@@ -204,6 +204,12 @@ public:
 
 #endif // Disabled until reworked and reintroduced to GattServer API
 
+private:
+    GattServer();
+
+    GattServer(const GattServer &);
+    const GattServer& operator=(const GattServer &);
+
 public:
     /**
      * Return the singleton of the Cordio implementation of ble::GattServer.
@@ -220,6 +226,8 @@ private:
     void set_signing_event_handler(
         PalSigningMonitorEventHandler *signing_event_handler
     );
+
+    EventHandler* getEventHandler();
 
     void add_default_services();
 
@@ -374,14 +382,6 @@ private:
     uint16_t currentHandle;
 
     bool default_services_added;
-
-private:
-    GattServer();
-
-    EventHandler* getEventHandler();
-
-    GattServer(const GattServer &);
-    const GattServer& operator=(const GattServer &);
 };
 
 } // ble

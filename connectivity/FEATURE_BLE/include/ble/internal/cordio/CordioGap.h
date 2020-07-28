@@ -332,15 +332,20 @@ public:
     /* ===================================================================== */
     /*                    private implementation follows                     */
 
-protected:
+private:
+    /* Disallow copy and assignment. */
+    Gap(const Gap &);
+    Gap& operator=(const Gap &);
+
     Gap(
         PalEventQueue &event_queue,
         PalGap &pal_gap,
         PalGenericAccessService &generic_access_service,
         PalSecurityManager &pal_sm
     );
+
     ~Gap();
-private:
+
     ble_error_t setAdvertisingData(
         advertising_handle_t handle,
         Span<const uint8_t> payload,

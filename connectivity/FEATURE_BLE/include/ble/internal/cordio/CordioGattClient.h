@@ -43,8 +43,6 @@ class GattClient :
 public:
     void setEventHandler(EventHandler *handler);
 
-    ~GattClient() { }
-
     ble_error_t launchServiceDiscovery(
         ble::connection_handle_t connectionHandle,
         ServiceDiscovery::ServiceCallback_t sc = NULL,
@@ -236,6 +234,8 @@ protected:
      * Create a PalGattClient from a PalGattClient
      */
     GattClient(PalGattClient& pal_client);
+
+    ~GattClient() { }
 };
 
 } // namespace ble
