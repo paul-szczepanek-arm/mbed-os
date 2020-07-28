@@ -27,7 +27,6 @@
 #include "ble/types/GattServerEvents.h"
 #include "ble/types/GattCallbackParamTypes.h"
 
-#include <stddef.h>
 #include "ble/types/blecommon.h"
 #include "ble/Gap.h"
 #include "SecurityManager.h"
