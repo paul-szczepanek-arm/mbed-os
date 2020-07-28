@@ -444,8 +444,8 @@ private:
      * @param server_message The message received from the server.
      */
     void on_server_event(
-            connection_handle_t connection_handle,
-            const AttServerMessage& server_message
+        connection_handle_t connection_handle,
+        const AttServerMessage& server_message
     );
 
     /**
@@ -457,7 +457,7 @@ private:
      * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.3.3
      */
     void on_transaction_timeout(
-            connection_handle_t connection_handle
+        connection_handle_t connection_handle
     );
 private:
     sign_count_t _local_sign_counter;

@@ -102,10 +102,21 @@ public:
          * @param connectionHandle The handle of the connection that changed the size.
          * @param attMtuSize
          */
-        void onAttMtuChange(
+        virtual void onAttMtuChange(
             ble::connection_handle_t connectionHandle,
             uint16_t attMtuSize
-        );
+        ) {
+            (void)connectionHandle;
+            (void)attMtuSize;
+        }
+    protected:
+        /**
+         * Prevent polymorphic deletion and avoid unnecessary virtual destructor
+         * as the GattClient class will never delete the instance it contains.
+         */
+        ~EventHandler()
+        {
+        }
     };
 
     /**

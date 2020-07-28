@@ -187,7 +187,76 @@ public:
      */
     ble_error_t terminate();
 
+
+    /**
+     * @see ble::PalGattClient::when_server_message_received
+     */
+    void when_server_message_received(
+        mbed::Callback<void(connection_handle_t, const AttServerMessage&)> cb
+    ) {
+        _server_message_cb = cb;
+    }
+
+
+    /**
+     * @see ble::PalGattClient::when_transaction_timeout
+     */
+    void when_transaction_timeout(
+        mbed::Callback<void(connection_handle_t)> cb
+    ) {
+        _transaction_timeout_cb = cb;
+    }
+
+    /**
+     * @see ble::PalGattClient::set_event_handler
+     */
+    void set_event_handler(PalGattClientEventHandler* event_handler) {
+        _event_handler = event_handler;
+    }
+
+    /**
+     * @see ble::PalGattClient::get_event_handler
+     */
+    PalGattClientEventHandler* get_event_handler() {
+        return _event_handler;
+    }
+
 private:
+    /**
+     * @see ble::PalGattClient::on_server_event
+     */
+    void on_server_event(
+        connection_handle_t connection_handle,
+        const AttServerMessage& server_message
+    ) {
+        if (_server_message_cb) {
+            _server_message_cb(connection_handle, server_message);
+        }
+    }
+
+    /**
+     * @see ble::PalGattClient::on_transaction_timeout
+     */
+    void on_transaction_timeout(
+        connection_handle_t connection_handle
+    ) {
+        if (_transaction_timeout_cb) {
+            _transaction_timeout_cb(connection_handle);
+        }
+    }
+
+    PalGattClientEventHandler* _event_handler;
+
+    /**
+     * Callback called when the client receive a message from the server.
+     */
+    mbed::Callback<void(connection_handle_t, const AttServerMessage&)> _server_message_cb;
+
+    /**
+     * Callback called when a transaction times out.
+     */
+    mbed::Callback<void(connection_handle_t)> _transaction_timeout_cb;
+
     PalAttClient& _client;
 };
 

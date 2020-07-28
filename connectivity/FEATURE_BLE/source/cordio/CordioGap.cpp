@@ -18,6 +18,8 @@
 
 #include <algorithm>
 #include <stdint.h>
+#include <CordioGap.h>
+
 
 #include "ble/internal/BLEInstanceBase.h"
 #include "ble/Gap.h"
@@ -669,8 +671,8 @@ void Gap::on_read_phy(
         status = BLE_ERROR_UNSPECIFIED;
     }
 
-    if (_eventHandler) {
-        _eventHandler->onPhyUpdateComplete(status, connection_handle, tx_phy, rx_phy);
+    if (_event_handler) {
+        _event_handler->onPhyUpdateComplete(status, connection_handle, tx_phy, rx_phy);
     }
 }
 
@@ -681,8 +683,8 @@ void Gap::on_data_length_change(
     uint16_t rx_size
 )
 {
-    if (_eventHandler) {
-        _eventHandler->onDataLengthChange(connection_handle, tx_size, rx_size);
+    if (_event_handler) {
+        _event_handler->onDataLengthChange(connection_handle, tx_size, rx_size);
     }
 }
 
@@ -699,8 +701,8 @@ void Gap::on_phy_update_complete(
         status = BLE_ERROR_UNSPECIFIED;
     }
 
-    if (_eventHandler) {
-        _eventHandler->onPhyUpdateComplete(status, connection_handle, tx_phy, rx_phy);
+    if (_event_handler) {
+        _event_handler->onPhyUpdateComplete(status, connection_handle, tx_phy, rx_phy);
     }
 }
 
@@ -902,7 +904,7 @@ ble_error_t Gap::reset(void)
     shutdownCallChain.call(this);
     shutdownCallChain.clear();
 
-    _eventHandler = NULL;
+    _event_handler = NULL;
 
 #if BLE_ROLE_BROADCASTER
     _advertising_timeout.detach();
@@ -981,8 +983,8 @@ void Gap::on_scan_timeout()
             )
         );
     } else {
-        if (_eventHandler) {
-            _eventHandler->onScanTimeout(ScanTimeoutEvent());
+        if (_event_handler) {
+            _event_handler->onScanTimeout(ScanTimeoutEvent());
         }
     }
 }
@@ -996,8 +998,8 @@ void Gap::process_legacy_scan_timeout()
     set_random_address_rotation(false);
 #endif
 
-    if (_eventHandler) {
-        _eventHandler->onScanTimeout(ScanTimeoutEvent());
+    if (_event_handler) {
+        _event_handler->onScanTimeout(ScanTimeoutEvent());
     }
 }
 
@@ -1081,7 +1083,7 @@ void Gap::on_advertising_report(const GapAdvertisingReportEvent &e)
             static_cast<peer_address_type_t::type>(advertising.address_type.value());
 
         // report in new event handler
-        if (_eventHandler) {
+        if (_event_handler) {
             uint8_t event_type = 0;
 
             // Conversion table available at BLUETOOTH SPECIFICATION Version 5.0 | Vol 2, Part E
@@ -1104,7 +1106,7 @@ void Gap::on_advertising_report(const GapAdvertisingReportEvent &e)
                     break;
             }
 
-            _eventHandler->onAdvertisingReport(
+            _event_handler->onAdvertisingReport(
                 AdvertisingReportEvent(
                     advertising_event_t(event_type),
                     peer_address_type,
@@ -1128,8 +1130,8 @@ void Gap::on_advertising_report(const GapAdvertisingReportEvent &e)
 void Gap::on_connection_complete(const GapConnectionCompleteEvent &e)
 {
     if (e.status != hci_error_code_t::SUCCESS) {
-        if (_eventHandler) {
-            _eventHandler->onConnectionComplete(
+        if (_event_handler) {
+            _event_handler->onConnectionComplete(
                 ConnectionCompleteEvent(
                     BLE_ERROR_NOT_FOUND,
                     INVALID_ADVERTISING_HANDLE,
@@ -1222,8 +1224,8 @@ void Gap::on_connection_complete(const GapConnectionCompleteEvent &e)
     }
 
     // signal application
-    if (_eventHandler) {
-        _eventHandler->onConnectionComplete(
+    if (_event_handler) {
+        _event_handler->onConnectionComplete(
             ConnectionCompleteEvent(
                 BLE_ERROR_NONE,
                 e.connection_handle,
@@ -1266,8 +1268,8 @@ void Gap::on_disconnection_complete(const GapDisconnectionCompleteEvent &e)
         }
 
         // signal application
-        if (_eventHandler) {
-            _eventHandler->onDisconnectionComplete(
+        if (_event_handler) {
+            _event_handler->onDisconnectionComplete(
                 DisconnectionCompleteEvent(
                     (connection_handle_t) e.connection_handle,
                     (disconnection_reason_t::type) e.reason
@@ -1283,8 +1285,8 @@ void Gap::on_disconnection_complete(const GapDisconnectionCompleteEvent &e)
 void Gap::on_connection_parameter_request(const GapRemoteConnectionParameterRequestEvent &e)
 {
     if (_user_manage_connection_parameter_requests) {
-        if (_eventHandler) {
-            _eventHandler->onUpdateConnectionParametersRequest(
+        if (_event_handler) {
+            _event_handler->onUpdateConnectionParametersRequest(
                 UpdateConnectionParametersRequestEvent(
                     e.connection_handle,
                     conn_interval_t(e.min_connection_interval),
@@ -1312,11 +1314,11 @@ void Gap::on_connection_parameter_request(const GapRemoteConnectionParameterRequ
 
 void Gap::on_connection_update(const GapConnectionUpdateEvent &e)
 {
-    if (!_eventHandler) {
+    if (!_event_handler) {
         return;
     }
 
-    _eventHandler->onConnectionParametersUpdateComplete(
+    _event_handler->onConnectionParametersUpdateComplete(
         ConnectionParametersUpdateCompleteEvent(
             e.status == hci_error_code_t::SUCCESS ? BLE_ERROR_NONE : BLE_ERROR_UNSPECIFIED,
             e.connection_handle,
@@ -2215,11 +2217,11 @@ void Gap::on_enhanced_connection_complete(
     clock_accuracy_t master_clock_accuracy
 )
 {
-    if (!_eventHandler) {
+    if (!_event_handler) {
         return;
     }
 
-    _eventHandler->onConnectionComplete(
+    _event_handler->onConnectionComplete(
         ConnectionCompleteEvent(
             (status == hci_error_code_t::SUCCESS) ? BLE_ERROR_NONE : BLE_ERROR_INTERNAL_STACK_FAILURE,
             (connection_handle_t) connection_handle,
@@ -2265,11 +2267,11 @@ void Gap::on_extended_advertising_report(
     }
 #endif // BLE_FEATURE_PRIVACY
 
-    if (!_eventHandler) {
+    if (!_event_handler) {
         return;
     }
 
-    _eventHandler->onAdvertisingReport(
+    _event_handler->onAdvertisingReport(
         AdvertisingReportEvent(
             event_type,
             address_type ?
@@ -2301,11 +2303,11 @@ void Gap::on_periodic_advertising_sync_established(
     clock_accuracy_t clock_accuracy
 )
 {
-    if (!_eventHandler) {
+    if (!_event_handler) {
         return;
     }
 
-    _eventHandler->onPeriodicAdvertisingSyncEstablished(
+    _event_handler->onPeriodicAdvertisingSyncEstablished(
         PeriodicAdvertisingSyncEstablishedEvent(
             (error == hci_error_code_t::SUCCESS) ? BLE_ERROR_NONE : BLE_ERROR_INTERNAL_STACK_FAILURE,
             sync_handle,
@@ -2329,11 +2331,11 @@ void Gap::on_periodic_advertising_report(
     const uint8_t *data
 )
 {
-    if (!_eventHandler) {
+    if (!_event_handler) {
         return;
     }
 
-    _eventHandler->onPeriodicAdvertisingReport(
+    _event_handler->onPeriodicAdvertisingReport(
         PeriodicAdvertisingReportEvent(
             sync_handle,
             tx_power,
@@ -2347,11 +2349,11 @@ void Gap::on_periodic_advertising_report(
 
 void Gap::on_periodic_advertising_sync_loss(sync_handle_t sync_handle)
 {
-    if (!_eventHandler) {
+    if (!_event_handler) {
         return;
     }
 
-    _eventHandler->onPeriodicAdvertisingSyncLoss(
+    _event_handler->onPeriodicAdvertisingSyncLoss(
         PeriodicAdvertisingSyncLoss(sync_handle)
     );
 }
@@ -2366,11 +2368,11 @@ void Gap::on_advertising_set_terminated(
 {
     _active_sets.clear(advertising_handle);
 
-    if (!_eventHandler) {
+    if (!_event_handler) {
         return;
     }
 
-    _eventHandler->onAdvertisingEnd(
+    _event_handler->onAdvertisingEnd(
         AdvertisingEndEvent(
             advertising_handle,
             connection_handle,
@@ -2387,11 +2389,11 @@ void Gap::on_scan_request_received(
     const ble::address_t &address
 )
 {
-    if (!_eventHandler) {
+    if (!_event_handler) {
         return;
     }
 
-    _eventHandler->onScanRequestReceived(
+    _event_handler->onScanRequestReceived(
         ScanRequestEvent(
             advertising_handle,
             (peer_address_type_t::type) scanner_address_type.value(),
@@ -2409,11 +2411,11 @@ void Gap::on_connection_update_complete(
     uint16_t supervision_timeout
 )
 {
-    if (!_eventHandler) {
+    if (!_event_handler) {
         return;
     }
 
-    _eventHandler->onConnectionParametersUpdateComplete(
+    _event_handler->onConnectionParametersUpdateComplete(
         ConnectionParametersUpdateCompleteEvent(
             status == hci_error_code_t::SUCCESS ? BLE_ERROR_NONE : BLE_ERROR_UNSPECIFIED,
             connection_handle,
@@ -2434,8 +2436,8 @@ void Gap::on_remote_connection_parameter(
 )
 {
     if (_user_manage_connection_parameter_requests) {
-        if (_eventHandler) {
-            _eventHandler->onUpdateConnectionParametersRequest(
+        if (_event_handler) {
+            _event_handler->onUpdateConnectionParametersRequest(
                 UpdateConnectionParametersRequestEvent(connection_handle,
                 conn_interval_t(connection_interval_min),
                 conn_interval_t(connection_interval_max),
@@ -2728,6 +2730,10 @@ void Gap::prepare_legacy_advertising_set()
         AdvertisingParameters()
     );
     _existing_sets.set(LEGACY_ADVERTISING_HANDLE);
+}
+
+void Gap::setEventHandler(Gap::EventHandler *handler) {
+    _event_handler = handler;
 }
 
 } // ble

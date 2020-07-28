@@ -58,7 +58,7 @@ public:
         connection_handle_t connection_handle,
         ble::phy_t tx_phy,
         ble::phy_t rx_phy
-     )= 0;
+     ) = 0;
 
     /**
      * Should be invoked by the PalGap implementation when an enhanced
@@ -111,7 +111,7 @@ public:
         uint16_t connection_latency,
         uint16_t supervision_timeout,
         clock_accuracy_t master_clock_accuracy
-     )= 0;
+     ) = 0;
 
     /** Called on advertising report event.
      *
@@ -146,7 +146,7 @@ public:
         const address_t &direct_address,
         uint8_t data_length,
         const uint8_t *data_size
-     )= 0;
+     ) = 0;
 
     /** Called on advertising sync event.
      *
@@ -168,7 +168,7 @@ public:
         phy_t advertiser_phy,
         uint16_t periodic_advertising_interval,
         clock_accuracy_t clock_accuracy
-     )= 0;
+     ) = 0;
 
     /** Called after a periodic advertising report event.
      *
@@ -186,7 +186,7 @@ public:
         advertising_data_status_t data_status,
         uint8_t data_length,
         const uint8_t *data
-     )= 0;
+     ) = 0;
 
     /** Called on periodic advertising sync loss event.
      *
@@ -194,11 +194,11 @@ public:
      */
     virtual void on_periodic_advertising_sync_loss(
         sync_handle_t sync_handle
-     )= 0;
+     ) = 0;
 
     /** Called when scanning times out.
      */
-    virtual void on_scan_timeout( )= 0;
+    virtual void on_scan_timeout( ) = 0;
 
     /** Called when advertising set stops advertising.
      *
@@ -212,7 +212,7 @@ public:
         advertising_handle_t advertising_handle,
         connection_handle_t connection_handle,
         uint8_t number_of_completed_extended_advertising_events
-     )= 0;
+     ) = 0;
 
     /** Called when a device receives a scan request from an active scanning device.
      *
@@ -224,7 +224,7 @@ public:
         advertising_handle_t advertising_handle,
         connection_peer_address_type_t scanner_address_type,
         const address_t &address
-     )= 0;
+     ) = 0;
 
     virtual void on_connection_update_complete(
         hci_error_code_t status,
@@ -232,7 +232,7 @@ public:
         uint16_t connection_interval,
         uint16_t connection_latency,
         uint16_t supervision_timeout
-     )= 0;
+     ) = 0;
 
     virtual void on_remote_connection_parameter(
         connection_handle_t connection_handle,
@@ -240,7 +240,7 @@ public:
         uint16_t connection_interval_max,
         uint16_t connection_latency,
         uint16_t supervision_timeout
-     )= 0;
+     ) = 0;
 };
 
 namespace interface {

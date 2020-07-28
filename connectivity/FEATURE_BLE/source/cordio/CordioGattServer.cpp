@@ -1396,19 +1396,6 @@ ble::GattServer::DataSentCallbackChain_t &GattServer::onDataSent()
     return dataSentCallChain;
 }
 
-void GattServer::onDataWritten(const DataWrittenCallback_t &callback)
-{
-    dataWrittenCallChain.add(callback);
-}
-
-template <typename T>
-void GattServer::onDataWritten(
-    T *objPtr,
-    void (T::*memberPtr)(const GattWriteCallbackParams *context)
-) {
-    dataWrittenCallChain.add(objPtr, memberPtr);
-}
-
 ble::GattServer::DataWrittenCallbackChain_t &GattServer::onDataWritten()
 {
     return dataWrittenCallChain;

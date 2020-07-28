@@ -246,9 +246,6 @@ public:
      *  to set the interface implementation to be used. */
     class EventHandler {
     public:
-        EventHandler() {};
-        virtual ~EventHandler() {};
-
         ////////////////////////////////////////////////////////////////////////////
         // Pairing
         //
@@ -419,6 +416,13 @@ public:
             (void)connectionHandle;
             (void)csrk;
             (void)authenticated;
+        }
+        /**
+         * Prevent polymorphic deletion and avoid unnecessary virtual destructor
+         * as the SecurityManager class will never delete the instance it contains.
+         */
+        ~EventHandler()
+        {
         }
     };
 

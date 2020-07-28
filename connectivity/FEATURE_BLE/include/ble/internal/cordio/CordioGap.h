@@ -1422,7 +1422,7 @@ private:
     /**
      * Event handler provided by the application.
      */
-    ble::Gap::EventHandler *_eventHandler;
+    ble::Gap::EventHandler *_event_handler;
 
     PalEventQueue &_event_queue;
     PalGap &_pal_gap;

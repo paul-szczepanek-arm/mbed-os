@@ -222,13 +222,13 @@ public:
      * @param[in] initiator_dist key distribution
      * @param[in] responder_dist key distribution
      */
-    void on_pairing_request(
+    virtual void on_pairing_request(
         connection_handle_t connection,
         bool oob_data_flag,
         AuthenticationMask authentication_requirements,
         KeyDistribution initiator_dist,
         KeyDistribution responder_dist
-    );
+    ) = 0;
 
     /**
      * Indicate that the pairing has failed.
@@ -238,28 +238,28 @@ public:
      * @param[in] connection connection handle
      * @param[in] error reason for the failed pairing
      */
-    void on_pairing_error(
+    virtual void on_pairing_error(
         connection_handle_t connection,
         pairing_failure_t error
-    );
+    ) = 0;
 
     /**
      * Indicate that the pairing has timed out.
      *
      * @param[in] connection connection handle
      */
-    void on_pairing_timed_out(
+    virtual void on_pairing_timed_out(
         connection_handle_t connection
-    );
+    ) = 0;
 
     /**
      * Indicate that the pairing for the link has completed.
      *
      * @param[in] connection connection handle
      */
-    void on_pairing_completed(
+    virtual void on_pairing_completed(
         connection_handle_t connection
-    );
+    ) = 0;
 
     ////////////////////////////////////////////////////////////////////////////
     // Security
@@ -272,9 +272,9 @@ public:
      * @param[in] connection connection handle
      * @see BLUETOOTH SPECIFICATION Version 5.0 | Vol 6, Part B, 5.4
      */
-    void on_valid_mic_timeout(
+    virtual void on_valid_mic_timeout(
         connection_handle_t connection
-    );
+    ) = 0;
 
     /**
      * Ask the stack to evaluate the security request received from the slave.
@@ -283,10 +283,10 @@ public:
      * @param[in] connection connection handle
      * @param[in] authentication authentication requirements from the slave
      */
-    void on_slave_security_request(
+    virtual void on_slave_security_request(
         connection_handle_t connection,
         AuthenticationMask authentication
-    );
+    ) = 0;
 
     ////////////////////////////////////////////////////////////////////////////
     // Encryption
@@ -300,19 +300,19 @@ public:
      * @param[in] connection connection handle
      * @param[in] result encryption state of the link
      */
-    void on_link_encryption_result(
+    virtual void on_link_encryption_result(
         connection_handle_t connection,
         link_encryption_t result
-    );
+    ) = 0;
 
     /**
      * Indicate that the encryption request failed due to timeout.
      *
      * @param[in] connection connection handle
      */
-    void on_link_encryption_request_timed_out(
+    virtual void on_link_encryption_request_timed_out(
         connection_handle_t connection
-    );
+    ) = 0;
 
     ////////////////////////////////////////////////////////////////////////////
     // MITM
@@ -324,10 +324,10 @@ public:
      * @param[in] connection connection handle
      * @param[in] passkey passkey to be displayed
      */
-    void on_passkey_display(
+    virtual void on_passkey_display(
         connection_handle_t connection,
         passkey_num_t passkey
-    );
+    ) = 0;
 
     /**
      * Indicate that user confirmation is required to confirm matching
@@ -336,9 +336,9 @@ public:
      * @param[in] connection connection handle
      * @see BLUETOOTH SPECIFICATION Version 5.0 | Vol 2, Part E, 7.7.42
      */
-    void on_confirmation_request(
+    virtual void on_confirmation_request(
         connection_handle_t connection
-    );
+    ) = 0;
 
     /**
      * Request the passkey entered during pairing.
@@ -347,9 +347,9 @@ public:
      * @param[in] connection connection handle
      * or a cancellation of the procedure.
      */
-    void on_passkey_request(
+    virtual void on_passkey_request(
         connection_handle_t connection
-    );
+    ) = 0;
 
     /**
      * Indicate that a key has been pressed by the peer.
@@ -358,10 +358,10 @@ public:
      * @param[in] keypress type of keypress event
      * @see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part H, 3.5.8
      */
-    void on_keypress_notification(
+    virtual void on_keypress_notification(
         connection_handle_t connection,
         Keypress_t keypress
-    );
+    ) = 0;
 
     /**
      * Request OOB data from the user application.
@@ -370,9 +370,9 @@ public:
      * @note shall be followed by: PalSecurityManager::secure_connections_oob_request_reply
      * or a cancellation of the procedure.
      */
-    void on_secure_connections_oob_request(
+    virtual void on_secure_connections_oob_request(
         connection_handle_t connection
-    );
+    ) = 0;
 
     /**
      * Request OOB data from the user application.
@@ -381,9 +381,9 @@ public:
      * @note shall be followed by: PalSecurityManager::legacy_pairing_oob_request_reply
      * or a cancellation of the procedure.
      */
-    void on_legacy_pairing_oob_request(
+    virtual void on_legacy_pairing_oob_request(
         connection_handle_t connection
-    );
+    ) = 0;
 
     /**
      * Send OOB data to the application for transport to the peer.
@@ -394,10 +394,10 @@ public:
      *                    in secure connections pairing
      * @return BLE_ERROR_NONE or appropriate error code indicating the failure reason.
      */
-    void on_secure_connections_oob_generated(
+    virtual void on_secure_connections_oob_generated(
         const oob_lesc_value_t &random,
         const oob_confirm_t &confirm
-    );
+    ) = 0;
 
     ////////////////////////////////////////////////////////////////////////////
     // Keys
@@ -410,10 +410,10 @@ public:
      * @param[in] connection connection handle
      * @param[in] ltk long term key from the peer
      */
-    void on_secure_connections_ltk_generated(
+    virtual void on_secure_connections_ltk_generated(
         connection_handle_t connection,
         const ltk_t &ltk
-    );
+    ) = 0;
 
     /**
      * Store the results of key distribution after LTK has been received.
@@ -421,10 +421,10 @@ public:
      * @param[in] connection connection handle
      * @param[in] ltk long term key from the peer
      */
-    void on_keys_distributed_ltk(
+    virtual void on_keys_distributed_ltk(
         connection_handle_t connection,
         const ltk_t &ltk
-    );
+    ) = 0;
 
     /**
      * Store the results of key distribution after EDIV and RAND has been received.
@@ -432,11 +432,11 @@ public:
      * @param[in] connection connection handle
      * @param[in] ltk long term key from the peer
      */
-    void on_keys_distributed_ediv_rand(
+    virtual void on_keys_distributed_ediv_rand(
         connection_handle_t connection,
         const ediv_t &ediv,
         const rand_t &rand
-    );
+    ) = 0;
 
     /**
      * Store the local key, if we are slave now or in the future
@@ -445,10 +445,10 @@ public:
      * @param[in] connection connection handle
      * @param[in] ltk key sent to the peer
      */
-    void on_keys_distributed_local_ltk(
+    virtual void on_keys_distributed_local_ltk(
         connection_handle_t connection,
         const ltk_t &ltk
-    );
+    ) = 0;
 
     /**
      * Store the EDIV and RAND that will be used to identify
@@ -460,11 +460,11 @@ public:
      * @param[in] ediv identifies LTK
      * @param[in] rand identifies LTK
      */
-    void on_keys_distributed_local_ediv_rand(
+    virtual void on_keys_distributed_local_ediv_rand(
         connection_handle_t connection,
         const ediv_t &ediv,
         const rand_t &rand
-    );
+    ) = 0;
 
     /**
      * Store the results of key distribution after IRK has been received.
@@ -472,10 +472,10 @@ public:
      * @param[in] connection connection handle
      * @param[in] irk identity resolution key
      */
-    void on_keys_distributed_irk(
+    virtual void on_keys_distributed_irk(
         connection_handle_t connection,
         const irk_t &irk
-    );
+    ) = 0;
 
     /**
      * Store the identity address of the peer after it has been distributed.
@@ -484,11 +484,11 @@ public:
      * @param[in] peer_identity_address_type public or private address indication
      * @param[in] peer_identity_address peer address
      */
-    void on_keys_distributed_bdaddr(
+    virtual void on_keys_distributed_bdaddr(
         connection_handle_t connection,
         advertising_peer_address_type_t peer_identity_address_type,
         const address_t &peer_identity_address
-    );
+    ) = 0;
 
     /**
      * Store the peer's CSRK after it has been distributed.
@@ -496,10 +496,10 @@ public:
      * @param[in] connection connection handle
      * @param[in] csrk signing key
      */
-    void on_keys_distributed_csrk(
+    virtual void on_keys_distributed_csrk(
         connection_handle_t connection,
         const csrk_t &csrk
-    );
+    ) = 0;
 
     /**
      * Request the LTK since the peer is asking us to encrypt the link. We need to
@@ -510,11 +510,11 @@ public:
      * @param[in] ediv identifies LTK
      * @param[in] rand identifies LTK
      */
-    void on_ltk_request(
+    virtual void on_ltk_request(
         connection_handle_t connection,
         const ediv_t &ediv,
         const rand_t &rand
-    );
+    ) = 0;
 
     /**
      * Request the LTK since the peer is asking us to encrypt the link.
@@ -523,9 +523,9 @@ public:
      *
      * @param[in] connection connection handle
      */
-    void on_ltk_request(
+    virtual void on_ltk_request(
         connection_handle_t connection
-    );
+    ) = 0;
 };
 
 namespace interface {

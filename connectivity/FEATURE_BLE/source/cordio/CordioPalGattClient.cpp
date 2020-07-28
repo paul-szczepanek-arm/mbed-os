@@ -21,7 +21,7 @@
 
 namespace ble {
 
-PalGattClient::PalGattClient(PalAttClient& client) : _client(client)
+PalGattClient::PalGattClient(PalAttClient& client) : _event_handler(nullptr), _client(client)
 {
     _client.when_server_message_received(
         mbed::callback(this, &PalGattClient::on_server_event)

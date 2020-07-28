@@ -40,10 +40,10 @@ struct PalGattClientEventHandler {
      * @param connectionHandle The handle of the connection that changed the size.
      * @param attMtuSize
      */
-    void on_att_mtu_change(
+    virtual void on_att_mtu_change(
         ble::connection_handle_t connection_handle,
         uint16_t att_mtu_size
-    ) { };
+    ) = 0;
 
     /**
      * Function invoked when a write command has been sent out of the stack
@@ -53,11 +53,11 @@ struct PalGattClientEventHandler {
      * @param attribute_handle Attribute written
      * @param status HCI status of the operation.
      */
-    void on_write_command_sent(
+    virtual void on_write_command_sent(
         ble::connection_handle_t connection_handle,
         ble::attribute_handle_t attribute_handle,
         uint8_t status
-    ) { };
+    ) = 0;
 };
 
 
@@ -594,9 +594,7 @@ public:
      */
     void when_server_message_received(
         mbed::Callback<void(connection_handle_t, const AttServerMessage&)> cb
-    ) {
-        _server_message_cb = cb;
-    }
+    );
 
     /**
      * Register a callback handling transaction timeout.
@@ -611,9 +609,7 @@ public:
      */
      void when_transaction_timeout(
          mbed::Callback<void(connection_handle_t)> cb
-     ) {
-         _transaction_timeout_cb = cb;
-     }
+     );
 
      /**
       * Sets the event handler that us called by the PAL porters to notify the stack of events
@@ -621,24 +617,16 @@ public:
       *
       * @param event_handler The new event handler interface implementation.
       */
-     void set_event_handler(PalGattClientEventHandler* event_handler) {
-         _event_handler = event_handler;
-     }
+     void set_event_handler(PalGattClientEventHandler* event_handler);
 
      /**
       * Get the currently registered event handler.
       *
       * @return Currently registered event handler. NULL if no event handler is present.
       */
-     PalGattClientEventHandler* get_event_handler() {
-         return _event_handler;
-     }
+     PalGattClientEventHandler* get_event_handler();
 
 protected:
-    PalGattClient() : _event_handler(NULL) { }
-
-    ~PalGattClient() { }
-
     /**
      * Upon server message reception an implementation shall call this function.
      *
@@ -649,11 +637,7 @@ protected:
     void on_server_event(
         connection_handle_t connection_handle,
         const AttServerMessage& server_message
-    ) {
-        if (_server_message_cb) {
-            _server_message_cb(connection_handle, server_message);
-        }
-    }
+    );
 
     /**
      * Upon transaction timeout an implementation shall call this function.
@@ -666,28 +650,7 @@ protected:
      */
     void on_transaction_timeout(
         connection_handle_t connection_handle
-    ) {
-        if (_transaction_timeout_cb) {
-            _transaction_timeout_cb(connection_handle);
-        }
-    }
-
-private:
-    PalGattClientEventHandler* _event_handler;
-
-    /**
-     * Callback called when the client receive a message from the server.
-     */
-    mbed::Callback<void(connection_handle_t, const AttServerMessage&)> _server_message_cb;
-
-    /**
-     * Callback called when a transaction times out.
-     */
-    mbed::Callback<void(connection_handle_t)> _transaction_timeout_cb;
-
-    // Disallow copy construction and copy assignment.
-    PalGattClient(const PalGattClient&);
-    PalGattClient& operator=(const PalGattClient&);
+    );
 };
 
 } // namespace interface

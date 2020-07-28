@@ -34,6 +34,7 @@
 #include "SecurityManager.h"
 
 #include "ble/BLE.h"
+#include "ble/types/GattCallbackParamTypes.h"
 #include "ble/internal/cordio/CordioPalSigningMonitor.h"
 
 /*! Maximum count of characteristics that can be stored for authorisation purposes */
@@ -378,7 +379,9 @@ public:
      * @attention It is possible to set multiple event handlers. Registered
      * handlers may be removed with onDataWritten().detach(callback).
      */
-    void onDataWritten(const DataWrittenCallback_t &callback);
+    void onDataWritten(const DataWrittenCallback_t &callback) {
+        dataWrittenCallChain.add(callback);
+    }
 
     /**
      * Set an event handler that is called after
@@ -393,7 +396,9 @@ public:
     void onDataWritten(
         T *objPtr,
         void (T::*memberPtr)(const GattWriteCallbackParams *context)
-    );
+    ) {
+        dataWrittenCallChain.add(objPtr, memberPtr);
+    };
 
     /**
      * Access the callchain of data written event handlers.
