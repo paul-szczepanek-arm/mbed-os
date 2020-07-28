@@ -582,7 +582,6 @@ private:
     GattClient(const GattClient &);
     GattClient& operator=(const GattClient &);
 
-#if !defined(DOXYGEN_ONLY)
     /* ===================================================================== */
     /*                    private implementation follows                     */
 
@@ -672,8 +671,6 @@ protected:
      * Create a PalGattClient from a PalGattClient
      */
     GattClient(PalGattClient& pal_client);
-
-#endif // !defined(DOXYGEN_ONLY)
 };
 
 /**

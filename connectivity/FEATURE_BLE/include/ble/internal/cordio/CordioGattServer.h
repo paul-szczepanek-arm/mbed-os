@@ -582,8 +582,6 @@ protected:
      */
     void handleDataSentEvent(unsigned count);
 
-#if !defined(DOXYGEN_ONLY)
-
     /* ===================================================================== */
     /*                    private implementation follows                     */
 
@@ -789,8 +787,6 @@ private:
 
     GattServer(const GattServer &);
     const GattServer& operator=(const GattServer &);
-
-#endif // !defined(DOXYGEN_ONLY)
 };
 
 /**

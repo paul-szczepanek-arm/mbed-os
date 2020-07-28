@@ -87,7 +87,9 @@ namespace ble {
  * indicate properties are set. The client discovers that descriptor
  * if it intends to register to server initiated events.
  */
+#if !defined(DOXYGEN_ONLY)
 namespace interface {
+#endif // !defined(DOXYGEN_ONLY)
 class GattClient {
 public:
     /**
@@ -703,7 +705,9 @@ public:
  * @}
  */
 
-} // interface
+#if !defined(DOXYGEN_ONLY)
+} // namespace interface
+#endif // !defined(DOXYGEN_ONLY)
 } // namespace ble
 
 #if (BLE_STACK_IMPLEMENTATION == 1)

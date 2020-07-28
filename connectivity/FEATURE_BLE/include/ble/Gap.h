@@ -277,7 +277,9 @@ class PalGenericAccessService;
  * PHY and of any changes to PHYs which may be triggered autonomously by the
  * controller or by the peer.
  */
+#if !defined(DOXYGEN_ONLY)
 namespace interface {
+#endif // !defined(DOXYGEN_ONLY)
 class Gap {
     /**
      * Gap shutdown event handler.
@@ -1458,7 +1460,9 @@ public:
  * @}
  */
 
-} // interface
+#if !defined(DOXYGEN_ONLY)
+} // namespace interface
+#endif // !defined(DOXYGEN_ONLY)
 } // namespace ble
 
 

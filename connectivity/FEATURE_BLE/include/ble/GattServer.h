@@ -107,7 +107,9 @@ class BLE;
  * Characteristic Value Notification and Characteristic Value Indication when
  * the nature of the server initiated is not relevant.
  */
+#if !defined(DOXYGEN_ONLY)
 namespace interface {
+#endif // !defined(DOXYGEN_ONLY)
 class GattServer {
 public:
     /**
@@ -663,7 +665,9 @@ protected:
  * @}
  */
 
-} // interface
+#if !defined(DOXYGEN_ONLY)
+} // namespace interface
+#endif // !defined(DOXYGEN_ONLY)
 } // ble
 
 #if (BLE_STACK_IMPLEMENTATION == 1)

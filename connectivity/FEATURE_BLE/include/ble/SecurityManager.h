@@ -188,7 +188,9 @@ namespace ble {
  * @endverbatim
  *
  */
+#if !defined(DOXYGEN_ONLY)
 namespace interface {
+#endif // !defined(DOXYGEN_ONLY)
 class SecurityManager
 {
 public:
@@ -918,7 +920,9 @@ public:
     void setSecurityManagerEventHandler(EventHandler* handler);
 };
 
-} // interface
+#if !defined(DOXYGEN_ONLY)
+} // namespace interface
+#endif // !defined(DOXYGEN_ONLY)
 } // ble
 
 #if (BLE_STACK_IMPLEMENTATION == 1)

@@ -1235,8 +1235,6 @@ public:
     ble_error_t setRandomStaticAddress(const ble::address_t& address);
 #endif // !defined(DOXYGEN_ONLY)
 
-#if !defined(DOXYGEN_ONLY)
-
     /* ===================================================================== */
     /*                    private implementation follows                     */
 
@@ -1499,8 +1497,6 @@ private:
     BitArray<MAX_ADVERTISING_SETS> _set_is_connectable;
 
     bool _user_manage_connection_parameter_requests : 1;
-
-#endif // !defined(DOXYGEN_ONLY)
 };
 
 /**
