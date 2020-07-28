@@ -35,6 +35,9 @@
 
 using namespace std::chrono;
 
+MBED_STATIC_ASSERT(BLE_GAP_MAX_ADVERTISING_SETS < 0xFF, "BLE_GAP_MAX_ADVERTISING_SETS must be less than 255");
+MBED_STATIC_ASSERT(BLE_GAP_MAX_ADVERTISING_SETS > 0, "BLE_GAP_MAX_ADVERTISING_SETS must be a positive number");
+
 namespace ble {
 
 namespace {
@@ -1537,16 +1540,12 @@ void Gap::on_address_rotation_timeout()
     _event_queue.post(mbed::callback(this, &Gap::update_random_address));
 }
 
-
-const uint8_t Gap::BLE_GAP_MAX_ADVERTISING_SETS;
-
-
 uint8_t Gap::getMaxAdvertisingSetNumber()
 {
 #if BLE_FEATURE_EXTENDED_ADVERTISING
     if (is_extended_advertising_available()) {
         uint8_t set_number = _pal_gap.get_max_number_of_advertising_sets();
-        return std::min(BLE_GAP_MAX_ADVERTISING_SETS, set_number);
+        return std::min((uint8_t)BLE_GAP_MAX_ADVERTISING_SETS, set_number);
     } else
 #endif // BLE_FEATURE_EXTENDED_ADVERTISING
     {

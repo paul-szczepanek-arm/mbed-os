@@ -62,6 +62,19 @@ class Gap :
     friend PalGap;
     friend CordioBLEInstanceBase;
 public:
+    /**
+     * Default peripheral privacy configuration.
+     */
+    static const peripheral_privacy_configuration_t
+        default_peripheral_privacy_configuration;
+
+    /**
+     * Default peripheral privacy configuration.
+     */
+    static const central_privacy_configuration_t
+        default_central_privacy_configuration;
+
+public:
     void setEventHandler(EventHandler *handler);
 
     bool isFeatureSupported(controller_supported_features_t feature);

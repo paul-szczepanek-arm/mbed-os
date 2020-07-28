@@ -299,19 +299,6 @@ public:
 
 public:
     /**
-     * Default peripheral privacy configuration.
-     */
-    static const peripheral_privacy_configuration_t
-        default_peripheral_privacy_configuration;
-
-    /**
-     * Default peripheral privacy configuration.
-     */
-    static const central_privacy_configuration_t
-        default_central_privacy_configuration;
-
-public:
-    /**
      * Definition of the general handler of Gap related events.
      */
     struct EventHandler {
