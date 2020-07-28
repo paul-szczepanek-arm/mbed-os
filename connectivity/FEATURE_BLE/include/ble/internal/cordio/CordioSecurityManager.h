@@ -159,7 +159,7 @@ public:
 
     ble_error_t passkeyEntered(ble::connection_handle_t connectionHandle, Passkey_t passkey);
 
-    ble_error_t sendKeypressNotification(ble::connection_handle_t connectionHandle, Keypress_t keypress);
+    ble_error_t sendKeypressNotification(ble::connection_handle_t connectionHandle, ble::Keypress_t keypress);
 
     ble_error_t legacyPairingOobReceived(const ble::address_t *address, const ble::oob_tk_t *tk);
 
@@ -295,7 +295,7 @@ public:
      */
     void on_keypress_notification(
         connection_handle_t connection,
-        Keypress_t keypress
+        ble::Keypress_t keypress
     );
 
     /** @copydoc PalSecurityManager::on_passkey_request

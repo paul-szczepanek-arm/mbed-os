@@ -316,7 +316,7 @@ public:
      * @see ::ble::PalSecurityManager::send_keypress_notification
      */
     ble_error_t send_keypress_notification(
-        connection_handle_t connection, Keypress_t keypress
+        connection_handle_t connection, ble::Keypress_t keypress
     );
 
     /**

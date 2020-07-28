@@ -542,7 +542,7 @@ extern "C" void DmSecKeypressReq(dmConnId_t connId, uint8_t keypressType);
 
 
 ble_error_t PalSecurityManager::send_keypress_notification(
-    connection_handle_t connection, Keypress_t keypress
+    connection_handle_t connection, ble::Keypress_t keypress
 ) {
     DmSecKeypressReq(connection, keypress);
     return BLE_ERROR_NONE;
@@ -813,7 +813,7 @@ bool PalSecurityManager::sm_handler(const wsfMsgHdr_t* msg) {
             dmSecKeypressIndEvt_t* evt = (dmSecKeypressIndEvt_t*) msg;
             handler->on_keypress_notification(
                 /* connection */ evt->hdr.param,
-                (Keypress_t) evt->notificationType
+                (ble::Keypress_t) evt->notificationType
             );
             return true;
         }
@@ -823,7 +823,7 @@ bool PalSecurityManager::sm_handler(const wsfMsgHdr_t* msg) {
         case DM_PRIV_ADD_DEV_TO_RES_LIST_IND: // Device added to resolving list
         case DM_PRIV_REM_DEV_FROM_RES_LIST_IND: // Device removed from resolving list
         case DM_PRIV_CLEAR_RES_LIST_IND: // Resolving list cleared
-        { 
+        {
             // Previous command completed, we can move to the next control block
             self.process_privacy_control_blocks(true);
             return true;

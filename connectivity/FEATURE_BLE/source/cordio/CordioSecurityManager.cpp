@@ -820,7 +820,7 @@ ble_error_t SecurityManager::passkeyEntered(
 
 ble_error_t SecurityManager::sendKeypressNotification(
     connection_handle_t connection,
-    Keypress_t keypress
+    ble::Keypress_t keypress
 ) {
     if (!_db) return BLE_ERROR_INITIALIZATION_INCOMPLETE;
     return _pal.send_keypress_notification(connection, keypress);
@@ -1543,7 +1543,7 @@ void SecurityManager::on_passkey_display(
 
 void SecurityManager::on_keypress_notification(
     connection_handle_t connection,
-    Keypress_t keypress
+    ble::Keypress_t keypress
 ) {
     set_mitm_performed(connection);
     eventHandler->keypressNotification(connection, keypress);

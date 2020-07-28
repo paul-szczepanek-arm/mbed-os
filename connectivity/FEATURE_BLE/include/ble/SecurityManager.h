@@ -361,7 +361,7 @@ public:
          * @param[in] connectionHandle connection connectionHandle
          * @param[in] keypress type of keypress event
          */
-        virtual void keypressNotification(ble::connection_handle_t connectionHandle, Keypress_t keypress) {
+        virtual void keypressNotification(ble::connection_handle_t connectionHandle, ble::Keypress_t keypress) {
             (void)connectionHandle;
             (void)keypress;
         }
@@ -827,7 +827,7 @@ public:
      * @param[in] keypress Type of keypress event.
      * @return BLE_ERROR_NONE or appropriate error code indicating the failure reason.
      */
-    ble_error_t sendKeypressNotification(ble::connection_handle_t connectionHandle, Keypress_t keypress);
+    ble_error_t sendKeypressNotification(ble::connection_handle_t connectionHandle, ble::Keypress_t keypress);
 
     /**
      * Supply the stack with the OOB data for legacy connections.
@@ -918,6 +918,19 @@ public:
      * @param[in] handler Event Handler interface implementation.
      */
     void setSecurityManagerEventHandler(EventHandler* handler);
+
+public:
+#if !defined(DOXYGEN_ONLY)
+    /** For backwards compatibility. This enm is now in BLETypes.h
+     * @deprecated, use the enum in ble namespace */
+    enum Keypress_t {
+        KEYPRESS_STARTED,   /**< Passkey entry started */
+        KEYPRESS_ENTERED,   /**< Passkey digit entered */
+        KEYPRESS_ERASED,    /**< Passkey digit erased */
+        KEYPRESS_CLEARED,   /**< Passkey cleared */
+        KEYPRESS_COMPLETED, /**< Passkey entry completed */
+    };
+#endif // !defined(DOXYGEN_ONLY)
 };
 
 #if !defined(DOXYGEN_ONLY)

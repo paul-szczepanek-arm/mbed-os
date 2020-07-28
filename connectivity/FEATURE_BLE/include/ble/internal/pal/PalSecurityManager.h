@@ -360,7 +360,7 @@ public:
      */
     virtual void on_keypress_notification(
         connection_handle_t connection,
-        Keypress_t keypress
+        ble::Keypress_t keypress
     ) = 0;
 
     /**
@@ -1004,7 +1004,7 @@ public:
      */
     ble_error_t send_keypress_notification(
         connection_handle_t connection,
-        Keypress_t keypress
+        ble::Keypress_t keypress
     );
 
     /**
