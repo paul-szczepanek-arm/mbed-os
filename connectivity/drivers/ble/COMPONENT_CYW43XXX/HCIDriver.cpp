@@ -16,7 +16,7 @@
  */
 
 #include <stdio.h>
-#include "CordioBLE.h"
+#include "CordioBLEInstanceBase.h"
 #include "CordioHCIDriver.h"
 #include "hci_api.h"
 #include "hci_cmd.h"

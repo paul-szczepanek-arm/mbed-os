@@ -18,7 +18,7 @@
 
 #include <stdio.h>
 #include "ble/types/blecommon.h"
-#include "CordioBLE.h"
+#include "CordioBLEInstanceBase.h"
 #include "CordioHCIDriver.h"
 #include "CordioHCITransportDriver.h"
 #include "mbed.h"

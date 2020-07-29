@@ -53,7 +53,7 @@ More information about the architecture can be found in [HCI abstraction archite
 
 #### HCITransport
 
-<span class="notes">**Note:** If the Bluetooth controller uses an H4 communication interface and the host exposes serial flow control in Mbed, you can skip this step. Use the class `ble::vendor::cordio::H4TransportDriver` as the transport driver.</span>
+<span class="notes">**Note:** If the Bluetooth controller uses an H4 communication interface and the host exposes serial flow control in Mbed, you can skip this step. Use the class `ble::H4TransportDriver` as the transport driver.</span>
 
 The transport driver shall inherit publicly from the base class `CordioHCITransportDriver`. 
 
@@ -66,7 +66,7 @@ namespace ble {
 namespace vendor {
 namespace target_name {
 
-class TransportDriver : public cordio::CordioHCITransportDriver {
+class TransportDriver : public CordioHCITransportDriver {
 public:
     TransportDriver(/* specific constructor arguments*/);
 
@@ -114,10 +114,10 @@ namespace ble {
 namespace vendor {
 namespace target_name {
 
-class HCIDriver : public cordio::CordioHCIDriver {
+class HCIDriver : public CordioHCIDriver {
 public:
     HCIDriver(
-        cordio::CordioHCITransportDriver& transport_driver,
+        CordioHCITransportDriver& transport_driver,
         /* specific constructor arguments*/
     );
 
@@ -434,13 +434,13 @@ Given that the `CordioBLE` class doesn't know which class constructs the driver 
 This function is in the global namespace, and its signature is:
 
 ```
-ble::vendor::cordio::CordioHCIDriver& ble_cordio_get_hci_driver();
+ble::CordioHCIDriver& ble_cordio_get_hci_driver();
 ```
 
 **Example:**
 
 ```
-ble::vendor::cordio::CordioHCIDriver& ble_cordio_get_hci_driver() {
+ble::CordioHCIDriver& ble_cordio_get_hci_driver() {
     static ble::vendor::target_name::TransportDriver transport_driver(
         /* transport parameters */
     );
