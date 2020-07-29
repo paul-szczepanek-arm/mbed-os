@@ -29,6 +29,8 @@
 #include "ble/types/ServiceDiscovery.h"
 #include "ble/types/CharacteristicDescriptorDiscovery.h"
 #include "ble/types/GattCallbackParamTypes.h"
+#include "ble/types/DiscoveredService.h"
+#include "ble/types/DiscoveredCharacteristic.h"
 
 namespace ble {
 
@@ -133,12 +135,14 @@ public:
      * Attribute read event handler.
      *
      * @see GattClient::onDataRead().
+     * @deprecated Use the version in global ble namespace.
      */
     typedef FunctionPointerWithContext<const GattReadCallbackParams*>
         ReadCallback_t;
 
     /**
      * Callchain of attribute read event handlers.
+     * @deprecated Use the version in global ble namespace.
      */
     typedef CallChainOfFunctionPointersWithContext<const GattReadCallbackParams*>
         ReadCallbackChain_t;
@@ -174,9 +178,10 @@ public:
     };
 
     /**
-     * Attribute write event handler.
+     * Attribute write event handler.ble::WriteCallback_t
      *
      * @see GattClient::onDataWrite().
+     * @deprecated Use the version in global ble namespace.
      */
     typedef FunctionPointerWithContext<const GattWriteCallbackParams*>
         WriteCallback_t;
@@ -185,6 +190,7 @@ public:
      * Callchain of attribute write event handlers.
      *
      * @see GattClient::onDataWrite().
+     * @deprecated Use the version in global ble namespace.
      */
     typedef CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams*>
         WriteCallbackChain_t;
@@ -463,7 +469,7 @@ public:
      *
      * @param[in] callback Event handler being registered.
      */
-    void onDataRead(ReadCallback_t callback);
+    void onDataRead(ble::ReadCallback_t callback);
 
     /**
      * Get the callchain of attribute read event handlers.
@@ -476,7 +482,7 @@ public:
      * @note It is possible to unregister an handler by using
      * onDataRead().detach(callback).
      */
-    ReadCallbackChain_t& onDataRead();
+    ble::ReadCallbackChain_t& onDataRead();
 
     /**
      * Register an attribute write event handler.
@@ -489,7 +495,7 @@ public:
      * @note Write commands (issued using writeWoResponse) don't generate a
      * response.
      */
-    void onDataWritten(WriteCallback_t callback);
+    void onDataWritten(ble::WriteCallback_t callback);
 
     /**
      * Get the callchain of attribute write event handlers.
@@ -502,7 +508,7 @@ public:
      * @note It is possible to unregister an handler by using
      * onDataWritten().detach(callback).
      */
-    WriteCallbackChain_t& onDataWritten();
+    ble::WriteCallbackChain_t& onDataWritten();
 
     /**
      * Register a service discovery termination event handler.

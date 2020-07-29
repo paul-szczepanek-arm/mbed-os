@@ -25,6 +25,7 @@
 #include "platform/mbed_toolchain.h"
 
 #include "ble/types/BLERoles.h"
+#include "ble/types/BLETypes.h"
 #include "ble/types/blecommon.h"
 
 

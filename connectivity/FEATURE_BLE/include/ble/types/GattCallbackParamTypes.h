@@ -383,6 +383,36 @@ struct GattHVXCallbackParams {
 
 };
 
+namespace ble {
+
+/**
+ * Attribute read event handler.
+ *
+ * @see GattClient::onDataRead().
+ */
+typedef FunctionPointerWithContext<const GattReadCallbackParams *> ReadCallback_t;
+
+/**
+ * Callchain of attribute read event handlers.
+ */
+typedef CallChainOfFunctionPointersWithContext<const GattReadCallbackParams *> ReadCallbackChain_t;
+
+/**
+ * Attribute write event handler.
+ *
+ * @see GattClient::onDataWrite().
+ */
+typedef FunctionPointerWithContext<const GattWriteCallbackParams *> WriteCallback_t;
+
+/**
+ * Callchain of attribute write event handlers.
+ *
+ * @see GattClient::onDataWrite().
+ */
+typedef CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams *> WriteCallbackChain_t;
+
+}
+
 /**
  * @}
  * @}

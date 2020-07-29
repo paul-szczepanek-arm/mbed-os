@@ -20,11 +20,13 @@
 #define MBED_DISCOVERED_CHARACTERISTIC_H__
 
 #include "ble/types/UUID.h"
-#include "ble/Gap.h"
 #include "ble/types/GattAttribute.h"
-#include "ble/GattClient.h"
 #include "ble/types/CharacteristicDescriptorDiscovery.h"
 #include "ble/types/DiscoveredCharacteristicDescriptor.h"
+
+namespace ble {
+class GattClient;
+}
 
 /**
  * @addtogroup ble
@@ -67,7 +69,7 @@
  * by the connection handle and the attribute handle, which are present in
  * GattReadCallbackParams.
  *
- * Another overload (read(uint16_t, const ble::GattClient::ReadCallback_t&)) of the
+ * Another overload (read(uint16_t, const ble::ReadCallback_t&)) of the
  * read function accepts a completion callback as a last parameter. That
  * completion callback will be invoked automatically once the response to the
  * read request for that given characteristic has been received. However,
@@ -327,7 +329,7 @@ public:
      */
     ble_error_t read(
         uint16_t offset,
-        const ble::GattClient::ReadCallback_t &onRead
+        const ble::ReadCallback_t &onRead
     ) const;
 
     /**
@@ -431,7 +433,7 @@ public:
     ble_error_t write(
         uint16_t length,
         const uint8_t *value,
-        const ble::GattClient::WriteCallback_t &onWrite
+        const ble::WriteCallback_t &onWrite
     ) const;
 
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID, UUID::ByteOrder_t order = UUID::MSB) {
