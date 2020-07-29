@@ -46,6 +46,7 @@ class SecurityManager :
 {
     friend class ble::PalConnectionMonitorEventHandler;
     friend CordioBLEInstanceBase;
+    friend PalGenericAccessService;
 
 public:
     ////////////////////////////////////////////////////////////////////////////

@@ -57,6 +57,7 @@ class GattServer :
     friend ble::PalAttClient;
     friend PalSigningMonitor;
     friend CordioBLEInstanceBase;
+    friend PalGenericAccessService;
 
 // inherited typedefs have the wrong types so we have to redefine them
 public:
@@ -210,7 +211,6 @@ private:
     GattServer(const GattServer &);
     const GattServer& operator=(const GattServer &);
 
-public:
     /**
      * Return the singleton of the Cordio implementation of ble::GattServer.
      */
@@ -222,7 +222,6 @@ public:
      */
     void initialize();
 
-private:
     void set_signing_event_handler(
         PalSigningMonitorEventHandler *signing_event_handler
     );

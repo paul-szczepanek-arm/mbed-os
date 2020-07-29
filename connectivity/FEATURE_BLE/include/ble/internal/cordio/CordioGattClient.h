@@ -149,8 +149,7 @@ private:
     /* ===================================================================== */
     /*                    private implementation follows                     */
 
-public:
-
+private:
     /**
      * @see ble::PalSigningMonitor::set_signing_event_handler
      */
@@ -229,7 +228,7 @@ private:
     mutable ProcedureControlBlock* control_blocks;
     bool _is_reseting;
 
-protected:
+private:
     /**
      * Create a PalGattClient from a PalGattClient
      */
