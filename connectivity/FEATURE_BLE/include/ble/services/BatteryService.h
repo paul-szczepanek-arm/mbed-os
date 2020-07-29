@@ -25,6 +25,7 @@
 
 #include "ble/BLE.h"
 #include "ble/Gap.h"
+#include "ble/GattServer.h"
 
 /**
  * BLE Battery service.

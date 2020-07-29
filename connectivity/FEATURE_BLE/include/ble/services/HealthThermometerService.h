@@ -21,6 +21,7 @@
 
 #include "ble/BLE.h"
 #include "ble/Gap.h"
+#include "ble/GattServer.h"
 
 #if BLE_FEATURE_GATT_SERVER
 
