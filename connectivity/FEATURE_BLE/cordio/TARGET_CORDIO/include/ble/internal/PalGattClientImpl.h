@@ -223,7 +223,11 @@ public:
 
 private:
     /**
-     * @see ble::PalGattClient::on_server_event
+     * Upon server message reception an implementation shall call this function.
+     *
+     * @param connection_handle The handle of the connection which has received
+     * the server message.
+     * @param server_message The message received from the server.
      */
     void on_server_event(
         connection_handle_t connection_handle,
@@ -235,7 +239,13 @@ private:
     }
 
     /**
-     * @see ble::PalGattClient::on_transaction_timeout
+     * Upon transaction timeout an implementation shall call this function.
+     *
+     * @param connection_handle The handle of the connection of the transaction
+     * which has times out.
+     *
+     * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.3.3
+     * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part G Section 4.4.14
      */
     void on_transaction_timeout(
         connection_handle_t connection_handle

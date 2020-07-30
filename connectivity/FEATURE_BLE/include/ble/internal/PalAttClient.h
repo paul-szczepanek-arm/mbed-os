@@ -625,31 +625,6 @@ public:
     virtual void when_transaction_timeout(
          mbed::Callback<void(connection_handle_t)> cb
      ) = 0;
-
-protected:
-    /**
-     * Upon server message reception an implementation shall call this function.
-     *
-     * @param connection_handle The handle of the connection which has received
-     * the server message.
-     * @param server_message The message received from the server.
-     */
-    virtual void on_server_event(
-        connection_handle_t connection_handle,
-        const AttServerMessage& server_message
-    ) = 0;
-
-    /**
-     * Upon transaction timeout an implementation shall call this function.
-     *
-     * @param connection_handle The handle of the connection of the transaction
-     * which has times out.
-     *
-     * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.3.3
-     */
-    virtual void on_transaction_timeout(
-        connection_handle_t connection_handle
-    ) = 0;
 };
 
 } // namespace interface

@@ -29,7 +29,10 @@
 
 namespace ble {
 
+class BLEInstanceBase;
+
 class PalSecurityManager : public interface::PalSecurityManager {
+    friend BLEInstanceBase;
 public:
 
     PalSecurityManager();
@@ -334,10 +337,11 @@ public:
      */
     PalSecurityManagerEventHandler* get_event_handler();
 
-    // singleton of the ARM Cordio Security Manager
+private:
+    /* used by the PAL to get the singleton */
     static PalSecurityManager &get_security_manager();
 
-    // Event handler
+    /* used by PAL to handle security messages coming from the stack Event handler */
     static bool sm_handler(const wsfMsgHdr_t* msg);
 
 private:

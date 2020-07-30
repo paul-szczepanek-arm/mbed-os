@@ -41,16 +41,6 @@ namespace interface {
 class PalEventQueue {
 public:
     /**
-     * Base constructor of an event queue.
-     */
-    PalEventQueue() { }
-
-    /**
-     * Destructor, needs to be overiden in implementation
-     */
-    virtual ~PalEventQueue() { }
-
-    /**
      * Post an event into the event queue.
      *
      * @param event The event to store in the queue, it shall be processed at

@@ -100,7 +100,7 @@ public:
      * @return BLE_ERROR_NONE if the request has been successfully sent or the
      * appropriate error otherwise.
      */
-    ble_error_t initialize();
+    virtual ble_error_t initialize() = 0;
 
     /**
      * Termination of the instance. An implementation can use this function
@@ -113,7 +113,7 @@ public:
      * @return BLE_ERROR_NONE if the request has been successfully sent or the
      * appropriate error otherwise.
      */
-    ble_error_t terminate();
+    virtual ble_error_t terminate() = 0;
 
     /**
      * Negotiate the mtu to use by this connection.
@@ -132,7 +132,7 @@ public:
      * @param connection The handle of the connection to send this request to.
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t exchange_mtu(connection_handle_t connection);
+    virtual ble_error_t exchange_mtu(connection_handle_t connection) = 0;
 
     /**
      * Acquire the size of the mtu for a given connection.
@@ -145,10 +145,10 @@ public:
      * @return BLE_ERROR_NONE if the MTU size has been acquired or the
      * appropriate error otherwise.
      */
-    ble_error_t get_mtu_size(
+    virtual ble_error_t get_mtu_size(
         connection_handle_t connection_handle,
         uint16_t& mtu_size
-    );
+    ) = 0;
 
     /**
      * Discover primary services in the range [begin - 0xFFFF].
@@ -181,10 +181,10 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t discover_primary_service(
+    virtual ble_error_t discover_primary_service(
         connection_handle_t connection,
         attribute_handle_t discovery_range_begining
-    );
+    ) = 0;
 
     /**
      * Discover primary services by UUID in the range [discovery_range_begining - 0xFFFF].
@@ -216,11 +216,11 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t discover_primary_service_by_service_uuid(
+    virtual ble_error_t discover_primary_service_by_service_uuid(
         connection_handle_t connection_handle,
         attribute_handle_t discovery_range_beginning,
         const UUID& uuid
-    );
+    ) = 0;
 
     /**
      * Find included services within a service.
@@ -258,10 +258,10 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t find_included_service(
+    virtual ble_error_t find_included_service(
         connection_handle_t connection_handle,
         attribute_handle_range_t service_range
-    );
+    ) = 0;
 
     /**
      * Find characteristic declarations within a service definition.
@@ -299,10 +299,10 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t discover_characteristics_of_a_service(
+    virtual ble_error_t discover_characteristics_of_a_service(
         connection_handle_t connection_handle,
         attribute_handle_range_t discovery_range
-    );
+    ) = 0;
 
     /**
      * Discover characteristic descriptors of a characteristic.
@@ -333,10 +333,10 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t discover_characteristics_descriptors(
+    virtual ble_error_t discover_characteristics_descriptors(
         connection_handle_t connection_handle,
         attribute_handle_range_t descriptors_discovery_range
-    );
+    ) = 0;
 
     /**
      * Read the value of an attribute.
@@ -359,10 +359,10 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t read_attribute_value(
+    virtual ble_error_t read_attribute_value(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle
-    );
+    ) = 0;
 
     /**
      * Read a characteristic value using its UUID (type).
@@ -393,11 +393,11 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t read_using_characteristic_uuid(
+    virtual ble_error_t read_using_characteristic_uuid(
         connection_handle_t connection_handle,
         attribute_handle_range_t read_range,
         const UUID& uuid
-    );
+    ) = 0;
 
     /**
      * Read a partial value of an attribute.
@@ -425,11 +425,11 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t read_attribute_blob(
+    virtual ble_error_t read_attribute_blob(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         uint16_t offset
-    );
+    ) = 0;
 
     /**
      * Read atomically multiple characteristics values.
@@ -451,10 +451,10 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t read_multiple_characteristic_values(
+    virtual ble_error_t read_multiple_characteristic_values(
         connection_handle_t connection_handle,
         const Span<const attribute_handle_t>& characteristic_value_handles
-    );
+    ) = 0;
 
     /**
      * Send a write command to the server.
@@ -469,11 +469,11 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t write_without_response(
+    virtual ble_error_t write_without_response(
         connection_handle_t connection_handle,
         attribute_handle_t characteristic_value_handle,
         const Span<const uint8_t>& value
-    );
+    ) = 0;
 
     /**
      * Send a Signed Write without Response command to the server.
@@ -491,11 +491,11 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t signed_write_without_response(
+    virtual ble_error_t signed_write_without_response(
         connection_handle_t connection_handle,
         attribute_handle_t characteristic_value_handle,
         const Span<const uint8_t>& value
-    );
+    ) = 0;
 
     /**
      * Send a write request to the server.
@@ -517,11 +517,11 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t write_attribute(
+    virtual ble_error_t write_attribute(
         connection_handle_t connection_handle,
         attribute_handle_t attribute_handle,
         const Span<const uint8_t>& value
-    );
+    ) = 0;
 
     /**
      * Send a prepare write request to the server.
@@ -552,12 +552,12 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t queue_prepare_write(
+    virtual ble_error_t queue_prepare_write(
         connection_handle_t connection_handle,
         attribute_handle_t characteristic_value_handle,
         const Span<const uint8_t>& value,
         uint16_t offset
-    );
+    ) = 0;
 
     /**
      * Send a request to the server to execute the queue of prepared write
@@ -579,10 +579,10 @@ public:
      *
      * @return BLE_ERROR_NONE or an appropriate error.
      */
-    ble_error_t execute_write_queue(
+    virtual ble_error_t execute_write_queue(
         connection_handle_t connection_handle,
         bool execute
-    );
+    ) = 0;
 
     /**
      * Register a callback which will handle messages from the server.
@@ -592,9 +592,9 @@ public:
      * message was received and the message received. Real type of the message
      * can be obtained from its opcode.
      */
-    void when_server_message_received(
+    virtual void when_server_message_received(
         mbed::Callback<void(connection_handle_t, const AttServerMessage&)> cb
-    );
+    ) = 0;
 
     /**
      * Register a callback handling transaction timeout.
@@ -607,9 +607,9 @@ public:
      * timeout. To send a new ATT message, the conenction should be
      * reestablished.
      */
-     void when_transaction_timeout(
+     virtual void when_transaction_timeout(
          mbed::Callback<void(connection_handle_t)> cb
-     );
+     ) = 0;
 
      /**
       * Sets the event handler that us called by the PAL porters to notify the stack of events
@@ -617,40 +617,14 @@ public:
       *
       * @param event_handler The new event handler interface implementation.
       */
-     void set_event_handler(PalGattClientEventHandler* event_handler);
+     virtual void set_event_handler(PalGattClientEventHandler* event_handler) = 0;
 
      /**
       * Get the currently registered event handler.
       *
       * @return Currently registered event handler. NULL if no event handler is present.
       */
-     PalGattClientEventHandler* get_event_handler();
-
-protected:
-    /**
-     * Upon server message reception an implementation shall call this function.
-     *
-     * @param connection_handle The handle of the connection which has received
-     * the server message.
-     * @param server_message The message received from the server.
-     */
-    void on_server_event(
-        connection_handle_t connection_handle,
-        const AttServerMessage& server_message
-    );
-
-    /**
-     * Upon transaction timeout an implementation shall call this function.
-     *
-     * @param connection_handle The handle of the connection of the transaction
-     * which has times out.
-     *
-     * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part F Section 3.3.3
-     * @note see BLUETOOTH SPECIFICATION Version 5.0 | Vol 3, Part G Section 4.4.14
-     */
-    void on_transaction_timeout(
-        connection_handle_t connection_handle
-    );
+     virtual PalGattClientEventHandler* get_event_handler() = 0;
 };
 
 } // namespace interface

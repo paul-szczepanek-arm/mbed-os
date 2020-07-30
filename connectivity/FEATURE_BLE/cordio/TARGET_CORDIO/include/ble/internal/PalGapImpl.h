@@ -328,7 +328,12 @@ public:
     PalGapEventHandler *get_event_handler();
 
 private:
-
+    /**
+     * Called this function whenever the LE subsystem
+     * generate a PalGap event.
+     *
+     * @param gap_event The event to emit to higher layer.
+     */
     void emit_gap_event(const GapEvent &gap_event)
     {
         if (_gap_event_cb) {
@@ -495,6 +500,27 @@ private:
         address_t peer_address,
         advertising_peer_address_type_t peer_address_type
     );
+
+    /**
+     * Create an ALL_PHYS parameter used in LE Set PHY Command
+     * and LE Set Default PHY Command.
+     * @see BLUETOOTH SPECIFICATION Version 5.0 | Vol 2, Part E - 7.8.49
+     */
+    static uint8_t create_all_phys_value(
+        const phy_set_t &tx_phys,
+        const phy_set_t &rx_phys
+    )
+    {
+        /* if phy set is empty set corresponding all_phys bit to 1 */
+        uint8_t all_phys = 0;
+        if (tx_phys.value() == 0) {
+            all_phys |= 0x01;
+        }
+        if (rx_phys.value() == 0) {
+            all_phys |= 0x02;
+        }
+        return all_phys;
+    }
 
 private:
     PalGapEventHandler* _pal_event_handler;

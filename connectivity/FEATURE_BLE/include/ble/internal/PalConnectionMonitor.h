@@ -74,7 +74,7 @@ public:
 class PalConnectionMonitor {
 
 protected:
-    PalConnectionMonitor() : _connection_event_handler(NULL) { }
+    PalConnectionMonitor() : _connection_event_handler(nullptr) { }
 
     PalConnectionMonitorEventHandler* _connection_event_handler;
 

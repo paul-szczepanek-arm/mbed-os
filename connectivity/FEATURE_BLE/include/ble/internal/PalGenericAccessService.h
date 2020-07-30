@@ -34,16 +34,7 @@ namespace interface {
  * server.
  */
 struct PalGenericAccessService {
-    /**
-     * Empty, default, constructor
-     */
-    PalGenericAccessService() { }
-
-    /**
-     * Virtual destructor
-     */
-    virtual ~PalGenericAccessService() { }
-
+public:
     /**
      * Acquire the peripheral preferred connection parameters stored in the GAP
      * GATT service.
@@ -59,7 +50,7 @@ struct PalGenericAccessService {
      */
      virtual ble_error_t get_peripheral_preferred_connection_parameters(
          ble::Gap::PreferredConnectionParams_t& parameters
-    ) = 0;
+     ) = 0;
 
     /**
      * set the value of the peripheral preferred connection parameters stored in
@@ -76,16 +67,11 @@ struct PalGenericAccessService {
      */
     virtual ble_error_t set_peripheral_preferred_connection_parameters(
         const ble::Gap::PreferredConnectionParams_t& parameters
-   ) = 0;
-
-private:
-    PalGenericAccessService(const PalGenericAccessService&);
-    PalGenericAccessService& operator=(const PalGenericAccessService&);
+    ) = 0;
 };
 
 } // namespace interface
 } // namespace ble
-
 
 #if (BLE_PAL_API_IMPLEMENTATION == 1)
 #include "ble/internal/PalGenericAccessServiceImpl.h"

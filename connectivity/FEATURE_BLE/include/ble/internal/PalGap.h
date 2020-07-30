@@ -253,7 +253,6 @@ namespace interface {
  */
 class PalGap {
 public:
-
     /**
      * Initialisation of the instance. An implementation can use this function
      * to initialise the subsystems needed to realize the operations of this
@@ -264,7 +263,7 @@ public:
      * @return BLE_ERROR_NONE if the request has been successfully sent or the
      * appropriate error otherwise.
      */
-    ble_error_t initialize();
+    virtual ble_error_t initialize() = 0;
 
     /**
      * Termination of the instance. An implementation can use this function
@@ -277,7 +276,7 @@ public:
      * @return BLE_ERROR_NONE if the request has been successfully sent or the
      * appropriate error otherwise.
      */
-    ble_error_t terminate();
+    virtual ble_error_t terminate() = 0;
 
     /**
      * Return the public device address.
@@ -287,7 +286,7 @@ public:
      *
      * @return the public device address.
      */
-    address_t get_device_address();
+    virtual address_t get_device_address() = 0;
 
     /**
      * Return the current random address.
@@ -297,7 +296,7 @@ public:
      *
      * @return the random device address.
      */
-    address_t get_random_address();
+    virtual address_t get_random_address() = 0;
 
     /**
      * Set the random address which will used be during scan, connection or
@@ -311,7 +310,7 @@ public:
      * @return BLE_ERROR_NONE if the request has been successfully sent or the
      * appropriate error otherwise.
      */
-    ble_error_t set_random_address(const address_t &address);
+    virtual ble_error_t set_random_address(const address_t &address) = 0;
 
     /**
      * Set the random device address used by an advertising set.
@@ -333,10 +332,10 @@ public:
      * @note See Bluetooth 5 Vol 2, Part E: 7.8.52 LE Set Advertising Set Random
      * Address Command
      */
-    ble_error_t set_advertising_set_random_address(
+    virtual ble_error_t set_advertising_set_random_address(
         advertising_handle_t advertising_handle,
         const address_t &address
-    );
+    ) = 0;
 
     /**
      * Set the advertising parameters which will be used during the advertising
@@ -395,7 +394,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.5 LE set advertising parameters
      * command.
      */
-    ble_error_t set_advertising_parameters(
+    virtual ble_error_t set_advertising_parameters(
         uint16_t advertising_interval_min,
         uint16_t advertising_interval_max,
         advertising_type_t advertising_type,
@@ -404,7 +403,7 @@ public:
         const address_t &peer_address,
         advertising_channel_map_t advertising_channel_map,
         advertising_filter_policy_t advertising_filter_policy
-    );
+    ) = 0;
 
     /**
      * Define the advertising parameters of an advertising set.
@@ -465,7 +464,7 @@ public:
      * @pre @p advertising_handle should not be enabled when this command is
      * issued.
      */
-    ble_error_t set_extended_advertising_parameters(
+    virtual ble_error_t set_extended_advertising_parameters(
         advertising_handle_t advertising_handle,
         advertising_event_properties_t event_properties,
         advertising_interval_t primary_advertising_interval_min,
@@ -481,7 +480,7 @@ public:
         phy_t secondary_phy,
         uint8_t advertising_sid,
         bool scan_request_notification
-    );
+    ) = 0;
 
     /**
      * Configure periodic advertising parameters of an advertising set.
@@ -509,12 +508,12 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.61 LE Set Periodic Advertising
      * Parameters Command
      */
-    ble_error_t set_periodic_advertising_parameters(
+    virtual ble_error_t set_periodic_advertising_parameters(
         advertising_handle_t advertising_handle,
         periodic_advertising_interval_t periodic_advertising_min,
         periodic_advertising_interval_t periodic_advertising_max,
         bool advertise_power
-    );
+    ) = 0;
 
     /**
      * Set the data sends in advertising packet. If the advertising is
@@ -533,10 +532,10 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.5 LE set advertising data
      * command.
      */
-    ble_error_t set_advertising_data(
+    virtual ble_error_t set_advertising_data(
         uint8_t advertising_data_length,
         const advertising_data_t &advertising_data
-    );
+    ) = 0;
 
     /**
      * Set data in advertising PDUs.
@@ -569,13 +568,13 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.54 LE set extended advertising
      * data command.
      */
-    ble_error_t set_extended_advertising_data(
+    virtual ble_error_t set_extended_advertising_data(
         advertising_handle_t advertising_handle,
         advertising_fragment_description_t operation,
         bool minimize_fragmentation,
         uint8_t advertising_data_size,
         const uint8_t *advertising_data
-    );
+    ) = 0;
 
     /**
      * Set the data used in periodic advertising PDUs.
@@ -602,12 +601,12 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.62 LE set periodic advertising
      * data command.
      */
-    ble_error_t set_periodic_advertising_data(
+    virtual ble_error_t set_periodic_advertising_data(
         advertising_handle_t advertising_handle,
         advertising_fragment_description_t fragment_description,
         uint8_t advertising_data_size,
         const uint8_t *advertising_data
-    );
+    ) = 0;
 
     /**
      * Set the data sends in scan response packets. If the advertising is
@@ -626,10 +625,10 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.8 LE set scan response data
      * command.
      */
-    ble_error_t set_scan_response_data(
+    virtual ble_error_t set_scan_response_data(
         uint8_t scan_response_data_length,
         const advertising_data_t &scan_response_data
-    );
+    ) = 0;
 
     /**
      * Set the data sends in extended scan response packets.  If the advertising
@@ -656,13 +655,13 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.55 LE set extended scan response
      * data command.
      */
-    ble_error_t set_extended_scan_response_data(
+    virtual ble_error_t set_extended_scan_response_data(
         advertising_handle_t advertising_handle,
         advertising_fragment_description_t operation,
         bool minimize_fragmentation,
         uint8_t scan_response_data_size,
         const uint8_t *scan_response_data
-    );
+    ) = 0;
 
     /**
      * Start or stop advertising.
@@ -704,7 +703,7 @@ public:
      * @note Successfull connection shall emit a ConnectionComplete event. It
      * also means advertising is disabled.
      */
-    ble_error_t advertising_enable(bool enable);
+    virtual ble_error_t advertising_enable(bool enable) = 0;
 
     /**
      * Start of stop advertising of extended advertising sets.
@@ -741,13 +740,13 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.56 LE extended advertising enable
      * command.
      */
-    ble_error_t extended_advertising_enable(
+    virtual ble_error_t extended_advertising_enable(
         bool enable,
         uint8_t number_of_sets,
         const advertising_handle_t *handles,
         const uint16_t *durations,
         const uint8_t *max_extended_advertising_events
-    );
+    ) = 0;
 
     /**
      * Enable or disable periodic advertising of an advertising set.
@@ -764,10 +763,10 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.63 LE periodic advertising enable
      * command.
      */
-    ble_error_t periodic_advertising_enable(
+    virtual ble_error_t periodic_advertising_enable(
         bool enable,
         advertising_handle_t advertising_handle
-    );
+    ) = 0;
 
     /**
      * Query the maximum data length the controller supports in an advertising
@@ -779,7 +778,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.57 LE read maximum advertising
      * data length command.
      */
-    uint16_t get_maximum_advertising_data_length();
+    virtual uint16_t get_maximum_advertising_data_length() = 0;
 
     /**
      * Query the maximum data length the controller supports in an advertising set
@@ -788,7 +787,7 @@ public:
      * @return The length in byte the controller can support in an advertising set
      * for connectable advertising.
      */
-    uint16_t get_maximum_connectable_advertising_data_length();
+    virtual uint16_t get_maximum_connectable_advertising_data_length() = 0;
 
     /**
      * Query the maximum payload length for a single HCI packet carrying partial
@@ -796,7 +795,7 @@ public:
      *
      * @return Max size of the HCI packet transporting the data.
      */
-    uint8_t get_maximum_hci_advertising_data_length();
+    virtual uint8_t get_maximum_hci_advertising_data_length() = 0;
 
     /**
      * Query the maximum number of concurrent advertising sets that is supported
@@ -808,7 +807,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.58 LE number of supported
      * advertising sets command.
      */
-    uint8_t get_max_number_of_advertising_sets();
+    virtual uint8_t get_max_number_of_advertising_sets() = 0;
 
     /**
      * Remove an advertising set from the controller.
@@ -828,9 +827,9 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.59 LE remove advertising set
      * command.
      */
-    ble_error_t remove_advertising_set(
+    virtual ble_error_t remove_advertising_set(
         advertising_handle_t advertising_handle
-    );
+    ) = 0;
 
     /**
      * Remove all advertising sets maintained by the controller.
@@ -843,7 +842,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.60 LE clear advertising sets
      * command.
      */
-    ble_error_t clear_advertising_sets();
+    virtual ble_error_t clear_advertising_sets() = 0;
 
 
     /**
@@ -873,13 +872,13 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.10 LE set scan parameters
      * command.
      */
-    ble_error_t set_scan_parameters(
+    virtual ble_error_t set_scan_parameters(
         bool active_scanning,
         uint16_t scan_interval,
         uint16_t scan_window,
         own_address_type_t own_address_type,
         scanning_filter_policy_t filter_policy
-    );
+    ) = 0;
 
     /**
      * Set extended scan parameters to be used on advertising channels.
@@ -909,14 +908,14 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.64 LE set extended scan parameters
      * command.
      */
-    ble_error_t set_extended_scan_parameters(
+    virtual ble_error_t set_extended_scan_parameters(
         own_address_type_t own_address_type,
         scanning_filter_policy_t filter_policy,
         phy_set_t scanning_phys,
         const bool *active_scanning,
         const uint16_t *scan_interval,
         const uint16_t *scan_window
-    );
+    ) = 0;
 
     /**
      * Start/stop scanning process.
@@ -926,7 +925,7 @@ public:
      *
      * @parameter enable Start the scanning process if true and stop it if
      * false. If the scan process is already started, enabling it again will
-     * only update the duplicate filtering; based on the new parameter.
+     * only update the duplicate filtering = 0; based on the new parameter.
      *
      * @parameter filter_duplicates Enable duplicate filtering if true,
      * otherwise disable it.
@@ -939,10 +938,10 @@ public:
      *
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.11 LE set scan enable command.
      */
-    ble_error_t scan_enable(
+    virtual ble_error_t scan_enable(
         bool enable,
         bool filter_duplicates
-    );
+    ) = 0;
 
     /**
      * Enable or disable extended scanning.
@@ -965,12 +964,12 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.65 LE set extended scan enable
      * command.
      */
-    ble_error_t extended_scan_enable(
+    virtual ble_error_t extended_scan_enable(
         bool enable,
         duplicates_filter_t filter_duplicates,
         uint16_t duration,
         uint16_t period
-    );
+    ) = 0;
 
     /**
      * Synchronize an observer with a periodic advertising broadcaster.
@@ -1001,14 +1000,14 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.67 LE periodic advertising create
      * sync command.
      */
-    ble_error_t periodic_advertising_create_sync(
+    virtual ble_error_t periodic_advertising_create_sync(
         bool use_periodic_advertiser_list,
         uint8_t advertising_sid,
         peer_address_type_t peer_address_type,
         const address_t &peer_address,
         uint16_t allowed_skip,
         uint16_t sync_timeout
-    );
+    ) = 0;
 
     /**
      * Cancel the establishment of synchronization with a periodic advertising
@@ -1022,7 +1021,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.68 LE periodic advertising create
      * sync cancel command.
      */
-    ble_error_t cancel_periodic_advertising_create_sync();
+    virtual ble_error_t cancel_periodic_advertising_create_sync() = 0;
 
     /**
      * Stop reception of the periodic advertising identified by @p sync_handle.
@@ -1037,9 +1036,9 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.69 LE periodic advertising
      * terminate sync command.
      */
-    ble_error_t periodic_advertising_terminate_sync(
+    virtual ble_error_t periodic_advertising_terminate_sync(
         sync_handle_t sync_handle
-    );
+    ) = 0;
 
     /**
      * Add a device to the periodic advertiser list stored in the controller.
@@ -1064,11 +1063,11 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.70 LE add device to periodic
      * advertising list command.
      */
-    ble_error_t add_device_to_periodic_advertiser_list(
+    virtual ble_error_t add_device_to_periodic_advertiser_list(
         advertising_peer_address_type_t advertiser_address_type,
         const address_t &advertiser_address,
         uint8_t advertising_sid
-    );
+    ) = 0;
 
     /**
      * Remove a device from the periodic advertiser list.
@@ -1088,11 +1087,11 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.71 LE remove device from periodic
      * advertising list command.
      */
-    ble_error_t remove_device_from_periodic_advertiser_list(
+    virtual ble_error_t remove_device_from_periodic_advertiser_list(
         advertising_peer_address_type_t advertiser_address_type,
         const address_t &advertiser_address,
         uint8_t advertising_sid
-    );
+    ) = 0;
 
     /**
      * Clear all devices from the list of periodic advertisers.
@@ -1105,7 +1104,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.72 LE clear periodic advertising
      * list command.
      */
-    ble_error_t clear_periodic_advertiser_list();
+    virtual ble_error_t clear_periodic_advertiser_list() = 0;
 
     /**
      * Return the total number of entries that can be stored by the periodic
@@ -1115,7 +1114,7 @@ public:
      *
      * @note We (wrongfully) assume that value doesn't change over time.
      */
-    uint8_t read_periodic_advertiser_list_size();
+    virtual uint8_t read_periodic_advertiser_list_size() = 0;
 
     /**
      * Create a new le connection to a connectable advertiser.
@@ -1188,7 +1187,7 @@ public:
      *
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.12 LE create connection command.
      */
-    ble_error_t create_connection(
+    virtual ble_error_t create_connection(
         uint16_t scan_interval,
         uint16_t scan_window,
         initiator_policy_t initiator_policy,
@@ -1201,7 +1200,7 @@ public:
         uint16_t supervision_timeout,
         uint16_t minimum_connection_event_length,
         uint16_t maximum_connection_event_length
-    );
+    ) = 0;
 
     /**
      * Create a new le connection to a connectable advertiser.
@@ -1280,7 +1279,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.66 LE extended create connection
      * command.
      */
-    ble_error_t extended_create_connection(
+    virtual ble_error_t extended_create_connection(
         initiator_policy_t initiator_policy,
         own_address_type_t own_address_type,
         peer_address_type_t peer_address_type,
@@ -1294,7 +1293,7 @@ public:
         const uint16_t *supervision_timeouts,
         const uint16_t *minimum_connection_event_lengths,
         const uint16_t *maximum_connection_event_lengths
-    );
+    ) = 0;
 
     /**
      * Cancel the ongoing connection creation process.
@@ -1305,7 +1304,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.13 LE create connection cancel
      * command.
      */
-    ble_error_t cancel_connection_creation();
+    virtual ble_error_t cancel_connection_creation() = 0;
 
     /**
      * Return the number of total whitelist entries that can be stored in the
@@ -1319,7 +1318,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.14 LE read white list size
      * command.
      */
-    uint8_t read_white_list_capacity();
+    virtual uint8_t read_white_list_capacity() = 0;
 
     /**
      * Clear the whitelist stored in the LE subsystem.
@@ -1332,7 +1331,7 @@ public:
      *
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.15 LE clear white list command.
      */
-    ble_error_t clear_whitelist();
+    virtual ble_error_t clear_whitelist() = 0;
 
     /**
      * Add a device to the LE subsystem Whitelist.
@@ -1351,10 +1350,10 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.16 LE add device to white list
      * command.
      */
-    ble_error_t add_device_to_whitelist(
+    virtual ble_error_t add_device_to_whitelist(
         whitelist_address_type_t address_type,
         address_t address
-    );
+    ) = 0;
 
     /**
      * Remove a device from the LE subsystem Whitelist.
@@ -1373,10 +1372,10 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.17 LE remove device from white
      * list command.
      */
-    ble_error_t remove_device_from_whitelist(
+    virtual ble_error_t remove_device_from_whitelist(
         whitelist_address_type_t address_type,
         address_t address
-    );
+    ) = 0;
 
     /**
      * Start a connection update procedure.
@@ -1435,7 +1434,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.18 LE Connection update command.
      *
      */
-    ble_error_t connection_parameters_update(
+    virtual ble_error_t connection_parameters_update(
         connection_handle_t connection,
         uint16_t connection_interval_min,
         uint16_t connection_interval_max,
@@ -1443,7 +1442,7 @@ public:
         uint16_t supervision_timeout,
         uint16_t minimum_connection_event_length,
         uint16_t maximum_connection_event_length
-    );
+    ) = 0;
 
     /**
      * Accept connection parameter request.
@@ -1502,7 +1501,7 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.31 LE remote connection parameter
      * request reply command.
      */
-    ble_error_t accept_connection_parameter_request(
+    virtual ble_error_t accept_connection_parameter_request(
         connection_handle_t connection_handle,
         uint16_t interval_min,
         uint16_t interval_max,
@@ -1510,7 +1509,7 @@ public:
         uint16_t supervision_timeout,
         uint16_t minimum_connection_event_length,
         uint16_t maximum_connection_event_length
-    );
+    ) = 0;
 
     /**
      * Reject a connection parameter update request.
@@ -1527,10 +1526,10 @@ public:
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.32 LE Remote Connection Parameter
      * Request Negative Reply Command.
      */
-    ble_error_t reject_connection_parameter_request(
+    virtual ble_error_t reject_connection_parameter_request(
         connection_handle_t connection_handle,
         hci_error_code_t rejection_reason
-    );
+    ) = 0;
 
     /**
      * Start a disconnection procedure.
@@ -1548,10 +1547,10 @@ public:
      *
      * @note: See Bluetooth 5 Vol 2 PartE: 7.1.6 disconenct command.
      */
-    ble_error_t disconnect(
+    virtual ble_error_t disconnect(
         connection_handle_t connection,
         local_disconnection_reason_t disconnection_reason
-    );
+    ) = 0;
 
     /** Check if privacy feature is supported by implementation
      *
@@ -1559,7 +1558,7 @@ public:
      *
      * @note: See Bluetooth 5 Vol 3 Part C: 10.7 Privacy feature.
      */
-    bool is_privacy_supported();
+    virtual bool is_privacy_supported() = 0;
 
     /** Enable or disable private addresses resolution
      *
@@ -1570,9 +1569,9 @@ public:
      *
      * @note: See Bluetooth 5 Vol 2 PartE: 7.8.44 LE Set Address Resolution Enable command.
      */
-    ble_error_t set_address_resolution(
+    virtual ble_error_t set_address_resolution(
         bool enable
-    );
+    ) = 0;
 
     /**
      * Checked support for a feature in the link controller.
@@ -1580,32 +1579,32 @@ public:
      * @param feature feature to be checked.
      * @return TRUE if feature is supported.
      */
-    bool is_feature_supported(
+    virtual bool is_feature_supported(
         controller_supported_features_t feature
-    );
+    ) = 0;
 
     /**
     * @see PalGap::readPhy
     */
-    ble_error_t read_phy(connection_handle_t connection);
+    virtual ble_error_t read_phy(connection_handle_t connection) = 0;
 
     /**
     * @see PalGap::setPreferredPhys
     */
-    ble_error_t set_preferred_phys(
+    virtual ble_error_t set_preferred_phys(
         const phy_set_t &tx_phys,
         const phy_set_t &rx_phys
-    );
+    ) = 0;
 
     /**
     * @see PalGap::setPhy
     */
-    ble_error_t set_phy(
+    virtual ble_error_t set_phy(
         connection_handle_t connection,
         const phy_set_t &tx_phys,
         const phy_set_t &rx_phys,
         coded_symbol_per_bit_t coded_symbol
-    );
+    ) = 0;
 
     /**
      * Register a callback which will handle PalGap events.
@@ -1614,7 +1613,7 @@ public:
      * LE subsystem.
      * It accept a single parameter in input: The event received.
      */
-    void when_gap_event_received(mbed::Callback<void(const GapEvent &)> cb);
+    virtual void when_gap_event_received(mbed::Callback<void(const GapEvent &)> cb) = 0;
 
     /**
     * Sets the event handler that us called by the PAL porters to notify the stack of events
@@ -1623,48 +1622,13 @@ public:
     * @param[in] event_handler the new event handler interface implementation. Memory
     * owned by caller who is responsible for updating this pointer if interface changes.
     */
-    void set_event_handler(PalGapEventHandler *event_handler);
-
-    PalGapEventHandler *get_event_handler();
-
-protected:
-    PalGap() { };
-    ~PalGap() { };
+    virtual void set_event_handler(PalGapEventHandler *event_handler) = 0;
 
     /**
-     * Implementation shall call this function whenever the LE subsystem
-     * generate a PalGap event.
-     *
-     * @param gap_event The event to emit to higher layer.
+     * Return the registered event handler.
+     * @return Pointer to event handler
      */
-    void emit_gap_event(const GapEvent &gap_event);
-
-public:
-    /**
-     * Create an ALL_PHYS parameter used in LE Set PHY Command
-     * and LE Set Default PHY Command.
-     * @see BLUETOOTH SPECIFICATION Version 5.0 | Vol 2, Part E - 7.8.49
-     */
-    static uint8_t create_all_phys_value(
-        const phy_set_t &tx_phys,
-        const phy_set_t &rx_phys
-    )
-    {
-        /* if phy set is empty set corresponding all_phys bit to 1 */
-        uint8_t all_phys = 0;
-        if (tx_phys.value() == 0) {
-            all_phys |= 0x01;
-        }
-        if (rx_phys.value() == 0) {
-            all_phys |= 0x02;
-        }
-        return all_phys;
-    }
-
-private:
-    // Disallow copy construction and copy assignment.
-    PalGap(const PalGap &);
-    PalGap &operator=(const PalGap &);
+    virtual PalGapEventHandler *get_event_handler() = 0;
 };
 
 } // namespace interface
