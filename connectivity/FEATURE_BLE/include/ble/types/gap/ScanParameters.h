@@ -104,8 +104,8 @@ public:
         }
 
     private:
-        scan_window_t interval;
-        scan_interval_t window;
+        scan_interval_t interval;
+        scan_window_t window;
         bool active_scanning;
     };
 
