@@ -47,6 +47,7 @@ class SecurityManager :
     friend class ble::PalConnectionMonitorEventHandler;
     friend BLEInstanceBase;
     friend PalGenericAccessService;
+    friend PalSecurityManager;
 
 public:
     ////////////////////////////////////////////////////////////////////////////
@@ -196,7 +197,7 @@ public:
     /*                    private implementation follows                     */
 
     /* implements PalSecurityManager::EventHandler */
-public:
+private:
     ////////////////////////////////////////////////////////////////////////////
     // Pairing
     //
