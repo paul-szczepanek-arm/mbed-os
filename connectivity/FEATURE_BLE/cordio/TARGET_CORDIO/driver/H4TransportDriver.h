@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef IMPL_H4_TRANSPORT_DRIVER_H_
-#define IMPL_H4_TRANSPORT_DRIVER_H_
+#ifndef CORDIO_H4_TRANSPORT_DRIVER_H_
+#define CORDIO_H4_TRANSPORT_DRIVER_H_
 
 #if (DEVICE_SERIAL && DEVICE_SERIAL_FC) || defined(DOXYGEN_ONLY)
 
@@ -78,4 +78,4 @@ private:
 
 #endif
 
-#endif /* IMPL_H4_TRANSPORT_DRIVER_H_ */
+#endif /* CORDIO_H4_TRANSPORT_DRIVER_H_ */
