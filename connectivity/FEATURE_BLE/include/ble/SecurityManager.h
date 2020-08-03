@@ -945,6 +945,7 @@ public:
 #endif
 
 #if (BLE_IMPORT_API_MODULES_INTO_GLOBAL_NAMESPACE == 1)
+#warning ("Deprecated since mbed-os-6.3.0. Use the namespaced ble::SecurityManager instead of the global SecurityManager.")
 using ble::SecurityManager;
 #endif
 
