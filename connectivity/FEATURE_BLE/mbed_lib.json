@@ -12,11 +12,6 @@
             "value": 1,
             "macro_name": "BLE_PAL_API_IMPLEMENTATION"
         },
-        "ble-import-api-modules-into-global-namespace": {
-            "help": "Imports Gap, GattServer, GattClient, SecurityManager which are in namespace ble into the global namespace.",
-            "value": true,
-            "macro_name": "BLE_IMPORT_API_MODULES_INTO_GLOBAL_NAMESPACE"
-        },
         "ble-role-observer": {
             "help": "Include observer BLE role support (scanning for and processing advertising packets).",
             "value": true,

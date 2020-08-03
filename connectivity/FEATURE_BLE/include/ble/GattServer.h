@@ -673,9 +673,7 @@ protected:
 #error "please provide alternate BLE implementation"
 #endif
 
-#if (BLE_IMPORT_API_MODULES_INTO_GLOBAL_NAMESPACE == 1)
-#warning ("Deprecated since mbed-os-6.3.0. Use the namespaced ble::GattServer instead of the global GattServer.")
+/** @deprecated Use the namespaced ble::GattServer instead of the global GattServer. */
 using ble::GattServer;
-#endif
 
 #endif /* ifndef MBED_GATT_SERVER_H__ */
