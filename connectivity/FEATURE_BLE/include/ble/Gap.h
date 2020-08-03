@@ -1453,11 +1453,14 @@ public:
 #endif // !defined(DOXYGEN_ONLY)
 } // namespace ble
 
-
-#endif // BLE_GAP_GAP_H
-
 #if (BLE_API_IMPLEMENTATION == 1)
 #include "ble/internal/GapImpl.h"
 #else
 #error "please provide alternate BLE implementation"
 #endif
+
+#if (BLE_IMPORT_API_MODULES_INTO_GLOBAL_NAMESPACE == 1)
+using ble::Gap;
+#endif
+
+#endif // BLE_GAP_GAP_H

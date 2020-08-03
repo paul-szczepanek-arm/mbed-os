@@ -673,4 +673,8 @@ protected:
 #error "please provide alternate BLE implementation"
 #endif
 
+#if (BLE_IMPORT_API_MODULES_INTO_GLOBAL_NAMESPACE == 1)
+using ble::GattServer;
+#endif
+
 #endif /* ifndef MBED_GATT_SERVER_H__ */

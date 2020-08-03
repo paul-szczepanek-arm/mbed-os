@@ -944,4 +944,8 @@ public:
 #error "please provide alternate BLE implementation"
 #endif
 
+#if (BLE_IMPORT_API_MODULES_INTO_GLOBAL_NAMESPACE == 1)
+using ble::SecurityManager;
+#endif
+
 #endif /*BLE_SECURITY_MANAGER_H_*/

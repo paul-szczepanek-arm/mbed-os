@@ -722,4 +722,8 @@ public:
 #error "please provide alternate BLE implementation"
 #endif
 
+#if (BLE_IMPORT_API_MODULES_INTO_GLOBAL_NAMESPACE == 1)
+using ble::GattClient;
+#endif
+
 #endif /* ifndef MBED_GATT_CLIENT_H__ */
