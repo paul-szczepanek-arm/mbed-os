@@ -22,7 +22,6 @@
 #include <algorithm>
 #include "ble/GattServer.h"
 #include "ble/internal/BLEInstanceBase.h"
-#include "mbed.h"
 #include "wsf_types.h"
 #include "att_api.h"
 
