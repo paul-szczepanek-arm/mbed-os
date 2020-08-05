@@ -921,15 +921,9 @@ public:
 
 public:
 #if !defined(DOXYGEN_ONLY)
-    /** For backwards compatibility. This enm is now in BLETypes.h
-     * @deprecated, use the enum in ble namespace */
-    enum Keypress_t {
-        KEYPRESS_STARTED,   /**< Passkey entry started */
-        KEYPRESS_ENTERED,   /**< Passkey digit entered */
-        KEYPRESS_ERASED,    /**< Passkey digit erased */
-        KEYPRESS_CLEARED,   /**< Passkey cleared */
-        KEYPRESS_COMPLETED, /**< Passkey entry completed */
-    };
+    /** For backwards compatibility. This enum is now in BLETypes.h
+     * @deprecated use the enum in ble namespace */
+    typedef ble::Keypress_t Keypress_t;
 #endif // !defined(DOXYGEN_ONLY)
 };
 

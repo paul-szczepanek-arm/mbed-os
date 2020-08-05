@@ -188,9 +188,10 @@ public:
      * @return A reference to a single object.
      *
      * @pre id shall be less than NUM_INSTANCES.
-     * @deprecated BLE singleton supports one instance. You may create multiple instances by using the constructor.
-     * Please use BLE::Instance().
+     *
      */
+    MBED_DEPRECATED_SINCE("mbed-os-6.3.0", "BLE singleton supports one instance. You may create multiple"
+                          "instances by using the constructor. Please use BLE::Instance().")
     static BLE &Instance(InstanceID_t id)
     {
         return Instance();
@@ -200,8 +201,9 @@ public:
      * Fetch the ID of a BLE instance.
      *
      * @return Instance id of this BLE instance.
-     * @deprecated BLE singleton supports one instance. You may create multiple instances by using the constructor.
      */
+    MBED_DEPRECATED_SINCE("mbed-os-6.3.0", "BLE singleton supports one instance. You may create multiple"
+                          "instances by using the constructor.")
     InstanceID_t getInstanceID(void) const
     {
         return DEFAULT_INSTANCE;
