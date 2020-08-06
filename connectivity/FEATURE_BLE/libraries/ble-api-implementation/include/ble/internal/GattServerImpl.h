@@ -33,7 +33,6 @@
 #include "att_api.h"
 #include "SecurityManager.h"
 
-#include "ble/BLE.h"
 #include "ble/types/GattCallbackParamTypes.h"
 #include "ble/internal/PalSigningMonitor.h"
 

@@ -28,16 +28,15 @@
 #include "ble/types/BLETypes.h"
 #include "ble/types/blecommon.h"
 
+#include "ble/Gap.h"
+#include "ble/GattClient.h"
+#include "ble/GattServer.h"
+#include "ble/SecurityManager.h"
 
 /* Forward declaration for the implementation class */
 
 namespace ble {
 class BLEInstanceBase;
-class Gap;
-class GattClient;
-class GattServer;
-class SecurityManager;
-}
 
 /**
  * @addtogroup ble
@@ -477,6 +476,9 @@ private:
     bool event_signaled;
 };
 
+}
+
+using ble::BLE;
 /**
  * @namespace ble Entry namespace for all %BLE API definitions.
  */

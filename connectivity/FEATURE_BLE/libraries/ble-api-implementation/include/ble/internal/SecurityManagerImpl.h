@@ -34,9 +34,10 @@
 #include "ble/internal/PalSigningMonitor.h"
 #include "ble/internal/PalSecurityManager.h"
 #include "ble/SecurityManager.h"
-#include "ble/internal/BLEInstanceBase.h"
 
 namespace ble {
+
+class BLEInstanceBase;
 
 class SecurityManager :
     public ble::interface::SecurityManager,

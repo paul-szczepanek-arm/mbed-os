@@ -31,8 +31,6 @@
 #include "ble/Gap.h"
 #include "SecurityManager.h"
 
-#include "ble/BLE.h"
-
 namespace ble {
 
 /**
