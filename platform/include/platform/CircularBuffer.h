@@ -260,6 +260,20 @@ public:
         return pop(dest, N);
     }
 
+    /**
+     * Pop multiple elements from the buffer.
+     *
+     * @param dest The array which will receive the elements.
+     *
+     * @return The number of elements popped.
+     */
+    CounterType pop(mbed::Span<T>& dest)
+    {
+        CounterType popped = pop(dest.data(), dest.size());
+        dest = mbed::make_Span(dest.data(), popped);
+        return popped;
+    }
+
     /** Check if the buffer is empty.
      *
      * @return True if the buffer is empty, false if not.
