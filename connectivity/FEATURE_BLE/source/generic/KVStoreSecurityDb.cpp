@@ -300,6 +300,11 @@ void KVStoreSecurityDb::restore()
     db_read(&_local_identity, DB_LOCAL_IDENTITY);
     db_read(&_local_csrk, DB_LOCAL_CSRK);
     db_read(&_local_sign_counter, DB_LOCAL_SIGN_COUNT);
+
+    /* after restore all entry should be disconnected (we might have reset while connected) */
+    for (size_t i = 0; i < get_entry_count(); i++) {
+        _entries[i].flags.connected = false;
+    }
 }
 
 void KVStoreSecurityDb::sync(entry_handle_t db_handle)

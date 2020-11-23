@@ -321,6 +321,9 @@ void FileSecurityDb::restore()
     for (size_t i = 0; i < get_entry_count(); i++) {
         db_read(&_entries[i].flags, _entries[i].file_offset + DB_STORE_OFFSET_FLAGS);
         db_read(&_entries[i].peer_sign_counter, _entries[i].file_offset + DB_STORE_OFFSET_PEER_SIGNING_COUNT);
+
+        /* after restore all entry should be disconnected (we might have reset while connected) */
+        _entries[i].flags.connected = false;
     }
 
 }

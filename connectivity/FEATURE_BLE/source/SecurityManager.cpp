@@ -42,6 +42,11 @@ ble_error_t SecurityManager::reset()
     return impl->reset();
 }
 
+ble_error_t SecurityManager::syncBondingStateWithPersistentStorage(ble::connection_handle_t connectionHandle)
+{
+    return impl->syncBondingStateWithPersistentStorage(connectionHandle);
+}
+
 ble_error_t SecurityManager::preserveBondingStateOnReset(bool enable)
 {
     return impl->preserveBondingStateOnReset(enable);

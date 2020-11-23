@@ -503,6 +503,17 @@ public:
      */
     ble_error_t preserveBondingStateOnReset(bool enable);
 
+    /**
+     * Sync bonding state for a given connection with persistent storage. This is done automatically on
+     * disconnection but the user may want to call this earlier if reset is possible before disconnection.
+     *
+     * @note This is only meaningful when persistent storage is present.
+     *
+     * @param[in] connectionHandle Handle to identify the connection.
+     * @return BLE_ERROR_NONE or appropriate error code indicating the failure reason.
+     */
+    ble_error_t syncBondingStateWithPersistentStorage(::ble::connection_handle_t connectionHandle);
+
     ////////////////////////////////////////////////////////////////////////////
     // List management
     //

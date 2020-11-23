@@ -190,6 +190,21 @@ ble_error_t SecurityManager::reset()
     return BLE_ERROR_NONE;
 }
 
+ble_error_t SecurityManager::syncBondingStateWithPersistentStorage(ble::connection_handle_t connectionHandle)
+{
+    if (!_db) {
+        return BLE_ERROR_INITIALIZATION_INCOMPLETE;
+    }
+
+    ControlBlock_t *cb = get_control_block(connectionHandle);
+    if (!cb) {
+        return BLE_ERROR_INVALID_PARAM;
+    }
+
+    _db->sync(cb->db_entry);
+
+    return BLE_ERROR_NONE;
+}
 
 ble_error_t SecurityManager::preserveBondingStateOnReset(bool enabled)
 {

@@ -83,6 +83,8 @@ public:
 
     ble_error_t reset();
 
+    ble_error_t syncBondingStateWithPersistentStorage(ble::connection_handle_t connectionHandle);
+
     ble_error_t preserveBondingStateOnReset(bool enable);
 
     ////////////////////////////////////////////////////////////////////////////
