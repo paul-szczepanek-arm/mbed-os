@@ -28,7 +28,7 @@
 /* This test does not test anything, you may use it as a template for your unit tests.
  * It shows all the elements you need to use mocks for all the ble APIS. */
 
-class TestBLE : public testing::Test {
+class TestLinkLoss : public testing::Test {
 protected:
     void SetUp()
     {
@@ -42,7 +42,7 @@ protected:
     BLE* ble;
 };
 
-TEST_F(TestBLE, reset)
+TEST_F(TestLinkLoss, reset)
 {
     /* these are the user facing APIs */
     Gap &gap = ble->gap();
