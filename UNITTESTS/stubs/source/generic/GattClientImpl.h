@@ -18,8 +18,6 @@
 #ifndef BLE_GATTCLIENTSTUB_H
 #define BLE_GATTCLIENTSTUB_H
 
-#include "events/EventQueue.h"
-#include "events/mbed_events.h"
 
 namespace ble {
 namespace impl {

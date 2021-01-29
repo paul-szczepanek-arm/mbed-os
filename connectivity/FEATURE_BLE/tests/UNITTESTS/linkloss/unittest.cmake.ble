@@ -7,6 +7,7 @@ set(unittest-includes ${unittest-includes}
     ../connectivity/FEATURE_BLE/include/ble
     ../connectivity/FEATURE_BLE/include
     ../connectivity
+    ../UNITTESTS/stubs/fake
 )
 
 # Source files
@@ -25,6 +26,7 @@ set(unittest-sources
 set(unittest-test-sources
     ${CMAKE_CURRENT_LIST_DIR}/linkloss.cpp
     stubs/BLE.cpp
+    stubs/fake/events/EventQueue.cpp
 )
 
 set(unittest-test-flags

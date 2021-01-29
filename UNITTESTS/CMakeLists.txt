@@ -131,7 +131,7 @@ set(unittest-includes-base
   "${PROJECT_SOURCE_DIR}/../drivers/include/drivers/internal"
   "${PROJECT_SOURCE_DIR}/../hal"
   "${PROJECT_SOURCE_DIR}/../hal/include"
-  "${PROJECT_SOURCE_DIR}/../events/include"
+  #"${PROJECT_SOURCE_DIR}/../events/include"
   "${PROJECT_SOURCE_DIR}/../events/include/events/internal"
   "${PROJECT_SOURCE_DIR}/../events/source"
   "${PROJECT_SOURCE_DIR}/../rtos/include"
@@ -165,7 +165,7 @@ set(TEST_SUITES)
 
 # Get all matched tests.
 file(GLOB_RECURSE unittest-file-list
-  "../unittest.cmake" # matches any ../**/unittest.cmake
+  "../unittest.cmake.ble" # matches any ../**/unittest.cmake
 )
 
 if ("${unittest-file-list}" STREQUAL "")

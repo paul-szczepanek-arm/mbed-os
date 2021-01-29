@@ -24,6 +24,7 @@
 #include "ble/SecurityManager.h"
 
 #include "ble_mocks.h"
+#include "events/EventQueue.h"
 
 /* This test does not test anything, you may use it as a template for your unit tests.
  * It shows all the elements you need to use mocks for all the ble APIS. */
@@ -40,6 +41,7 @@ protected:
     }
 
     BLE* ble;
+    events::EventQueue queue;
 };
 
 TEST_F(TestLinkLoss, reset)
@@ -49,6 +51,9 @@ TEST_F(TestLinkLoss, reset)
     GattClient &client = ble->gattClient();
     GattServer &server = ble->gattServer();
     SecurityManager &sm = ble->securityManager();
+
+    queue.call([] { printf("event!!!!!!!!!!!!\r\n"); });
+    queue.dispatch_forever();
 
     /* they in turn call the implementations which are mocked and can have expectations set on them */
     EXPECT_CALL(ble::gap_mock(), reset());
