@@ -19,9 +19,12 @@
 #include <stdlib.h>
 
 #include "LoRaWANStack.h"
+#include "LoRaWANStack_stub.h"
 
 using namespace mbed;
 using namespace events;
+
+lorawan_gps_time_t LoRaWANStack_stub::gps_time_value = 0;
 
 /*****************************************************************************
  * Constructor                                                               *
@@ -120,6 +123,11 @@ int16_t LoRaWANStack::handle_rx(uint8_t *data, uint16_t length, uint8_t &port, i
 }
 
 lorawan_status_t LoRaWANStack::set_link_check_request()
+{
+    return LORAWAN_STATUS_OK;
+}
+
+lorawan_status_t LoRaWANStack::set_device_time_request()
 {
     return LORAWAN_STATUS_OK;
 }
@@ -252,7 +260,7 @@ void LoRaWANStack::mlme_indication_handler()
 {
 }
 
-void LoRaWANStack::mlme_confirm_handler()
+void LoRaWANStack::mlme_confirm_handler(loramac_mlme_confirm_t &mlme_confirm)
 {
 }
 
@@ -299,4 +307,36 @@ void LoRaWANStack::process_idle_state(lorawan_status_t &op_status)
 
 void LoRaWANStack::process_uninitialized_state(lorawan_status_t &op_status)
 {
+}
+
+void LoRaWANStack::remove_device_time_request(void)
+{
+}
+
+lorawan_gps_time_t LoRaWANStack::get_current_gps_time()
+{
+    return LoRaWANStack_stub::gps_time_value;
+}
+
+void LoRaWANStack::set_current_gps_time(lorawan_gps_time_t gps_time)
+{
+}
+
+lorawan_status_t LoRaWANStack::add_ping_slot_info_request(uint8_t periodicity)
+{
+    return LORAWAN_STATUS_OK;
+}
+
+void LoRaWANStack::remove_ping_slot_info_request()
+{
+}
+
+lorawan_status_t LoRaWANStack::enable_beacon_acquisition()
+{
+    return LORAWAN_STATUS_OK;
+}
+
+lorawan_status_t LoRaWANStack::get_last_rx_beacon(loramac_beacon_t &beacon)
+{
+    return LORAWAN_STATUS_NO_BEACON_FOUND;
 }

@@ -14,11 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "hal/rtc_api.h"
 
-#include "system/LoRaWANTimer.h"
+#include "platform/mbed_critical.h"
+#include "platform/mbed_rtc_time.h"
+#include "platform/SingletonPtr.h"
+#include "platform/PlatformMutex.h"
 
-namespace LoRaWANTimer_stub {
-extern lorawan_time_t time_value;
-extern bool call_cb_immediately;
-extern lorawan_gps_time_t gps_time;
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#if defined (__ICCARM__)
+time_t __time32(time_t *timer)
+#else
+time_t time(time_t *timer)
+#endif
+
+{
+    return 0;
 }
+
+void set_time(time_t t)
+{
+}
+
+void attach_rtc(time_t (*read_rtc)(void), void (*write_rtc)(time_t), void (*init_rtc)(void), int (*isenabled_rtc)(void))
+{
+}
+
+#ifdef __cplusplus
+}
+#endif

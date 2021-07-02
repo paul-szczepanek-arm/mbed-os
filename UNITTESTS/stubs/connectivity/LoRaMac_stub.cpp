@@ -27,6 +27,7 @@ int LoRaMac_stub::bool_true_counter = 0;
 bool LoRaMac_stub::bool_value = false;
 int LoRaMac_stub::int_value = 0;
 uint8_t LoRaMac_stub::uint8_value = 1;
+server_type_t LoRaMac_stub::stype = LW1_0_2;
 rx_slot_t LoRaMac_stub::slot_value = RX_SLOT_WIN_1;
 lorawan_status_t LoRaMac_stub::status_value = LORAWAN_STATUS_OK;
 loramac_mcps_confirm_t *LoRaMac_stub::mcps_conf_ptr = NULL;
@@ -35,6 +36,8 @@ loramac_mlme_confirm_t *LoRaMac_stub::mlme_conf_ptr = NULL;
 loramac_mlme_indication_t *LoRaMac_stub::mlme_ind_ptr = NULL;
 device_class_t LoRaMac_stub::dev_class_value = CLASS_A;
 mbed::Callback<void(void)> LoRaMac_stub::_scheduling_failure_handler = NULL;
+LoRaWANTimeHandler *LoRaMac_stub::time_handler_ptr = NULL;
+lorawan_gps_time_t LoRaMac_stub::gps_time_value = 0;
 
 LoRaMac::LoRaMac()
     : _lora_time(),
@@ -66,18 +69,9 @@ const loramac_mcps_indication_t *LoRaMac::get_mcps_indication() const
     return LoRaMac_stub::mcps_ind_ptr;
 }
 
-const loramac_mlme_confirm_t *LoRaMac::get_mlme_confirmation() const
-{
-    return LoRaMac_stub::mlme_conf_ptr;
-}
-
 const loramac_mlme_indication_t *LoRaMac::get_mlme_indication() const
 {
     return LoRaMac_stub::mlme_ind_ptr;
-}
-
-void LoRaMac::post_process_mlme_request()
-{
 }
 
 void LoRaMac::post_process_mcps_req()
@@ -102,7 +96,7 @@ rx_slot_t LoRaMac::get_current_slot(void)
     return LoRaMac_stub::slot_value;
 }
 
-void LoRaMac::handle_join_accept_frame(const uint8_t *payload, uint16_t size)
+loramac_event_info_status_t LoRaMac::handle_join_accept_frame(const uint8_t *payload, uint16_t size)
 {
 }
 
@@ -112,10 +106,9 @@ void LoRaMac::check_frame_size(uint16_t size)
 
 bool LoRaMac::message_integrity_check(const uint8_t *const payload,
                                       const uint16_t size,
-                                      uint8_t *const ptr_pos,
+                                      uint8_t *const ptr_pos, uint16_t confFCnt,
                                       uint32_t address,
-                                      uint32_t *downlink_counter,
-                                      const uint8_t *nwk_skey)
+                                      uint32_t *downlink_counter)
 {
     if (LoRaMac_stub::bool_false_counter) {
         LoRaMac_stub::bool_false_counter--;
@@ -132,19 +125,28 @@ bool LoRaMac::message_integrity_check(const uint8_t *const payload,
 void LoRaMac::extract_data_and_mac_commands(const uint8_t *payload,
                                             uint16_t size,
                                             uint8_t fopts_len,
-                                            uint8_t *nwk_skey,
-                                            uint8_t *app_skey,
                                             uint32_t address,
                                             uint32_t downlink_counter,
+                                            seq_counter_type_t cnt_type,
                                             int16_t rssi,
-                                            int8_t snr)
+                                            int8_t snr,
+                                            Callback<void(loramac_mlme_confirm_t &)> confirm_handler)
 {
+    if (LoRaMac_stub::mlme_conf_ptr) {
+        confirm_handler(*LoRaMac_stub::mlme_conf_ptr);
+    }
 }
 
-void LoRaMac::extract_mac_commands_only(const uint8_t *payload,
+bool LoRaMac::extract_mac_commands_only(const uint8_t *payload,
+                                        uint16_t size,
                                         int8_t snr,
-                                        uint8_t fopts_len)
+                                        uint8_t fopts_len,
+                                        Callback<void(loramac_mlme_confirm_t &)> confirm_handler)
 {
+    if (LoRaMac_stub::mlme_conf_ptr) {
+        confirm_handler(*LoRaMac_stub::mlme_conf_ptr);
+    }
+    return LoRaMac_stub::bool_value;
 }
 
 void LoRaMac::handle_data_frame(const uint8_t *const payload,
@@ -152,8 +154,12 @@ void LoRaMac::handle_data_frame(const uint8_t *const payload,
                                 uint8_t ptr_pos,
                                 uint8_t msg_type,
                                 int16_t rssi,
-                                int8_t snr)
+                                int8_t snr,
+                                Callback<void(loramac_mlme_confirm_t &)> confirm_handler)
 {
+    if (LoRaMac_stub::mlme_conf_ptr) {
+        confirm_handler(*LoRaMac_stub::mlme_conf_ptr);
+    }
 }
 
 void LoRaMac::set_batterylevel_callback(mbed::Callback<uint8_t(void)> battery_level)
@@ -165,8 +171,12 @@ void LoRaMac::on_radio_tx_done(lorawan_time_t timestamp)
 }
 
 void LoRaMac::on_radio_rx_done(const uint8_t *const payload, uint16_t size,
-                               int16_t rssi, int8_t snr)
+                               int16_t rssi, int8_t snr, uint32_t rx_timestamp,
+                               Callback<void(loramac_mlme_confirm_t &)> confirm_handler)
 {
+    if (LoRaMac_stub::mlme_conf_ptr) {
+        confirm_handler(*LoRaMac_stub::mlme_conf_ptr);
+    }
 }
 
 void LoRaMac::on_radio_tx_timeout(void)
@@ -333,12 +343,30 @@ device_class_t LoRaMac::get_device_class() const
     return LoRaMac_stub::dev_class_value;
 }
 
-void LoRaMac::set_device_class(const device_class_t &device_class,
-                               mbed::Callback<void(void)>rx2_would_be_closure_handler)
+lorawan_status_t LoRaMac::set_device_class(const device_class_t &device_class,
+                                           mbed::Callback<void(void)>rx2_would_be_closure_handler)
 {
+    return LoRaMac_stub::status_value;
 }
 
 void LoRaMac::setup_link_check_request()
+{
+}
+
+lorawan_status_t LoRaMac::setup_device_time_request(mbed::Callback<void(lorawan_gps_time_t gps_time)> notify)
+{
+    return LoRaMac_stub::status_value;
+}
+
+void LoRaMac::setup_reset_indication()
+{
+}
+
+void LoRaMac::setup_rekey_indication()
+{
+}
+
+void LoRaMac::setup_device_mode_indication(uint8_t classType)
 {
 }
 
@@ -376,17 +404,13 @@ void LoRaMac::reset_mcps_confirmation()
 {
 }
 
-void LoRaMac::reset_mlme_confirmation()
-{
-}
-
 void LoRaMac::reset_mcps_indication()
 {
 }
 
-void LoRaMac::set_tx_continuous_wave(uint8_t channel, int8_t datarate, int8_t tx_power,
-                                     float max_eirp, float antenna_gain, uint16_t timeout)
+LoRaWANTimeHandler *LoRaMac::get_lora_time()
 {
+    return LoRaMac_stub::time_handler_ptr;
 }
 
 lorawan_status_t LoRaMac::initialize(EventQueue *queue,
@@ -464,4 +488,54 @@ uint8_t LoRaMac::get_QOS_level(void)
 uint8_t LoRaMac::get_prev_QOS_level(void)
 {
     return LoRaMac_stub::uint8_value;
+}
+
+server_type_t LoRaMac::get_server_type()
+{
+    return LoRaMac_stub::stype;
+}
+
+uint8_t LoRaMac::get_current_adr_ack_limit()
+{
+    return LoRaMac_stub::uint8_value;
+}
+
+void LoRaMac::get_rejoin_parameters(uint32_t &max_time, uint32_t &max_count)
+{
+
+}
+
+lorawan_status_t LoRaMac::rejoin(join_req_type_t rejoin_type, bool is_forced, uint8_t datarate)
+{
+    return LoRaMac_stub::status_value;
+}
+
+lorawan_gps_time_t LoRaMac::get_gps_time(void)
+{
+    return LoRaMac_stub::gps_time_value;
+}
+
+void LoRaMac::set_gps_time(lorawan_gps_time_t gps_time)
+{
+}
+
+lorawan_status_t LoRaMac::add_ping_slot_info_req()
+{
+    return LoRaMac_stub::status_value;
+}
+
+lorawan_status_t LoRaMac::enable_beacon_acquisition(mbed::Callback<void(loramac_beacon_status_t,
+                                                                        const loramac_beacon_t *)>beacon_event_cb)
+{
+    return LoRaMac_stub::status_value;
+}
+
+lorawan_status_t LoRaMac::get_last_rx_beacon(loramac_beacon_t &beacon)
+{
+    return LoRaMac_stub::status_value;
+}
+
+lorawan_status_t LoRaMac::set_ping_slot_info(uint8_t periodicity)
+{
+    return LoRaMac_stub::status_value;
 }

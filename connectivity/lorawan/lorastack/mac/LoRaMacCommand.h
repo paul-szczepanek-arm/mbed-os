@@ -119,9 +119,10 @@ public:
      */
     lorawan_status_t process_mac_commands(const uint8_t *payload, uint8_t mac_index,
                                           uint8_t commands_size, uint8_t snr,
-                                          loramac_mlme_confirm_t &mlme_conf,
                                           lora_mac_system_params_t &mac_params,
-                                          LoRaPHY &lora_phy);
+                                          LoRaPHY &lora_phy,
+                                          mbed::Callback<void(loramac_mlme_confirm_t &)> confirm_handler,
+                                          rx_slot_t rx_slot);
 
     /**
      * @brief Adds a new LinkCheckReq MAC command to be sent.
@@ -132,10 +133,56 @@ public:
     lorawan_status_t add_link_check_req();
 
     /**
+     * @brief add_reset_ind Adds a ResetInd MAC command to be sent.
+     *
+     * @param version LoRaWAN version of the stack
+     * @return status  Function status: LORAWAN_STATUS_OK: OK,
+     *                                  LORAWAN_STATUS_LENGTH_ERROR: Buffer full
+     */
+    lorawan_status_t add_reset_ind(uint8_t version);
+
+    /**
+     * @brief add_rekey_ind Adds a RekeyInd MAC command to be sent.
+     *
+     * @param version LoRaWAN version of the stack
+     * @return status  Function status: LORAWAN_STATUS_OK: OK,
+     *                                  LORAWAN_STATUS_LENGTH_ERROR: Buffer full
+     */
+    lorawan_status_t add_rekey_ind(uint8_t version);
+
+    /**
+     * @brief add_device_mode_indication Adds a DeviceModeInd MAC command to be sent.
+     * @param classType Class type that is used from now on
+     * @return status  Function status: LORAWAN_STATUS_OK: OK,
+     *                                  LORAWAN_STATUS_LENGTH_ERROR: Buffer full
+     */
+    lorawan_status_t add_device_mode_indication(uint8_t classType);
+
+    /**
+     * @brief add_device_time_req Adds DeviceTimeReq MAC command to be sent.
+     *        Requests server's current time. 'notify' is the callback function
+     *        that will handle the event generation for the application.
+     * @return status  Function status: LORAWAN_STATUS_OK: OK,
+     *                                  LORAWAN_STATUS_LENGTH_ERROR: Buffer full
+     */
+    lorawan_status_t add_device_time_req(mbed::Callback<void(lorawan_gps_time_t gps_time)> notify);
+
+    /**
      * @brief Set battery level query callback method
      *        If callback is not set, BAT_LEVEL_NO_MEASURE is returned.
      */
     void set_batterylevel_callback(mbed::Callback<uint8_t(void)> battery_level);
+
+    /**
+     * @brief add_ping_slot_info_req Adds PingSlotInfoReq MAC command to be sent.
+     *                               Communicates the ping unicast slot periodicity to the
+     *                               network server.
+     * @param periodicity The ping slot period
+     * @return status  Function status: LORAWAN_STATUS_OK: OK,
+     *                                  LORAWAN_STATUS_LENGTH_ERROR: Buffer full,
+     *                                  LORAWAN_STATUS_PARAMETER_INVALID: Invalid periodicity
+     */
+    lorawan_status_t add_ping_slot_info_req(uint8_t periodicity);
 
 private:
     /**
@@ -220,6 +267,37 @@ private:
      */
     lorawan_status_t add_dl_channel_ans(uint8_t status);
 
+    /**
+     * @brief Adds a new AdrParamSetupAns MAC command to be sent.
+     * @return status  Function status: LORAWAN_STATUS_OK: OK,
+     *                                  LORAWAN_STATUS_LENGTH_ERROR: Buffer full
+     */
+    lorawan_status_t add_adr_param_setup_ans();
+
+    /**
+     * @brief Adds a new RejoinParamSetupAns MAC command to be sent.
+     * @param status 1 if time limitation was accepted, 0 otherwise.
+     * @return status  Function status: LORAWAN_STATUS_OK: OK,
+     *                                  LORAWAN_STATUS_LENGTH_ERROR: Buffer full
+     */
+    lorawan_status_t add_rejoin_param_setup_ans(uint8_t status);
+
+    /**
+     * @brief Adds a new PingSlotChannelAns MAC command to be sent.
+     * @param status Status bits
+     * @return status  Function status: LORAWAN_STATUS_OK: OK,
+     *                                  LORAWAN_STATUS_LENGTH_ERROR: Buffer full
+     */
+    lorawan_status_t add_ping_slot_channel_ans(uint8_t status);
+
+    /**
+     * @brief Adds a new BeaconFreqAns MAC command to be sent.
+     * @param status  Status bits
+     * @return status  Function status: LORAWAN_STATUS_OK: OK,
+     *                                  LORAWAN_STATUS_LENGTH_ERROR: Buffer full
+     */
+    lorawan_status_t add_beacon_freq_ans(uint8_t status);
+
 private:
     /**
       * Indicates if there are any pending sticky MAC commands
@@ -248,6 +326,7 @@ private:
     uint8_t mac_cmd_buffer_to_repeat[LORA_MAC_COMMAND_MAX_LENGTH];
 
     mbed::Callback<uint8_t(void)> _battery_level_cb;
+    mbed::Callback<void(lorawan_gps_time_t gps_time)> _time_sync_cb;
 };
 
 #endif //__LORAMACCOMMAND_H__

@@ -183,6 +183,30 @@
 #define KR920_RX_WND_2_DR                           DR_0
 
 /*!
+ * Beacon frequency
+ */
+#define KR920_BEACON_CHANNEL_FREQ                   923100000
+
+/*!
+ * Ping slot default frequency
+ */
+#define KR920_PING_CHANNEL_FREQ                     923100000
+
+/*!
+ * Size of RFU1 field
+ */
+#define KR920_BEACON_RFU1_SIZE                      2
+/*!
+ * Size of RFU2 field
+ */
+#define KR920_BEACON_RFU2_SIZE                      0
+
+/*!
+ * Datarate of the beacon channel
+ */
+#define KR920_BEACON_CHANNEL_DR                     DR_3
+
+/*!
  * Band 0 definition
  * { DutyCycle, TxMaxPower, LastJoinTxDoneTime, LastTxDoneTime, TimeOff }
  */
@@ -324,6 +348,11 @@ LoRaPHYKR920::LoRaPHYKR920()
     phy_params.ack_timeout_rnd = KR920_ACK_TIMEOUT_RND;
     phy_params.rx_window2_datarate = KR920_RX_WND_2_DR;
     phy_params.rx_window2_frequency = KR920_RX_WND_2_FREQ;
+    phy_params.beacon.default_frequency = KR920_BEACON_CHANNEL_FREQ;
+    phy_params.beacon.datarate = KR920_BEACON_CHANNEL_DR;
+    phy_params.beacon.rfu1_size = KR920_BEACON_RFU1_SIZE;
+    phy_params.beacon.rfu2_size = KR920_BEACON_RFU2_SIZE;
+    phy_params.ping_slot_default_frequency = KR920_PING_CHANNEL_FREQ;
 }
 
 LoRaPHYKR920::~LoRaPHYKR920()
@@ -479,29 +508,3 @@ lorawan_status_t LoRaPHYKR920::set_next_channel(channel_selection_params_t *para
         return LORAWAN_STATUS_NO_CHANNEL_FOUND;
     }
 }
-
-void LoRaPHYKR920::set_tx_cont_mode(cw_mode_params_t *params, uint32_t given_frequency)
-{
-    (void)given_frequency;
-
-    if (params->tx_power > bands[channels[params->channel].band].max_tx_pwr) {
-        params->tx_power = bands[channels[params->channel].band].max_tx_pwr;
-    }
-
-    float max_eirp = get_max_eirp(channels[params->channel].frequency);
-    int8_t phy_tx_power = 0;
-    uint32_t frequency = channels[params->channel].frequency;
-
-    // Take the minimum between the max_eirp and params->max_eirp.
-    // The value of params->max_eirp could have changed during runtime,
-    // e.g. due to a MAC command.
-    max_eirp = MIN(params->max_eirp, max_eirp);
-
-    // Calculate physical TX power
-    phy_tx_power = compute_tx_power(params->tx_power, max_eirp, params->antenna_gain);
-
-    _radio->lock();
-    _radio->set_tx_continuous_wave(frequency, phy_tx_power, params->timeout);
-    _radio->unlock();
-}
-

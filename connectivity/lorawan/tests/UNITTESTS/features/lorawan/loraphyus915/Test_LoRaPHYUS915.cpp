@@ -109,10 +109,6 @@ public:
         return bool_value;
     };
 
-    virtual void set_tx_continuous_wave(uint32_t freq, int8_t power, uint16_t time)
-    {
-    };
-
     virtual void lock(void)
     {
     };
@@ -151,22 +147,6 @@ TEST_F(Test_LoRaPHYUS915, constructor)
 TEST_F(Test_LoRaPHYUS915, restore_default_channels)
 {
     object->restore_default_channels();
-}
-
-TEST_F(Test_LoRaPHYUS915, rx_config)
-{
-    rx_config_params_t p;
-    memset(&p, 0, sizeof(p));
-
-    radio.uint8_value = 1;
-    EXPECT_TRUE(!object->rx_config(&p));
-
-    radio.uint8_value = 0;
-    p.is_repeater_supported = true;
-    EXPECT_TRUE(object->rx_config(&p));
-
-    p.is_repeater_supported = false;
-    EXPECT_TRUE(object->rx_config(&p));
 }
 
 TEST_F(Test_LoRaPHYUS915, tx_config)
@@ -285,14 +265,4 @@ TEST_F(Test_LoRaPHYUS915, apply_DR_offset)
             EXPECT_TRUE(val == object->apply_DR_offset(i, j));
         }
     }
-}
-
-TEST_F(Test_LoRaPHYUS915, set_tx_cont_mode)
-{
-    cw_mode_params_t p;
-    memset(&p, 0, sizeof(p));
-    object->set_tx_cont_mode(&p, 0);
-
-    p.datarate = 4;
-    object->set_tx_cont_mode(&p, 0);
 }

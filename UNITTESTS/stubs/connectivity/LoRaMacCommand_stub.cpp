@@ -19,6 +19,7 @@
 #include "LoRaMac.h"
 
 #include "LoRaMacCommand_stub.h"
+#include "Callback.h"
 
 lorawan_status_t LoRaMacCommand_stub::status_value = LORAWAN_STATUS_OK;
 bool LoRaMacCommand_stub::bool_value = false;
@@ -72,9 +73,11 @@ bool LoRaMacCommand::has_sticky_mac_cmd() const
 
 lorawan_status_t LoRaMacCommand::process_mac_commands(const uint8_t *payload, uint8_t mac_index,
                                                       uint8_t commands_size, uint8_t snr,
-                                                      loramac_mlme_confirm_t &mlme_conf,
                                                       lora_mac_system_params_t &mac_sys_params,
-                                                      LoRaPHY &lora_phy)
+                                                      LoRaPHY &lora_phy,
+                                                      mbed::Callback<void(loramac_mlme_confirm_t &)> confirm_handler,
+                                                      rx_slot_t rx_slot)
+
 {
     return LoRaMacCommand_stub::status_value;
 }
@@ -89,6 +92,26 @@ void LoRaMacCommand::set_batterylevel_callback(mbed::Callback<uint8_t(void)> bat
 }
 
 lorawan_status_t LoRaMacCommand::add_link_check_req()
+{
+    return LoRaMacCommand_stub::status_value;
+}
+
+lorawan_status_t LoRaMacCommand::add_reset_ind(uint8_t version)
+{
+    return LoRaMacCommand_stub::status_value;
+}
+
+lorawan_status_t LoRaMacCommand::add_rekey_ind(uint8_t version)
+{
+    return LoRaMacCommand_stub::status_value;
+}
+
+lorawan_status_t LoRaMacCommand::add_device_mode_indication(uint8_t classType)
+{
+    return LoRaMacCommand_stub::status_value;
+}
+
+lorawan_status_t LoRaMacCommand::add_device_time_req(mbed::Callback<void(lorawan_gps_time_t gps_time)> notify)
 {
     return LoRaMacCommand_stub::status_value;
 }
@@ -129,6 +152,11 @@ lorawan_status_t LoRaMacCommand::add_tx_param_setup_ans()
 }
 
 lorawan_status_t LoRaMacCommand::add_dl_channel_ans(uint8_t status)
+{
+    return LoRaMacCommand_stub::status_value;
+}
+
+lorawan_status_t LoRaMacCommand::add_ping_slot_info_req(uint8_t periodicity)
 {
     return LoRaMacCommand_stub::status_value;
 }

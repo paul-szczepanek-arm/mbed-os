@@ -109,10 +109,6 @@ public:
         return bool_value;
     };
 
-    virtual void set_tx_continuous_wave(uint32_t freq, int8_t power, uint16_t time)
-    {
-    };
-
     virtual void lock(void)
     {
     };
@@ -146,22 +142,6 @@ protected:
 TEST_F(Test_LoRaPHYAU915, constructor)
 {
     EXPECT_TRUE(object);
-}
-
-TEST_F(Test_LoRaPHYAU915, rx_config)
-{
-    rx_config_params_t p;
-    memset(&p, 0, sizeof(p));
-
-    radio.uint8_value = 1;
-    EXPECT_TRUE(!object->rx_config(&p));
-
-    radio.uint8_value = 0;
-    p.is_repeater_supported = true;
-    EXPECT_TRUE(object->rx_config(&p));
-
-    p.is_repeater_supported = false;
-    EXPECT_TRUE(object->rx_config(&p));
 }
 
 TEST_F(Test_LoRaPHYAU915, tx_config)

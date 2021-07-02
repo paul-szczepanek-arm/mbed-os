@@ -169,7 +169,7 @@ public:
     lorawan_status_t remove_single_channel(uint8_t id);
 
     /**
-     * @brief   LoRaMAC multicast channel link service.
+     * @brief   multicast channel link service.
      *
      * @details Links a multicast channel into the linked list.
      *
@@ -183,7 +183,7 @@ public:
     lorawan_status_t multicast_channel_link(multicast_params_t *channel_param);
 
     /**
-     * @brief   LoRaMAC multicast channel unlink service.
+     * @brief   multicast channel unlink service.
      *
      * @details Unlinks a multicast channel from the linked list.
      *
@@ -195,6 +195,25 @@ public:
      *          \ref LORAWAN_STATUS_PARAMETER_INVALID
      */
     lorawan_status_t multicast_channel_unlink(multicast_params_t *channel_param);
+
+    /**
+     * @brief get_multicast_params Get multicast parameters based on address
+     * @param address Address to use for search
+     * @return Multicast parameters object if address matched, NULL otherwise
+     */
+    multicast_params_t *get_multicast_params(uint32_t address);
+
+    /**
+     * @brief reset_multicast_counters Resets counters of all multicast groups
+     */
+    void reset_multicast_counters();
+
+    /**
+     * @brief get_rejoin_parameters Gets current rejoin parameters
+     * @param max_time Current rejoin max time
+     * @param max_count Current rejoin max count
+     */
+    void get_rejoin_parameters(uint32_t &max_time, uint32_t &max_count);
 
     /** Binds phy layer to MAC.
      *
@@ -300,15 +319,46 @@ public:
      * @param device_class Device class to use.
      * @param rx2_would_be_closure_handler callback function to inform about
      *        would be closure of RX2 window
+     * @return LORAWAN_STATUS_OK or a negative error code on failure.
      */
-    void set_device_class(const device_class_t &device_class,
-                          mbed::Callback<void(void)>rx2_would_be_closure_handler);
+    lorawan_status_t set_device_class(const device_class_t &device_class,
+                                      mbed::Callback<void(void)>rx2_would_be_closure_handler);
 
     /**
      * @brief setup_link_check_request Adds link check request command
      * to be put on next outgoing message (when it fits)
      */
     void setup_link_check_request();
+
+    /**
+     * @brief setup_device_time_request Adds device time request command
+     * to be put on next outgoing message (when it fits)
+     */
+    lorawan_status_t setup_device_time_request(mbed::Callback<void(lorawan_gps_time_t gps_time)> notify);
+
+    /**
+     * @brief setup_reset_indication Adds reset indication command
+     * to be put on next uplink message
+     */
+    void setup_reset_indication();
+
+    /**
+     * @brief setup_rekey_indication Adds rekey indication command
+     * to be put on next uplink message
+     */
+    void setup_rekey_indication();
+
+    /**
+     * @brief setup_device_mode_indication Adds Device mode indication command
+     * to be put on next uplink message
+     */
+    void setup_device_mode_indication(uint8_t classType);
+
+    /**
+     * @brief get_server_type Gets the server's type (Supported LoRaWAN spec version)
+     * @return Server type
+     */
+    server_type_t get_server_type();
 
     /**
      * @brief prepare_join prepares arguments to be ready for join() call.
@@ -327,6 +377,15 @@ public:
     lorawan_status_t join(bool is_otaa);
 
     /**
+     * @brief rejoin Rejoins the network
+     * @param rejoin_type Rejoin type indicates the rejoin message payload
+     * @param is_forced Indicates if the function was called because of ForceRejoinReq
+     * @param datarate In case of forced rejoin, datarate to be used for Rejoin request
+     * @return LORAWAN_STATUS_OK or a negative error code on failure.
+     */
+    lorawan_status_t rejoin(join_req_type_t rejoin_type, bool is_forced = false, uint8_t datarate = DR_0);
+
+    /**
      * MAC operations upon successful transmission
      */
     void on_radio_tx_done(lorawan_time_t timestamp);
@@ -335,7 +394,8 @@ public:
      * MAC operations upon reception
      */
     void on_radio_rx_done(const uint8_t *const payload, uint16_t size,
-                          int16_t rssi, int8_t snr);
+                          int16_t rssi, int8_t snr, uint32_t rx_timestamp,
+                          mbed::Callback<void(loramac_mlme_confirm_t &)> confirm_handler);
 
     /**
      * MAC operations upon transmission timeout
@@ -348,7 +408,6 @@ public:
      * @param is_timeout false when radio encountered an error
      *                   true when the an RX slot went empty
      *
-     * @return current RX slot
      */
     void on_radio_rx_timeout(bool is_timeout);
 
@@ -370,7 +429,6 @@ public:
      */
     const loramac_mcps_confirm_t *get_mcps_confirmation() const;
     const loramac_mcps_indication_t *get_mcps_indication() const;
-    const loramac_mlme_confirm_t *get_mlme_confirmation() const;
     const loramac_mlme_indication_t *get_mlme_indication() const;
 
     /**
@@ -379,7 +437,6 @@ public:
      */
     void post_process_mcps_req(void);
     void post_process_mcps_ind(void);
-    void post_process_mlme_request(void);
     void post_process_mlme_ind(void);
 
     /**
@@ -399,14 +456,30 @@ public:
     lorawan_status_t clear_tx_pipe(void);
 
     /**
-     * Gets the current time
+     * Gets the current monotonic tick time
      */
     lorawan_time_t get_current_time(void);
+
+    /**
+     * Gets the current GPS time
+     * For precise information please refer to LoRaWANTimer::get_gps_time() API
+     * documentation.
+     */
+    lorawan_gps_time_t get_gps_time(void);
+
+    /**
+     * Set the GPS time
+     * For precise information please refer to LoRaWANTimer::set_gps_time(...) API
+     * documentation.
+     */
+    void set_gps_time(lorawan_gps_time_t gps_time);
 
     /**
      * Gets the current receive slot
      */
     rx_slot_t get_current_slot(void);
+
+    uint8_t get_current_adr_ack_limit();
 
     /**
      * Indicates what level of QOS is set by network server. QOS level is set
@@ -418,6 +491,29 @@ public:
      *Indicates level of QOS used for the previous outgoing message
      */
     uint8_t get_prev_QOS_level(void);
+
+    /**
+     * Enable network beacon acquisition and tracking
+     * @param beacon_event_cb - stack callback
+     */
+    lorawan_status_t enable_beacon_acquisition(mbed::Callback<void(loramac_beacon_status_t,
+                                                                   const loramac_beacon_t *)>beacon_event_cb);
+
+    /**
+     * Set Class B ping slot periodicity
+     * @param beacon_event_cb - stack callback
+     */
+    lorawan_status_t set_ping_slot_info(uint8_t periodicity);
+
+    /**
+     * Add ping slot info request MAC command to next transmit if room available
+     */
+    lorawan_status_t add_ping_slot_info_req(void);
+
+    /**
+     * Get last received beacon
+     */
+    lorawan_status_t get_last_rx_beacon(loramac_beacon_t &beacon);
 
     /**
      * These locks trample through to the upper layers and make
@@ -436,6 +532,8 @@ public:
     void lock(void) { }
     void unlock(void) { }
 #endif
+
+    LoRaWANTimeHandler *get_lora_time();
 
 private:
     /**
@@ -469,16 +567,21 @@ private:
      */
     void reset_mac_parameters(void);
 
+    void reset_frame_counters(void);
+
+    void reset_phy_params(void);
+
     /**
      * Handles a Join Accept frame
      */
-    void handle_join_accept_frame(const uint8_t *payload, uint16_t size);
+    loramac_event_info_status_t handle_join_accept_frame(const uint8_t *payload, uint16_t size);
 
     /**
      * Handles data frames
      */
     void handle_data_frame(const uint8_t *payload,  uint16_t size, uint8_t ptr_pos,
-                           uint8_t msg_type, int16_t rssi, int8_t snr);
+                           uint8_t msg_type, int16_t rssi, int8_t snr,
+                           mbed::Callback<void(loramac_mlme_confirm_t &)> confirm_handler);
 
     /**
      * Send a Join Request
@@ -499,23 +602,26 @@ private:
      * Performs MIC
      */
     bool message_integrity_check(const uint8_t *payload, uint16_t size,
-                                 uint8_t *ptr_pos, uint32_t address,
-                                 uint32_t *downlink_counter, const uint8_t *nwk_skey);
+                                 uint8_t *ptr_pos, uint16_t confFCnt, uint32_t address,
+                                 uint32_t *downlink_counter);
 
     /**
      * Decrypts and extracts data and MAC commands from the received encrypted
      * payload
      */
     void extract_data_and_mac_commands(const uint8_t *payload, uint16_t size,
-                                       uint8_t fopts_len, uint8_t *nwk_skey,
-                                       uint8_t *app_skey, uint32_t address,
+                                       uint8_t fopts_len, uint32_t address,
                                        uint32_t downlink_frame_counter,
-                                       int16_t rssi, int8_t snr);
+                                       seq_counter_type_t cnt_type,
+                                       int16_t rssi, int8_t snr,
+                                       mbed::Callback<void(loramac_mlme_confirm_t &)> confirm_handler);
     /**
      * Decrypts and extracts MAC commands from the received encrypted
      * payload if there is no data
+     * @return True if successful, false otherwise
      */
-    void extract_mac_commands_only(const uint8_t *payload, int8_t snr, uint8_t fopts_len);
+    bool extract_mac_commands_only(const uint8_t *payload, uint16_t size, int8_t snr, uint8_t fopts_len,
+                                   mbed::Callback<void(loramac_mlme_confirm_t &)> confirm_handler);
 
     /**
      * Callback function to be executed when the DC backoff timer expires
@@ -531,6 +637,23 @@ private:
      * At the end of an RX2 window timer, an RX2 window is opened using this method.
      */
     void open_rx2_window(void);
+
+    /**
+     * Sets receive slot type with precedence check
+     * @return True if slot type set, false if higher priority slot is active
+     */
+    bool set_rx_slot(rx_slot_t rx_slot);
+
+    /**
+     * Open receive slot
+     * @return True if slot opened, false if higher priority slot is active
+     */
+    bool open_rx_window(rx_config_params_t *rx_config);
+
+    /**
+     * Close receive slot
+     */
+    void close_rx_window(rx_slot_t slot);
 
     /**
      * A method to retry a CONFIRMED message after a particular time period
@@ -589,20 +712,12 @@ private:
      * Resets MAC primitive blocks
      */
     void reset_mcps_confirmation(void);
-    void reset_mlme_confirmation(void);
     void reset_mcps_indication(void);
 
     /**
-     * @brief set_tx_continuous_wave Puts the system in continuous transmission mode
-     * @param [in] channel A Channel to use
-     * @param [in] datarate A datarate to use
-     * @param [in] tx_power A RF output power to use
-     * @param [in] max_eirp A maximum possible EIRP to use
-     * @param [in] antenna_gain Antenna gain to use
-     * @param [in] timeout Time in seconds while the radio is kept in continuous wave mode
+     * Calculate MIC for user data messages
      */
-    void set_tx_continuous_wave(uint8_t channel, int8_t datarate, int8_t tx_power,
-                                float max_eirp, float antenna_gain, uint16_t timeout);
+    lorawan_status_t calculate_userdata_mic();
 
 private:
     typedef mbed::ScopedLock<LoRaMac> Lock;
@@ -696,11 +811,15 @@ private:
 
     bool _continuous_rx2_window_open;
 
+    bool _dl_fport_available;
+
     device_class_t _device_class;
 
     uint8_t _prev_qos_level;
 
     bool _demod_ongoing;
+
+    bool _mod_ongoing;
 };
 
 #endif // MBED_LORAWAN_MAC_H__
